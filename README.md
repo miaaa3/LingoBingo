@@ -17,7 +17,7 @@ quiz, flashcard, and live multiplayer-game learning app.
    ```
    docker compose up --build
    ```
-3. Open http://localhost:8080
+3. Open http://localhost:8088
 
 The API is reached at `/api` through the nginx proxy (no CORS needed). MySQL
 data persists in the `dbdata` volume. Stop with `docker compose down`
