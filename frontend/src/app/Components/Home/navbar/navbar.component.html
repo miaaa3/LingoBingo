@@ -17,7 +17,7 @@
               </svg>
           </button>
           <div *ngIf="openForNotification" [@dropdownAnimation]="'visible'" class="absolute right-0 w-full mt-2 mr-12 origin-top-right rounded-md shadow-lg md:w-48">
-              <div class="flex items-center justify-center p-6 w-60 h-44 bg-gradient-to-r from-purple-400 to-indigo-500 rounded-md shadow-lg">
+              <div class="flex items-center justify-center p-6 w-60 h-44 bg-gradient-to-r from-purple-400 to-blue-ribbon-500 rounded-md shadow-lg">
                   <svg class="w-12 h-12 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                       <g>
                           <path fill="none" d="M0 0h24v24H0z"/>
@@ -36,7 +36,7 @@
       </div>
   
       <div [style.zIndex]="zIndex" (click.away)="closeDropdown()" class="relative" [attr.x-data]="{ open: false }">
-        <button type="button" (click)="toggleDropdown()" class="flex bg-blue-500 text-white rounded-full border md:me-0 focus:ring-4 focus:ring-gray-300 active:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button">
+        <button type="button" (click)="toggleDropdown()" class="flex bg-blue-ribbon-500 text-white rounded-full border md:me-0 focus:ring-4 focus:ring-gray-300 active:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button">
           <svg class="size-9 p-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
           </svg>

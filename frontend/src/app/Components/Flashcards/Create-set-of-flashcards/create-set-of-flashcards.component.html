@@ -5,7 +5,7 @@
     <button
       type="submit"
       [disabled]="!flashcardSetForm.valid"
-      [class.bg-blue-500]="flashcardSetForm.valid"
+      [class.bg-blue-ribbon-500]="flashcardSetForm.valid"
       [class.bg-gray-200]="!flashcardSetForm.valid"
       class="text-white px-4 py-2 rounded-lg"  
       (click)="createFlashcardSet()">
@@ -19,7 +19,7 @@
   <button
     type="submit"
     [disabled]="!flashcardSetForm.valid"
-    [class.bg-blue-500]="flashcardSetForm.valid"
+    [class.bg-blue-ribbon-500]="flashcardSetForm.valid"
     [class.bg-gray-200]="!flashcardSetForm.valid"
     class="text-white px-4 py-2 rounded-lg"
     (click)="createFlashcardSet()"  >

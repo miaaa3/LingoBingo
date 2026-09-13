@@ -5,7 +5,7 @@
     <button
       type="button"
       [disabled]="!quizForm.valid"
-      [class.bg-blue-500]="quizForm.valid"
+      [class.bg-blue-ribbon-500]="quizForm.valid"
       [class.bg-gray-200]="!quizForm.valid"
       class="text-white px-4 py-2 rounded-lg"
     >
@@ -20,7 +20,7 @@
     <button
       type="button"
       [disabled]="!quizForm.valid"
-      [class.bg-blue-500]="quizForm.valid"
+      [class.bg-blue-ribbon-500]="quizForm.valid"
       [class.bg-gray-200]="!quizForm.valid"
       class="text-white px-4 py-2 rounded-lg"
       (click)="onSubmit()"
@@ -58,18 +58,18 @@
         <div class="grid grid-cols-2 items-center gap-12 py-3 px-5 w-3/4">
           <div>
             <label for="question" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Question</label>
-            <input type="text" name="question" placeholder="Enter Question" formControlName="question" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-11 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <input type="text" name="question" placeholder="Enter Question" formControlName="question" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-ribbon-500 focus:border-blue-ribbon-500 block w-full h-11 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-ribbon-500 dark:focus:border-blue-ribbon-500">
           </div>
 
           <div>
             <label for="description" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Description</label>
-            <input type="text" name="description" placeholder="Enter Description" formControlName="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-11 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <input type="text" name="description" placeholder="Enter Description" formControlName="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-ribbon-500 focus:border-blue-ribbon-500 block w-full h-11 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-ribbon-500 dark:focus:border-blue-ribbon-500">
           </div>
         </div>
 
         <div class="w-1/4 hover:cursor-pointer flex flex-col items-start justify-center  mx-6">
           <label for="dropzone-file" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Image</label>
-          <div class="flex flex-row items-center justify-center gap-2 h-11 w-full border border-gray-300 rounded-lg cursor-pointer bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <div class="flex flex-row items-center justify-center gap-2 h-11 w-full border border-gray-300 rounded-lg cursor-pointer bg-gray-50 text-gray-900 text-sm focus:ring-blue-ribbon-500 focus:border-blue-ribbon-500  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-ribbon-500 dark:focus:border-blue-ribbon-500">
             <svg class="size-5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
             </svg>
@@ -96,12 +96,12 @@
         <div class="mt-4 mx-6 grid grid-cols-2 gap-4">
           <div>
             <label for="explanation" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Explanation</label>
-            <input type="text" name="explanation" placeholder="Enter Explanation" formControlName="explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <input type="text" name="explanation" placeholder="Enter Explanation" formControlName="explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-ribbon-500 focus:border-blue-ribbon-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-ribbon-500 dark:focus:border-blue-ribbon-500">
           </div>
 
           <div>
             <label for="tip" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Tip</label>
-            <input type="text" name="tip" placeholder="Enter Tip" formControlName="tip" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <input type="text" name="tip" placeholder="Enter Tip" formControlName="tip" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-ribbon-500 focus:border-blue-ribbon-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-ribbon-500 dark:focus:border-blue-ribbon-500">
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@
 
     <!-- Submit Button -->
     <button type="submit" [disabled]="!quizForm.valid"
-            [class.bg-blue-500]="quizForm.valid" [class.bg-gray-400]="!quizForm.valid"
+            [class.bg-blue-ribbon-500]="quizForm.valid" [class.bg-gray-400]="!quizForm.valid"
             class="text-white mt-8 px-4 py-2 rounded"
             (click)="onSubmit()">
       Create
