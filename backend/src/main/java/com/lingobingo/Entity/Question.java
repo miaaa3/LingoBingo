@@ -39,6 +39,8 @@ public class Question {
 
     private String tip;
 
+    private Integer points = 1;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "picture", columnDefinition = "BLOB")

@@ -1,9 +1,11 @@
 package com.lingobingo.Controller;
 
 import com.lingobingo.Entity.Quiz;
+import com.lingobingo.Entity.Role;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
 import com.lingobingo.Service.QuizService;
+import com.lingobingo.Service.QuizResultService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ public class QuizController {
 
     private final QuizService quizService;
     private final UserRepository userRepository;
+    private final QuizResultService quizResultService;
 
 
     // Add a new quiz
@@ -127,5 +130,39 @@ public class QuizController {
         return ResponseEntity.ok(result);
     }
 
-}
 
+    // Student submits answers; scored server-side and the result is saved.
+    @PostMapping("/{quizId}/submit")
+    public ResponseEntity<?> submitQuiz(@PathVariable Long quizId,
+                                        @RequestBody Map<String, String> answers,
+                                        Principal principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        try {
+            return ResponseEntity.ok(quizResultService.submit(quizId, principal.getName(), answers));
+        } catch (java.util.NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // Gradebook for a quiz - only the owning teacher (or admin).
+    @GetMapping("/{quizId}/results")
+    public ResponseEntity<?> quizResults(@PathVariable Long quizId, Principal principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        Optional<Quiz> quizOpt = quizService.getQuizById(quizId);
+        if (quizOpt.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quiz not found");
+        User user = userRepository.findByEmail(principal.getName()).orElse(null);
+        Quiz quiz = quizOpt.get();
+        boolean owns = quiz.getCreatedBy() != null && user != null
+                && user.getEmail().equals(quiz.getCreatedBy().getEmail());
+        boolean admin = user != null && user.getRole() == Role.ADMIN;
+        if (!owns && !admin) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not your quiz");
+        return ResponseEntity.ok(quizResultService.resultsForQuiz(quizId));
+    }
+
+    // A student's own quiz results.
+    @GetMapping("/results/mine")
+    public ResponseEntity<?> myResults(Principal principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        return ResponseEntity.ok(quizResultService.resultsForStudent(principal.getName()));
+    }
+}
