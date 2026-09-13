@@ -1,0 +1,37 @@
+<div class="max-w-4xl mx-auto p-6 mt-16">
+  <h1 class="text-3xl font-extrabold text-cloud-burst-900 mb-1">Quizzes</h1>
+  <p class="text-gray-500 mb-6">{{ isTeacher ? 'Your quizzes and their gradebooks.' : 'Take a quiz and test yourself.' }}</p>
+
+  <div *ngIf="loading" class="text-gray-400">Loading...</div>
+  <div *ngIf="!loading && quizzes.length === 0" class="text-center text-gray-400 py-10">
+    {{ isTeacher ? 'You have no quizzes yet.' : 'No quizzes available yet.' }}
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div *ngFor="let q of quizzes" class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+      <h3 class="text-xl font-bold text-blue-ribbon-800">{{ q.name }}</h3>
+      <p class="text-gray-500 text-sm mt-1">{{ q.description }}</p>
+      <p class="text-xs text-gray-400 mt-2">{{ qCount(q) }} {{ qCount(q) === 1 ? 'question' : 'questions' }}</p>
+      <div class="mt-4 flex gap-3">
+        <a [routerLink]="['/Quizzes', q.id, 'take']"
+           class="py-2 px-4 bg-blue-ribbon-600 text-white text-sm font-bold rounded-full hover:scale-105 transition-transform">
+          {{ isTeacher ? 'Preview' : 'Take quiz' }}
+        </a>
+        <a *ngIf="isTeacher" [routerLink]="['/Quizzes', q.id, 'gradebook']"
+           class="py-2 px-4 border-2 border-blue-ribbon-600 text-blue-ribbon-700 text-sm font-bold rounded-full hover:bg-blue-ribbon-50 transition-colors">
+          Gradebook
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isTeacher && myResults.length" class="mt-10">
+    <h2 class="text-xl font-bold text-cloud-burst-900 mb-3">My scores</h2>
+    <div class="space-y-2">
+      <div *ngFor="let r of myResults" class="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3">
+        <span class="font-medium text-gray-700">{{ r.quizName }}</span>
+        <span class="font-bold text-mustard-600">{{ r.score }} / {{ r.maxScore }}</span>
+      </div>
+    </div>
+  </div>
+</div>

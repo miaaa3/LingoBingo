@@ -23,6 +23,9 @@ import { ClassesComponent } from './Components/Classes/classes.component';
 import { CoursesComponent } from './Components/Courses/courses.component';
 import { CreateCourseComponent } from './Components/Courses/create-course.component';
 import { CourseViewerComponent } from './Components/Courses/course-viewer.component';
+import { QuizHubComponent } from './Components/Quiz-play/quiz-hub.component';
+import { TakeQuizComponent } from './Components/Quiz-play/take-quiz.component';
+import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 
 
 const routes: Routes = [
@@ -44,6 +47,9 @@ const routes: Routes = [
   {path:'Courses', component: CoursesComponent, canActivate: [AuthGuard]},
   {path:'Courses/create', component: CreateCourseComponent, canActivate: [AuthGuard]},
   {path:'Courses/:id', component: CourseViewerComponent, canActivate: [AuthGuard]},
+  {path:'Quizzes', component: QuizHubComponent, canActivate: [AuthGuard]},
+  {path:'Quizzes/:id/take', component: TakeQuizComponent, canActivate: [AuthGuard]},
+  {path:'Quizzes/:id/gradebook', component: GradebookComponent, canActivate: [AuthGuard]},
 
 
 

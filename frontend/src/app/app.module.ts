@@ -34,6 +34,9 @@ import { ClassesComponent } from './Components/Classes/classes.component';
 import { CoursesComponent } from './Components/Courses/courses.component';
 import { CreateCourseComponent } from './Components/Courses/create-course.component';
 import { CourseViewerComponent } from './Components/Courses/course-viewer.component';
+import { QuizHubComponent } from './Components/Quiz-play/quiz-hub.component';
+import { TakeQuizComponent } from './Components/Quiz-play/take-quiz.component';
+import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 
 
 
@@ -67,6 +70,9 @@ import { CourseViewerComponent } from './Components/Courses/course-viewer.compon
     CoursesComponent,
     CreateCourseComponent,
     CourseViewerComponent,
+    QuizHubComponent,
+    TakeQuizComponent,
+    GradebookComponent,
     
   
   ],

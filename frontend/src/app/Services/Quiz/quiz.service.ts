@@ -99,4 +99,16 @@ searchQuizzesSeparate(name?: string, isPublic?: boolean): Observable<{ ownQuizze
   getVisibleQuizzes():  Observable<{ ownQuizzes: any[]; publicQuizzes: any[] }> {
   return this.http.get<{ ownQuizzes: any[]; publicQuizzes: any[] }>(`${this.baseUrl}/visible`);
 }
+
+  submitQuiz(quizId: number | string, answers: { [key: string]: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${quizId}/submit`, answers);
+  }
+
+  getQuizResults(quizId: number | string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${quizId}/results`);
+  }
+
+  getMyResults(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/results/mine`);
+  }
 }
