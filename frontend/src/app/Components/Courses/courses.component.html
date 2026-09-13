@@ -1,0 +1,36 @@
+<div class="max-w-4xl mx-auto p-6 mt-16">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-extrabold text-indigo-800">Courses</h1>
+      <p class="text-gray-500">{{ isTeacher ? 'Build and manage your courses.' : 'Explore public courses.' }}</p>
+    </div>
+    <a *ngIf="isTeacher" routerLink="/Courses/create"
+       class="py-2 px-5 bg-indigo-600 text-white font-bold rounded-full hover:scale-105 transition-transform">+ New course</a>
+  </div>
+
+  <div *ngIf="loading" class="text-gray-400">Loading...</div>
+  <div *ngIf="!loading && courses.length === 0" class="text-center text-gray-400 py-10">
+    {{ isTeacher ? 'No courses yet - create your first one.' : 'No public courses available yet.' }}
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div *ngFor="let c of courses" [routerLink]="['/Courses', c.id]"
+         class="cursor-pointer bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-start justify-between">
+        <h3 class="text-xl font-bold text-indigo-800">{{ c.title }}</h3>
+        <span class="text-xs font-semibold px-2 py-1 rounded-full"
+              [ngClass]="c.isPublic ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'">
+          {{ c.isPublic ? 'Public' : 'Private' }}
+        </span>
+      </div>
+      <p class="text-gray-500 text-sm mt-2">{{ sectionCount(c) }} {{ sectionCount(c) === 1 ? 'section' : 'sections' }}</p>
+
+      <div *ngIf="isTeacher" class="mt-4 flex gap-4 text-sm">
+        <button (click)="toggleVisibility(c, $event)" class="font-semibold text-indigo-600 hover:underline">
+          Make {{ c.isPublic ? 'private' : 'public' }}
+        </button>
+        <button (click)="remove(c, $event)" class="font-semibold text-red-500 hover:underline">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

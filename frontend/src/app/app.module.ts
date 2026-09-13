@@ -31,6 +31,9 @@ import { DisplayGameComponent } from './Components/Game/display-game/display-gam
 import { ChooseProfileComponent } from './Components/Game/choose-profile/choose-profile.component';
 import { LeaderboardComponent } from './Components/Game/leaderboard/leaderboard.component';
 import { ClassesComponent } from './Components/Classes/classes.component';
+import { CoursesComponent } from './Components/Courses/courses.component';
+import { CreateCourseComponent } from './Components/Courses/create-course.component';
+import { CourseViewerComponent } from './Components/Courses/course-viewer.component';
 
 
 
@@ -61,6 +64,9 @@ import { ClassesComponent } from './Components/Classes/classes.component';
     ChooseProfileComponent,
     LeaderboardComponent,
     ClassesComponent,
+    CoursesComponent,
+    CreateCourseComponent,
+    CourseViewerComponent,
     
   
   ],

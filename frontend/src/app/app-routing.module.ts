@@ -20,6 +20,9 @@ import { JoinGameComponent } from './Components/Game/join-game/join-game.compone
 import { ChooseProfileComponent } from './Components/Game/choose-profile/choose-profile.component';
 import { LeaderboardComponent } from './Components/Game/leaderboard/leaderboard.component';
 import { ClassesComponent } from './Components/Classes/classes.component';
+import { CoursesComponent } from './Components/Courses/courses.component';
+import { CreateCourseComponent } from './Components/Courses/create-course.component';
+import { CourseViewerComponent } from './Components/Courses/course-viewer.component';
 
 
 const routes: Routes = [
@@ -38,6 +41,9 @@ const routes: Routes = [
   {path: 'game/:gameCode/play', component: DisplayGameComponent },
   {path: 'leaderboard/:gameCode', component: LeaderboardComponent },
   {path:'Classes', component: ClassesComponent, canActivate: [AuthGuard]},
+  {path:'Courses', component: CoursesComponent, canActivate: [AuthGuard]},
+  {path:'Courses/create', component: CreateCourseComponent, canActivate: [AuthGuard]},
+  {path:'Courses/:id', component: CourseViewerComponent, canActivate: [AuthGuard]},
 
 
 

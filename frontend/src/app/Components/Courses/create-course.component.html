@@ -1,0 +1,41 @@
+<div class="max-w-3xl mx-auto p-6 mt-16">
+  <h1 class="text-3xl font-extrabold text-indigo-800 mb-6">New course</h1>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+    <div>
+      <label class="block font-bold text-gray-800 mb-1">Title</label>
+      <input formControlName="title" placeholder="Course title"
+             class="w-full border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-indigo-500" />
+    </div>
+
+    <label class="flex items-center gap-2 text-gray-700">
+      <input type="checkbox" formControlName="isPublic" class="w-4 h-4" /> Public (visible to all students)
+    </label>
+
+    <div formArrayName="sections" class="space-y-4">
+      <div *ngFor="let sec of sections.controls; let i = index" [formGroupName]="i"
+           class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-gray-700">Section {{ i + 1 }}</span>
+          <button type="button" (click)="removeSection(i)" class="text-red-500 text-sm hover:underline">Remove</button>
+        </div>
+        <input formControlName="heading" placeholder="Section heading"
+               class="w-full border border-gray-300 rounded-lg py-2 px-3 mb-2 outline-none focus:ring-2 focus:ring-indigo-500" />
+        <textarea formControlName="content" rows="4" placeholder="Section content"
+                  class="w-full border border-gray-300 rounded-lg py-2 px-3 mb-2 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+        <label class="block text-sm text-gray-600">Image (optional)
+          <input type="file" accept="image/*" (change)="onFile(i, $event)" class="mt-1 block text-sm" />
+        </label>
+      </div>
+    </div>
+
+    <button type="button" (click)="addSection()" class="text-indigo-600 font-semibold hover:underline">+ Add section</button>
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit" [disabled]="saving || form.invalid"
+              class="py-2 px-6 bg-indigo-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">
+        {{ saving ? 'Saving...' : 'Create course' }}
+      </button>
+      <a routerLink="/Courses" class="py-2 px-6 text-gray-600 font-semibold self-center">Cancel</a>
+    </div>
+  </form>
+</div>

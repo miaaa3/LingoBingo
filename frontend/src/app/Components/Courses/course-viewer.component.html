@@ -1,0 +1,17 @@
+<div class="max-w-3xl mx-auto p-6 mt-16">
+  <a routerLink="/Courses" class="text-indigo-600 font-semibold hover:underline">&larr; Back to courses</a>
+  <div *ngIf="loading" class="text-gray-400 mt-6">Loading...</div>
+  <div *ngIf="!loading && !course" class="text-gray-400 mt-6">Course not found.</div>
+
+  <div *ngIf="course" class="mt-4">
+    <h1 class="text-3xl font-extrabold text-indigo-800 mb-6">{{ course.title }}</h1>
+    <div class="space-y-6">
+      <section *ngFor="let s of course.sections" class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">{{ s.heading }}</h2>
+        <p class="text-gray-700 whitespace-pre-line">{{ s.content }}</p>
+        <img *ngIf="s.mediaType" [src]="imageUrl(s.id)" [alt]="s.heading" class="mt-3 rounded-lg max-h-80" />
+      </section>
+      <div *ngIf="!course.sections || course.sections.length === 0" class="text-gray-400">This course has no sections yet.</div>
+    </div>
+  </div>
+</div>
