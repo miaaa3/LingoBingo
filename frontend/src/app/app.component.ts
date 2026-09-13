@@ -45,7 +45,7 @@ export class AppComponent implements OnInit{
   }
 
   shouldHideSidebar(): boolean {
-    return !this.local.getData("userApiKey");
+    return !this.local.getData("userApiKey2");
   }
 
   ngOnInit(): void {
@@ -54,12 +54,12 @@ export class AppComponent implements OnInit{
 
     // this.loadQuestions()
 
-    // console.warn("after : "+this.local.getData("userApiKey"))
+    // console.warn("after : "+this.local.getData("userApiKey2"))
     // this.api.httpOptions = {
     //   headers: new HttpHeaders({
     //     'Content-Type': 'application/json',
     //     Accept: 'application/json',
-    //     Authorization: 'Bearer ' + this.local.getData("userApiKey")
+    //     Authorization: 'Bearer ' + this.local.getData("userApiKey2")
     //   })
     // };
     // this.api.profile().subscribe(

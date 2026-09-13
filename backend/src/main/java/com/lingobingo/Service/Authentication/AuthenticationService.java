@@ -42,6 +42,7 @@ public class AuthenticationService {
 
         String jwtAccessToken = jwtService.generateToken(createdUser);
         return ResponseEntity.ok(AuthenticationResponse.builder()
+                .id(createdUser.getId())
                 .email(createdUser.getEmail())
                 .access_token(jwtAccessToken)
                 .role(createdUser.getRole()).build());

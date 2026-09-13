@@ -10,7 +10,7 @@ import { UserAnswerRequest } from 'src/app/Models/quiz/userAnswerRequest.model';
   providedIn: 'root'
 })
 export class QuizQuestionService {
-  private apiUrl = environment.apiUrl + '/quizzes';
+  private apiUrl = environment.apiUrl + '/questions';
 
   constructor(private http: HttpClient) { }
 
