@@ -5,6 +5,7 @@ import com.lingobingo.Dto.FlashcardDTO;
 import com.lingobingo.Dto.FlashcardResponseDTO;
 import com.lingobingo.Dto.FlashcardSetDTO;
 import com.lingobingo.Dto.FlashcardSetResponseDTO;
+import com.lingobingo.Dto.FlashcardSetJsonDTO;
 import com.lingobingo.Entity.Flashcard;
 import com.lingobingo.Entity.FlashcardSet;
 import com.lingobingo.Entity.User;
