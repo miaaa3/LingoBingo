@@ -21,6 +21,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -169,5 +171,71 @@ public class FlashcardSetController {
         return (updatedSet != null) ?
                 new ResponseEntity<>(updatedSet, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // --- Endpoints the frontend expects ---
+
+    // Own + public sets combined (used by the search/flashcards page)
+    @GetMapping("/visible")
+    public ResponseEntity<Map<String, Object>> getVisibleFlashcardSets(Principal principal) {
+        List<FlashcardSet> own = (principal != null)
+                ? flashcardSetService.getAllMyFlashcardSets(principal.getName())
+                : new ArrayList<>();
+        List<FlashcardSet> publicSets = flashcardSetService.getAllPublicFlashcardSets();
+        Map<String, Object> body = new HashMap<>();
+        body.put("ownSets", own);
+        body.put("publicSets", publicSets);
+        return ResponseEntity.ok(body);
+    }
+
+    // Search own + public sets by name/description
+    @GetMapping("/search-separate")
+    public ResponseEntity<Map<String, Object>> searchSeparate(
+            Principal principal,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) Boolean isPublic) {
+        List<FlashcardSet> own = (principal != null)
+                ? flashcardSetService.searchMySets(principal.getName(), name, description)
+                : new ArrayList<>();
+        List<FlashcardSet> publicSets = flashcardSetService.searchPublicSets(name, description);
+        Map<String, Object> body = new HashMap<>();
+        body.put("ownSets", own);
+        body.put("publicSets", publicSets);
+        return ResponseEntity.ok(body);
+    }
+
+    // Set visibility to an explicit value
+    @PutMapping("/{id}/visibility")
+    public ResponseEntity<FlashcardSet> setVisibility(@PathVariable Long id, @RequestParam boolean isPublic) {
+        FlashcardSet updated = flashcardSetService.setPublic(id, isPublic);
+        return (updated != null)
+                ? new ResponseEntity<>(updated, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // JSON create (no media) - complements the multipart /add
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<FlashcardSet> addFlashcardSetJson(Principal principal,
+                                                            @RequestBody FlashcardSetJsonDTO dto) {
+        FlashcardSet flashcardSet = new FlashcardSet();
+        flashcardSet.setTitle(dto.getTitle());
+        flashcardSet.setDescription(dto.getDescription());
+        if (dto.getFlashcards() != null) {
+            List<Flashcard> flashcards = new ArrayList<>();
+            for (FlashcardSetJsonDTO.Card c : dto.getFlashcards()) {
+                Flashcard flashcard = new Flashcard();
+                flashcard.setTerm(c.getTerm());
+                flashcard.setDefinition(c.getDefinition());
+                flashcard.setFlashcardSet(flashcardSet);
+                flashcards.add(flashcard);
+            }
+            flashcardSet.setFlashcards(flashcards);
+        }
+        if (principal != null) {
+            userRepository.findByEmail(principal.getName()).ifPresent(flashcardSet::setCreatedBy);
+        }
+        FlashcardSet created = flashcardSetService.createFlashcardSet(flashcardSet);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 }

@@ -59,13 +59,17 @@ export class CreateSetOfFlashcardsComponent implements OnInit {
   }
 
   createFlashcardSet(): void {
-    console.log('Creating flashcard set with data:', this.flashcardSetForm.value);
-    const flashcardSet = { ...this.flashcardSetForm.value };
-   
+    const raw = this.flashcardSetForm.value;
+    const flashcardSet = {
+      title: raw.name,
+      description: raw.description,
+      flashcards: raw.flashcards
+    };
+
     this.flashcardSetService.addFlashcardSet(flashcardSet).subscribe(
       (response) => {
         this.toastr.success('Flashcard set created successfully', 'Success');
-        this.router.navigate(['/Category-content/', flashcardSet.category]);
+        this.router.navigate(['/Search']);
       },
       (error) => {
         console.error('Error creating flashcard set:', error);

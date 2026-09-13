@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -95,5 +96,34 @@ public class FlashcardSetService {
     // Get all flashcard sets created by a specific user
     public List<FlashcardSet> getAllMyFlashcardSets(String userEmail) {
         return flashcardSetRepository.findAllByCreatedByEmail(userEmail);
+    }
+
+    // Set visibility to an explicit value
+    public FlashcardSet setPublic(Long id, boolean isPublic) {
+        Optional<FlashcardSet> optionalSet = flashcardSetRepository.findById(id);
+        if (optionalSet.isPresent()) {
+            FlashcardSet flashcardSet = optionalSet.get();
+            flashcardSet.setIsPublic(isPublic);
+            return flashcardSetRepository.save(flashcardSet);
+        }
+        return null;
+    }
+
+    // Search helpers (small dataset - filtered in memory)
+    public List<FlashcardSet> searchMySets(String email, String name, String description) {
+        return filter(getAllMyFlashcardSets(email), name, description);
+    }
+
+    public List<FlashcardSet> searchPublicSets(String name, String description) {
+        return filter(getAllPublicFlashcardSets(), name, description);
+    }
+
+    private List<FlashcardSet> filter(List<FlashcardSet> sets, String name, String description) {
+        return sets.stream()
+                .filter(s -> name == null || name.isBlank()
+                        || (s.getTitle() != null && s.getTitle().toLowerCase().contains(name.toLowerCase())))
+                .filter(s -> description == null || description.isBlank()
+                        || (s.getDescription() != null && s.getDescription().toLowerCase().contains(description.toLowerCase())))
+                .collect(Collectors.toList());
     }
 }
