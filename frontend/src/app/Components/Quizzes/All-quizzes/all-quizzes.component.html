@@ -2,7 +2,7 @@
     <h1 class="text-center text-3xl sm:text-4xl font-extrabold text-cloud-burst-900 mb-6">Navigate our Quizzes</h1>
         <div *ngIf="!isLoading">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 p-3 *:flex-col *:p-3 *:space-y-5 *:rounded-md *:border *:bg-white " >
-                <div class="group cursor-pointer" *ngFor="let item of quizzes" [routerLink]="'/Display-quiz/' + item.id">
+                <div class="group cursor-pointer" *ngFor="let item of quizzes" [routerLink]="['/Quizzes', item.id, 'take']">
                     <div class="flex justify-between">
                         <p class="text-xl">{{item.name}}</p>
                         <svg class="size-5 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">

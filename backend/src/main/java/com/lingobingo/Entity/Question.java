@@ -1,6 +1,7 @@
 package com.lingobingo.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +33,11 @@ public class Question {
     @Column(name = "answer")
     private Map<String, String> answers;
 
-    // Single correct answer key, e.g. "A" or "B"
+    // Single correct answer key, e.g. "A" or "B".
+    // WRITE_ONLY: accepted when creating a quiz, never sent to clients on GET
+    // (prevents leaking answers via listing/detail endpoints). Server-side
+    // scoring reads the field directly in Java, so it is unaffected.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String correctAnswer;
 
     private String explanation;
