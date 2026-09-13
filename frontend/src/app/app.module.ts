@@ -37,6 +37,7 @@ import { CourseViewerComponent } from './Components/Courses/course-viewer.compon
 import { QuizHubComponent } from './Components/Quiz-play/quiz-hub.component';
 import { TakeQuizComponent } from './Components/Quiz-play/take-quiz.component';
 import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
+import { PlanningComponent } from './Components/Planning/planning.component';
 
 
 
@@ -73,6 +74,7 @@ import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
     QuizHubComponent,
     TakeQuizComponent,
     GradebookComponent,
+    PlanningComponent,
     
   
   ],
