@@ -1,136 +1,67 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { RestApiService } from 'src/app/Services/Auth/rest-api.service';
+import { QuizService } from 'src/app/Services/Quiz/quiz.service';
 
+/**
+ * Manual quiz builder. Produces a clean JSON Quiz (matching the backend
+ * entity: questionText, answers A-D map, single correctAnswer key, points)
+ * and saves it through POST /api/quizzes/add — the same contract the
+ * flashcard generator and the take/scoring flow rely on.
+ */
 @Component({
   selector: 'app-create-quiz',
   templateUrl: './create-quiz.component.html',
   styleUrls: ['./create-quiz.component.css']
 })
 export class CreateQuizComponent implements OnInit {
-  difficulties: string[] = [];
-  categories: string[] = [];
-  numbers: number[] = [];
-  id: number = 28;
   quizForm!: FormGroup;
   questionsArray: AbstractControl[] = [];
-  imageFile: File | null = null; // Add this to store the image file
+  saving = false;
+  readonly optionKeys = ['A', 'B', 'C', 'D'];
 
   constructor(
     private formBuilder: FormBuilder,
-    private api: RestApiService,
+    private quizApi: QuizService,
     private router: Router,
     private toastr: ToastrService,
   ) {}
 
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input && input.files) {
-      this.imageFile = input.files[0];
-    }
+  ngOnInit(): void {
+    this.quizForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      description: [''],
+      isPublic: [true],
+      questions: this.formBuilder.array([]),
+    });
+    this.questionsArray = (this.quizForm.get('questions') as FormArray).controls;
+    this.addNewQuestion();
   }
-  
 
-  // Method to add a new question
   addNewQuestion(): void {
     const questions = this.quizForm.get('questions') as FormArray;
     questions.push(this.formBuilder.group({
       question: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
       answers: this.formBuilder.group({
         A: ['', Validators.required],
-        B: [''],
+        B: ['', Validators.required],
         C: [''],
-        D: ['']
+        D: [''],
       }),
-      multipleCorrectAnswers: false,
-      correctAnswers: this.formBuilder.group({
-        A: false,
-        B: false,
-        C: false,
-        D: false
-      }),
+      correctAnswer: ['A', Validators.required],
+      points: [1, [Validators.required, Validators.min(1)]],
       explanation: [''],
       tip: [''],
-      tags: [[]],
-      userAnswer: null,
     }));
-    this.numbers.push(this.numbers.length + 1);
-    this.questionsArray = (this.quizForm.get('questions') as FormArray).controls;
-  }
-
-  ngOnInit(): void {
-    this.numbers = [1];
-    //this.categories = getQuizCategories();
-    //this.difficulties = getDifficulties();
-
-    this.quizForm = this.formBuilder.group({
-      name: [''],
-      category: [''],
-      difficulty: [''],
-      description: [''],
-      image: [''], // Add a field for the image
-      questions: this.formBuilder.array([]),
-    });
-
-    this.questionsArray = (this.quizForm.get('questions') as FormArray).controls;
-
-    this.addNewQuestion();
-  }
-
-  async onSubmit() {
-    if (this.quizForm.valid) {
-      const formData = new FormData();
-      formData.append('name', this.quizForm.value.name);
-      formData.append('category', this.quizForm.value.category);
-      formData.append('difficulty', this.quizForm.value.difficulty);
-      formData.append('description', this.quizForm.value.description);
-      
-      // Append the image if there is one
-      if (this.imageFile) {
-        formData.append('image', this.imageFile, this.imageFile.name);
-      }
-  
-      const lastIdResponse = await this.api.getLastId().toPromise();
-      this.id = lastIdResponse['id'];
-  
-      // Push all questions to the form data as well
-      formData.append('questions', JSON.stringify(this.quizForm.value.questions));
-  
-      await this.api.addQuiz(formData).subscribe(
-        res => {
-          this.toastr.success('Quiz created successfully');
-          setTimeout(() => {
-            this.router.navigate(['/Home']);
-          }, 2000);
-        },
-        err => {
-          this.toastr.error('Failed to create quiz.');
-        }
-      );
-    }
-  }
-  
-
-  isFixedHeaderVisible = false;
-
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    this.isFixedHeaderVisible = scrollPosition > 100;
-  }
-
-  onCheckboxChange(index: number): void {
-    const answersArray = this.quizForm.get('answers') as FormArray;
-    const answerControl = answersArray.at(index).get('isCorrect');
-    answerControl.setValue(!answerControl.value);
+    this.questionsArray = questions.controls;
   }
 
   deleteQuestion(index: number): void {
     const questions = this.quizForm.get('questions') as FormArray;
+    if (questions.length <= 1) { return; }        // keep at least one
     questions.removeAt(index);
     this.questionsArray = questions.controls;
   }
@@ -138,4 +69,50 @@ export class CreateQuizComponent implements OnInit {
   onQuestionDrop(event: CdkDragDrop<any[]>): void {
     moveItemInArray((this.quizForm.get('questions') as FormArray).controls, event.previousIndex, event.currentIndex);
   }
+
+  totalPoints(): number {
+    return this.questionsArray.reduce((sum, q) => sum + (Number(q.get('points')?.value) || 0), 0);
+  }
+
+  onSubmit(): void {
+    if (this.quizForm.invalid) {
+      this.quizForm.markAllAsTouched();
+      this.toastr.warning('Add a quiz name, and for each question fill the text, options A and B, and pick the correct answer.');
+      return;
+    }
+
+    const v = this.quizForm.value;
+    const questions = v.questions.map((q: any) => {
+      const answers: { [k: string]: string } = {};
+      this.optionKeys.forEach(k => {
+        const text = (q.answers[k] || '').trim();
+        if (text) { answers[k] = text; }
+      });
+      // guard: the chosen correct key must point at a filled option
+      const correctAnswer = answers[q.correctAnswer] ? q.correctAnswer : Object.keys(answers)[0];
+      return {
+        questionText: q.question.trim(),
+        questionDescription: (q.description || '').trim(),
+        answers,
+        correctAnswer,
+        points: q.points || 1,
+        explanation: (q.explanation || '').trim(),
+        tip: (q.tip || '').trim(),
+      };
+    });
+
+    const payload = {
+      name: v.name.trim(),
+      description: (v.description || '').trim(),
+      isPublic: v.isPublic,
+      questions,
+    };
+
+    this.saving = true;
+    this.quizApi.addQuiz(payload).subscribe({
+      next: () => { this.saving = false; this.toastr.success('Quiz created successfully'); this.router.navigate(['/Quizzes']); },
+      error: () => { this.saving = false; this.toastr.error('Failed to create quiz.'); },
+    });
+  }
+
 }
