@@ -1,5 +1,6 @@
 package com.lingobingo.Configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -8,11 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class CorsConfig implements WebMvcConfigurer {
+
+    @Value("${cors.allowed-origins:http://localhost:4200}")
+    private String allowedOrigins;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200","http://10.192.138.232:4200")
-                .allowedMethods("*")
+                .allowedOrigins(allowedOrigins.split(","))
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }

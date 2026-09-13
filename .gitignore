@@ -7,3 +7,8 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+
+# Environment secrets
+.env
+**/.env
+!**/.env.example
