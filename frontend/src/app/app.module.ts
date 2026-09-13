@@ -30,6 +30,7 @@ import { JoinGameComponent } from './Components/Game/join-game/join-game.compone
 import { DisplayGameComponent } from './Components/Game/display-game/display-game.component';
 import { ChooseProfileComponent } from './Components/Game/choose-profile/choose-profile.component';
 import { LeaderboardComponent } from './Components/Game/leaderboard/leaderboard.component';
+import { ClassesComponent } from './Components/Classes/classes.component';
 
 
 
@@ -59,6 +60,7 @@ import { LeaderboardComponent } from './Components/Game/leaderboard/leaderboard.
     DisplayGameComponent,
     ChooseProfileComponent,
     LeaderboardComponent,
+    ClassesComponent,
     
   
   ],
