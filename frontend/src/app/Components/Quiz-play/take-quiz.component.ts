@@ -16,7 +16,7 @@ export class TakeQuizComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.quizService.getQuizById(+id).subscribe(
+      this.quizService.getQuizForTaking(id).subscribe(
         (res: any) => { this.quiz = res; this.loading = false; },
         () => { this.loading = false; }
       );

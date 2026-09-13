@@ -111,4 +111,8 @@ searchQuizzesSeparate(name?: string, isPublic?: boolean): Observable<{ ownQuizze
   getMyResults(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/results/mine`);
   }
+
+  getQuizForTaking(quizId: number | string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${quizId}/take`);
+  }
 }

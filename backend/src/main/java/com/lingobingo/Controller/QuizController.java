@@ -1,6 +1,8 @@
 package com.lingobingo.Controller;
 
 import com.lingobingo.Entity.Quiz;
+import com.lingobingo.Entity.Question;
+import com.lingobingo.Dto.QuizTakeDto;
 import com.lingobingo.Entity.Role;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -164,5 +167,21 @@ public class QuizController {
     public ResponseEntity<?> myResults(Principal principal) {
         if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
         return ResponseEntity.ok(quizResultService.resultsForStudent(principal.getName()));
+    }
+
+    // Quiz for taking - questions WITHOUT the correct answer key.
+    @GetMapping("/{quizId}/take")
+    public ResponseEntity<?> takeQuiz(@PathVariable Long quizId) {
+        Quiz quiz = quizService.getQuizById(quizId).orElse(null);
+        if (quiz == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quiz not found");
+        List<QuizTakeDto.TakeQuestion> questions = new ArrayList<>();
+        if (quiz.getQuestions() != null) {
+            for (Question q : quiz.getQuestions()) {
+                questions.add(new QuizTakeDto.TakeQuestion(
+                        q.getQuestionId(), q.getQuestionText(), q.getQuestionDescription(),
+                        q.getAnswers(), q.getPoints()));
+            }
+        }
+        return ResponseEntity.ok(new QuizTakeDto(quiz.getId(), quiz.getName(), quiz.getDescription(), questions));
     }
 }
