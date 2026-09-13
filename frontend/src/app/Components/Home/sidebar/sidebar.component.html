@@ -1,27 +1,17 @@
-<div class="flex-col p-4 bg-[#f6f7fb] rounded-t-xl h-screen w-48 justify-center fixed z-10 top-0 left-0 overflow-hidden mt-16">
-	<div class="max-w-full flex flex-col items-center gap-2">
-		<div class="flex border rounded-full w-fit" >
-			<img class="size-24 rounded-full object-cover" src="/assets/images/Profile.jpg" alt="user photo">
+<aside class="flex flex-col w-48 p-4 bg-white rounded-2xl shadow-sm sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
+	<div class="flex flex-col items-center gap-2">
+		<div class="border rounded-full w-fit">
+			<img class="size-20 rounded-full object-cover" src="/assets/images/Profile.jpg" alt="user photo">
 		</div>
-		<span class="text-base font-medium text-center self-center dark:text-white">{{username}}</span>
+		<span class="text-sm font-semibold text-center text-cloud-burst-900">{{username}}</span>
 	</div>
 
 	<nav class="flex flex-col gap-1 mt-6">
-		<a routerLink="/Home" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Home</a>
-		<a routerLink="/Classes" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Classes</a>
-		<a routerLink="/Courses" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Courses</a>
-		<a routerLink="/Search" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Flashcards</a>
-		<a routerLink="/Quizzes" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Quizzes</a>
-		<a routerLink="/Planning" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Planning</a>
+		<a routerLink="/Home" routerLinkActive="bg-blue-ribbon-50 text-blue-ribbon-700" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Home</a>
+		<a routerLink="/Classes" routerLinkActive="bg-blue-ribbon-50 text-blue-ribbon-700" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Classes</a>
+		<a routerLink="/Courses" routerLinkActive="bg-blue-ribbon-50 text-blue-ribbon-700" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Courses</a>
+		<a routerLink="/Search" routerLinkActive="bg-blue-ribbon-50 text-blue-ribbon-700" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Flashcards</a>
+		<a routerLink="/Quizzes" routerLinkActive="bg-blue-ribbon-50 text-blue-ribbon-700" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Quizzes</a>
+		<a routerLink="/Planning" routerLinkActive="bg-blue-ribbon-50 text-blue-ribbon-700" class="px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-ribbon-50 hover:text-blue-ribbon-700 transition-colors">Planning</a>
 	</nav>
-
-	<!-- <div class="p-2 mt-5">
-		<div class="flex gap-2 text-gray-600 dark:text-white">
-			<svg class="w-6 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10c0 .6.4 1 1 1h16c.6 0 1-.4 1-1V7c0-.6-.4-1-1-1H4a1 1 0 0 0-1 1Z"/>
-			  </svg>
-			  <h2 class="font-medium">FlashCards</h2>
-		</div>
-		
-	</div> -->
-</div>
+</aside>

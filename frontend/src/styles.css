@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,14 +7,13 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
-
-html{
-    color: #282e4a;
-    font-family: 'Rubik', sans-serif;
-
+html { height: 100%; color: #282e4a; }
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  background-color: #f3f6fb;
+  color: #282e4a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
