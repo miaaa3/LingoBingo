@@ -34,10 +34,15 @@ public class AuthenticationService {
         } else if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this username already exists.");
         }
+        String requestedRole = registerRequest.getRole() == null ? "STUDENT"
+                : registerRequest.getRole().trim().toUpperCase();
+        if (!requestedRole.equals("TEACHER") && !requestedRole.equals("STUDENT")) {
+            requestedRole = "STUDENT"; // ADMIN can never be self-assigned at signup
+        }
         User createdUser = new User(registerRequest.getEmail(),
                                     registerRequest.getUsername(),
                                     passwordEncoder.encode(registerRequest.getPassword()),
-                                    "USER");
+                                    requestedRole);
 
         userRepository.save(createdUser);
 

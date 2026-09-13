@@ -20,7 +20,7 @@
 
         <div class="w-full mb-4">
           <label for="name" class="block text-gray-800 font-bold">Username:</label>
-          <input type="text" name="username" id="name" formControlName="name" placeholder="Enter your username" class="w-full border border-gray-300 py-3 px-4 rounded mt-2 outline-none focus:ring-indigo-600 ring-indigo-600" />
+          <input type="text" name="username" id="username" formControlName="username" placeholder="Enter your username" class="w-full border border-gray-300 py-3 px-4 rounded mt-2 outline-none focus:ring-indigo-600 ring-indigo-600" />
         </div>
 
         <div class="w-full mb-4">
@@ -47,6 +47,20 @@
           </div>
         </div>
         
+        <div class="w-full mb-4">
+          <label class="block text-gray-800 font-bold mb-2">I am a:</label>
+          <div class="flex gap-3">
+            <button type="button"
+              (click)="registerForm.get('role')?.setValue('STUDENT')"
+              [ngClass]="registerForm.get('role')?.value === 'STUDENT' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border-indigo-600'"
+              class="flex-1 py-3 px-4 rounded-full border-2 font-bold transition-all duration-300">Student</button>
+            <button type="button"
+              (click)="registerForm.get('role')?.setValue('TEACHER')"
+              [ngClass]="registerForm.get('role')?.value === 'TEACHER' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border-indigo-600'"
+              class="flex-1 py-3 px-4 rounded-full border-2 font-bold transition-all duration-300">Teacher</button>
+          </div>
+        </div>
+
         <button type="submit" (click)="register()" [disabled]="isLoading || registerForm.invalid" class="cursor-pointer w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105">
           <div *ngIf="isLoading" class="loading-indicator"></div>
           <span *ngIf="!isLoading">Sign up</span>

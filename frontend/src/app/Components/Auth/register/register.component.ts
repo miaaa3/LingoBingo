@@ -28,6 +28,7 @@ export class RegisterComponent implements OnInit {
       username: ['', [Validators.required, Validators.minLength(4)]],
       email: [null, [Validators.required, Validators.email]],
       password: [null, [Validators.required, Validators.minLength(8)]],
+      role: ['STUDENT', Validators.required],
     });
   }
 
@@ -50,6 +51,9 @@ export class RegisterComponent implements OnInit {
         this.local.saveData('userApiKey2', res['access_token']);
         if (res['id'] != null) {
           this.local.saveData('userid', res['id'].toString());
+        }
+        if (res['role'] != null) {
+          this.local.saveData('role', res['role']);
         }
         this.toastr.success('Sign up successful.', 'Success');
         this.router.navigate(['/Home']);
