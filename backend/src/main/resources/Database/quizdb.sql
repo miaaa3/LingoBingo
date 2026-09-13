@@ -219,7 +219,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`created_at`, `id`, `email`, `name`, `password`, `username`, `role`) VALUES
-('2025-06-03 15:45:38.000000', 1, 'admin@quizit.com', 'admin', '$2a$10$9xCN3GAuCeAG8uikdwzlOuQ/ACTn5B0Wpar/4oTYacKjSb.hbUrDe', 'admin', 'USER');
+('2025-06-03 15:45:38.000000', 1, 'admin@lingobingo.com', 'admin', '$2a$10$9xCN3GAuCeAG8uikdwzlOuQ/ACTn5B0Wpar/4oTYacKjSb.hbUrDe', 'admin', 'USER');
 
 --
 -- Indexes for dumped tables

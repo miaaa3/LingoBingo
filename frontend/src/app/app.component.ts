@@ -22,7 +22,7 @@ export class AppComponent implements OnInit{
   testQuiz: Question[] = [];
   quizzesByCategory : Question[]=[] 
   
-  title = 'QuizIt';
+  title = 'LingoBingo';
 
   constructor(
     private test:QuizApiService,
