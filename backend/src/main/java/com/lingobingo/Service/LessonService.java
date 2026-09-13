@@ -77,4 +77,9 @@ public class LessonService {
             return lessonRepository.save(lesson);
         }).orElse(null);
     }
+
+    /** Get all public lessons */
+    public List<Lesson> getPublicLessons() {
+        return lessonRepository.findByIsPublicTrue();
+    }
 }

@@ -1,6 +1,8 @@
 package com.lingobingo.Entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +25,7 @@ public class Section {
     @Column(columnDefinition = "TEXT")
     private String content; // Section content
 
+    @JsonIgnore
     @Lob
     @Column(name = "media", columnDefinition = "LONGBLOB")
     private byte[] media; // Binary content stored directly in DB
@@ -33,6 +36,6 @@ public class Section {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
-    @JsonManagedReference(value = "lesson-sections")
+    @JsonBackReference(value = "lesson-sections")
     private Lesson lesson;
 }

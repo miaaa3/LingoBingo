@@ -8,11 +8,13 @@ import com.lingobingo.Entity.Lesson;
 import com.lingobingo.Entity.Section;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
+import com.lingobingo.Repository.SectionRepository;
 import com.lingobingo.Service.LessonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,7 @@ public class LessonController {
 
     private final LessonService lessonService;
     private final UserRepository userRepository;
+    private final SectionRepository sectionRepository;
 
 
     @PostMapping("/add")
@@ -144,5 +147,27 @@ public class LessonController {
         return (lesson != null) ?
                 new ResponseEntity<>(lesson, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    /** Get all public lessons (for students to browse) */
+    @GetMapping("/public")
+    public ResponseEntity<List<Lesson>> getPublicLessons() {
+        return new ResponseEntity<>(lessonService.getPublicLessons(), HttpStatus.OK);
+    }
+
+    /** Serve a section's image (public so <img> tags can load it without a token) */
+    @GetMapping("/sections/{sectionId}/image")
+    public ResponseEntity<byte[]> getSectionImage(@PathVariable Long sectionId) {
+        Section section = sectionRepository.findById(sectionId).orElse(null);
+        if (section == null || section.getMedia() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        try {
+            if (section.getMediaType() != null) {
+                mediaType = MediaType.parseMediaType(section.getMediaType());
+            }
+        } catch (Exception ignored) { }
+        return ResponseEntity.ok().contentType(mediaType).body(section.getMedia());
     }
 }
