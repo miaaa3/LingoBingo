@@ -23,7 +23,7 @@ export class TakeQuizComponent implements OnInit {
     }
   }
 
-  select(qid: number, key: string): void { this.answers[qid] = key; }
+  select(qid: any, key: any): void { this.answers[qid] = key; }
 
   allAnswered(): boolean {
     return this.quiz && this.quiz.questions && this.quiz.questions.every((q: any) => this.answers[q.questionId]);
