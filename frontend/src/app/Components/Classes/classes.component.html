@@ -1,75 +1,81 @@
 <div class="max-w-4xl mx-auto p-6 mt-16">
-  <h1 class="text-3xl font-extrabold text-blue-ribbon-800 mb-2">My Classes</h1>
-  <p class="text-gray-500 mb-6">
-    {{ isTeacher ? 'Create classes and share the join code with your students.' : 'Join your teacher\'s class with the code they give you.' }}
-  </p>
+  <h1 class="text-3xl font-extrabold text-cloud-burst-900 mb-2">My Classes</h1>
+  <p class="text-gray-500 mb-6">{{ isTeacher ? 'Create classes, share the join code, and assign content.' : 'Join your teacher&apos;s class and see what&apos;s assigned.' }}</p>
 
-  <!-- Teacher: create a class -->
   <div *ngIf="isTeacher" class="bg-white border border-gray-200 rounded-2xl p-5 mb-6 shadow-sm">
-    <h2 class="text-lg font-bold text-gray-800 mb-3">Create a class</h2>
+    <h2 class="text-lg font-bold text-cloud-burst-900 mb-3">Create a class</h2>
     <form [formGroup]="createForm" (ngSubmit)="create()" class="flex flex-col sm:flex-row gap-3">
-      <input formControlName="name" placeholder="Class name (e.g. English B2)"
-             class="flex-1 border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
-      <input formControlName="description" placeholder="Description (optional)"
-             class="flex-1 border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
-      <button type="submit" [disabled]="createForm.invalid"
-              class="py-2 px-5 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">
-        Create
-      </button>
+      <input formControlName="name" placeholder="Class name (e.g. English B2)" class="flex-1 border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+      <input formControlName="description" placeholder="Description (optional)" class="flex-1 border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+      <button type="submit" [disabled]="createForm.invalid" class="py-2 px-5 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">Create</button>
     </form>
   </div>
 
-  <!-- Student: join a class -->
   <div *ngIf="!isTeacher" class="bg-white border border-gray-200 rounded-2xl p-5 mb-6 shadow-sm">
-    <h2 class="text-lg font-bold text-gray-800 mb-3">Join a class</h2>
+    <h2 class="text-lg font-bold text-cloud-burst-900 mb-3">Join a class</h2>
     <form [formGroup]="joinForm" (ngSubmit)="join()" class="flex flex-col sm:flex-row gap-3">
-      <input formControlName="joinCode" placeholder="Enter join code (e.g. K7P2QX)"
-             class="flex-1 border border-gray-300 rounded-lg py-2 px-3 uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
-      <button type="submit" [disabled]="joinForm.invalid"
-              class="py-2 px-5 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">
-        Join
-      </button>
+      <input formControlName="joinCode" placeholder="Enter join code (e.g. ENG101)" class="flex-1 border border-gray-300 rounded-lg py-2 px-3 uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+      <button type="submit" [disabled]="joinForm.invalid" class="py-2 px-5 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">Join</button>
     </form>
   </div>
 
-  <!-- Class list -->
   <div *ngIf="loading" class="text-gray-400">Loading...</div>
+  <div *ngIf="!loading && classes.length === 0" class="text-center text-gray-400 py-10">{{ isTeacher ? 'No classes yet - create your first one above.' : 'You have not joined any class yet.' }}</div>
 
-  <div *ngIf="!loading && classes.length === 0" class="text-center text-gray-400 py-10">
-    {{ isTeacher ? 'No classes yet - create your first one above.' : 'You have not joined any class yet.' }}
-  </div>
-
-  <div class="grid gap-4 sm:grid-cols-2">
+  <div class="grid gap-4">
     <div *ngFor="let c of classes" class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
       <div class="flex items-start justify-between">
         <div>
-          <h3 class="text-xl font-bold text-blue-ribbon-800">{{ c.name }}</h3>
+          <h3 class="text-xl font-bold text-cloud-burst-900">{{ c.name }}</h3>
           <p class="text-gray-500 text-sm mt-1">{{ c.description || 'No description' }}</p>
         </div>
-        <span class="text-xs bg-blue-ribbon-50 text-blue-ribbon-700 font-semibold px-2 py-1 rounded-full">
-          {{ c.memberCount }} {{ c.memberCount === 1 ? 'student' : 'students' }}
-        </span>
+        <span class="text-xs bg-blue-ribbon-50 text-blue-ribbon-700 font-semibold px-2 py-1 rounded-full">{{ c.memberCount }} {{ c.memberCount === 1 ? 'student' : 'students' }}</span>
       </div>
 
-      <!-- Teacher sees the join code + roster -->
       <div *ngIf="isTeacher" class="mt-4">
         <div class="flex items-center gap-2">
           <span class="text-sm text-gray-500">Join code:</span>
           <code class="bg-gray-100 px-2 py-1 rounded font-mono tracking-widest">{{ c.joinCode }}</code>
           <button (click)="copyCode(c.joinCode)" class="text-blue-ribbon-600 text-sm font-semibold hover:underline">Copy</button>
         </div>
-        <button (click)="viewRoster(c.id)" class="mt-3 text-sm font-semibold text-blue-ribbon-600 hover:underline">
-          {{ rosterFor === c.id ? 'Hide students' : 'View students' }}
-        </button>
+        <button (click)="viewRoster(c.id)" class="mt-3 text-sm font-semibold text-blue-ribbon-600 hover:underline">{{ rosterFor === c.id ? 'Hide students' : 'View students' }}</button>
         <ul *ngIf="rosterFor === c.id" class="mt-2 border-t pt-2 text-sm text-gray-700">
           <li *ngFor="let m of roster" class="py-1">{{ m.name }} <span class="text-gray-400">({{ m.email }})</span></li>
           <li *ngIf="roster.length === 0" class="text-gray-400 py-1">No students have joined yet.</li>
         </ul>
       </div>
 
-      <!-- Student sees who teaches it -->
-      <div *ngIf="!isTeacher" class="mt-4 text-sm text-gray-500">
-        Teacher: <span class="font-semibold text-gray-700">{{ c.teacherName || 'Unknown' }}</span>
+      <div *ngIf="!isTeacher" class="mt-3 text-sm text-gray-500">Teacher: <span class="font-semibold text-gray-700">{{ c.teacherName || 'Unknown' }}</span></div>
+
+      <div class="mt-4 border-t pt-3">
+        <button (click)="toggleContent(c)" class="text-sm font-semibold text-blue-ribbon-700 hover:underline">
+          {{ expandedClassId === c.id ? 'Hide content' : 'Assigned content' }}
+        </button>
+
+        <div *ngIf="expandedClassId === c.id" class="mt-3">
+          <div *ngIf="isTeacher" class="flex flex-col sm:flex-row gap-2 mb-3">
+            <select [(ngModel)]="assignType" class="border border-gray-300 rounded-lg py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-blue-ribbon-500">
+              <option value="COURSE">Course</option>
+              <option value="QUIZ">Quiz</option>
+              <option value="FLASHCARD_SET">Flashcards</option>
+            </select>
+            <select [(ngModel)]="assignItemId" class="flex-1 border border-gray-300 rounded-lg py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-blue-ribbon-500">
+              <option value="" disabled>Select an item</option>
+              <option *ngFor="let it of itemsForType()" [value]="it.id">{{ itemLabel(it) }}</option>
+            </select>
+            <button (click)="assign()" [disabled]="!assignItemId" class="py-2 px-4 bg-blue-ribbon-600 text-white text-sm font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">Assign</button>
+          </div>
+
+          <ul class="space-y-2">
+            <li *ngFor="let cc of contentByClass[c.id]" class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+              <a [routerLink]="contentLink(cc)" class="text-sm font-medium text-cloud-burst-900 hover:text-blue-ribbon-700">
+                <span class="text-xs font-semibold text-blue-ribbon-600 mr-2">{{ typeLabel(cc.contentType) }}</span>{{ cc.title }}
+              </a>
+              <button *ngIf="isTeacher" (click)="unassign(c.id, cc)" class="text-red-500 text-xs font-semibold hover:underline">Remove</button>
+            </li>
+            <li *ngIf="!contentByClass[c.id] || contentByClass[c.id].length === 0" class="text-sm text-gray-400">Nothing assigned yet.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
