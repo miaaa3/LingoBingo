@@ -20,12 +20,12 @@
 
         <div class="w-full mb-4">
           <label for="name" class="block text-gray-800 font-bold">Username:</label>
-          <input type="text" name="username" id="username" formControlName="username" placeholder="Enter your username" class="w-full border border-gray-300 py-3 px-4 rounded mt-2 outline-none focus:ring-blue-ribbon-600 ring-blue-ribbon-600" />
+          <input type="text" name="username" id="username" formControlName="username" placeholder="Enter your username" class="w-full border border-gray-300 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
         </div>
 
         <div class="w-full mb-4">
           <label for="email" class="block text-gray-800 font-bold">Email:</label>
-          <input type="text" name="email" id="email" placeholder="Enter your email" formControlName="email" class="w-full border border-gray-300 py-3 px-4 rounded mt-2 outline-none focus:ring-blue-ribbon-600 ring-blue-ribbon-600">
+          <input type="text" name="email" id="email" placeholder="Enter your email" formControlName="email" class="w-full border border-gray-300 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
         </div>
 
         <div class="relative w-full mb-4">
@@ -35,7 +35,7 @@
               type="{{ showPassword ? 'text' : 'password' }}"
               formControlName="password"
               placeholder="Enter your password"
-              class="w-full border border-gray-300 py-3 px-4 rounded mt-2 outline-none focus:ring-blue-ribbon-600 ring-blue-ribbon-600"
+              class="w-full border border-gray-300 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500"
             />
             <button type="button" class="absolute right-0 mr-3 focus:outline-none" (click)="togglePasswordVisibility()">
               <svg class="h-6 w-6 text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"

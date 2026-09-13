@@ -1,58 +1,50 @@
+<div class="flex-1">
+  <!-- Hero -->
+  <div class="mb-8">
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-cloud-burst-900">How do you want to study today?</h1>
+    <p class="text-gray-500 mt-1">Pick a path below and keep your streak going.</p>
+  </div>
 
-<body class="flex-1">
-    <!-- section of features -->
-    <section class="*:cursor-pointer ">
-        <h1 class="font-medium text-xl">How do you wanna study today?</h1>
-        <div class="p-2 my-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="group" routerLink="/Search">
-                <div class="rounded-xl group-hover:bg-perano-200">
-                    <img class="rounded-xl rounded-b-none group-hover:opacity-65 h-44 w-full" src="assets/images/image_firstpart.png" alt="">
-                    <div class="p-6 rounded-xl rounded-t-none bg-perano-100 group-hover:bg-perano-200">
-                        <h3 class="font-medium text-lg">Discover New Horizons</h3>
-                        <p class="text-sm">Delve into a world of flashcards covering any subject you desire.</p>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="group" routerLink="/All-quizzes">
-                <div class="rounded-xl group-hover:bg-mustard-200">
-                    <img class="rounded-xl rounded-b-none group-hover:opacity-65 h-44 w-full object-cover" src="assets/images/image_secondpart.png" alt="">
-                    <div class="p-6 rounded-xl rounded-t-none bg-mustard-100 group-hover:bg-mustard-200">
-                        <h3 class="font-medium text-lg">Master English with Confidence</h3>
-                        <p class="text-sm"> Interactive lessons to boost your vocabulary, grammar, and fluency.</p>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="group"  routerLink="/Create-quiz">
-                <div class="rounded-xl group-hover:bg-mauve-200">
-                    <img class="rounded-xl rounded-b-none group-hover:opacity-65 h-44 w-full object-cover" src="assets/images/image_thirdpart.png" alt="">
-                    <div class="p-6 rounded-xl rounded-t-none bg-mauve-100 group-hover:bg-mauve-200">
-                        <h3 class="font-medium text-lg">Craft Engaging Quizzes</h3>
-                        <p class="text-sm">Empower your learning journey by creating personalized quizzes.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </section>
-    <!-- section of features -->
-     
-    <!-- recent activities -->
-    <section class="*:cursor-pointer ">
-        <h1 class="font-medium text-xl">Recent</h1>
-        <div class="p-2 my-4 grid grid-cols-2 gap-6">
-            
-            <div class="recent flex justify-between p-6 rounded-xl bg-white border-gray-300 border " *ngFor="let recentActivity of recentActivities">
-                <h3 class="font-medium text-lg">{{recentActivity.title}}</h3>
-                <h1 class="py-1 px-2 text-xs rounded-full cursor-pointer bg-[#f3f3f3] ">{{recentActivity.type}}</h1>
-            </div>
-         
-        </div>
-        
-    </section>
-    <!-- recent activities -->
+  <!-- Study options -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <a routerLink="/Search" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+      <img class="h-44 w-full object-cover group-hover:opacity-90 transition-opacity" src="assets/images/image_firstpart.png" alt="Flashcards" />
+      <div class="p-6 bg-perano-100 group-hover:bg-perano-200 transition-colors">
+        <h3 class="font-bold text-lg text-cloud-burst-900">Discover New Horizons</h3>
+        <p class="text-sm text-gray-600 mt-1">Dive into flashcards covering any subject you like.</p>
+      </div>
+    </a>
 
+    <a routerLink="/Quizzes" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+      <img class="h-44 w-full object-cover group-hover:opacity-90 transition-opacity" src="assets/images/image_secondpart.png" alt="Quizzes" />
+      <div class="p-6 bg-mustard-100 group-hover:bg-mustard-200 transition-colors">
+        <h3 class="font-bold text-lg text-cloud-burst-900">Test Your Knowledge</h3>
+        <p class="text-sm text-gray-600 mt-1">Take quizzes to boost vocabulary, grammar, and fluency.</p>
+      </div>
+    </a>
 
+    <a routerLink="/Courses" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+      <img class="h-44 w-full object-cover group-hover:opacity-90 transition-opacity" src="assets/images/image_thirdpart.png" alt="Courses" />
+      <div class="p-6 bg-mauve-100 group-hover:bg-mauve-200 transition-colors">
+        <h3 class="font-bold text-lg text-cloud-burst-900">Explore Courses</h3>
+        <p class="text-sm text-gray-600 mt-1">Learn from structured courses built by your teachers.</p>
+      </div>
+    </a>
+  </div>
 
-</body>
+  <!-- Recent activity -->
+  <section class="mt-10">
+    <h2 class="text-2xl font-bold text-cloud-burst-900 mb-4">Recent activity</h2>
+    <div *ngIf="recentActivities && recentActivities.length; else noRecent" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex items-center justify-between p-5 rounded-2xl bg-white border border-gray-200 shadow-sm" *ngFor="let recentActivity of recentActivities">
+        <h3 class="font-semibold text-cloud-burst-900">{{ recentActivity.title }}</h3>
+        <span class="py-1 px-3 text-xs font-semibold rounded-full bg-blue-ribbon-50 text-blue-ribbon-700">{{ recentActivity.type }}</span>
+      </div>
+    </div>
+    <ng-template #noRecent>
+      <div class="text-center text-gray-400 py-10 bg-white rounded-2xl border border-gray-200">
+        No recent activity yet. Start studying and it will show up here.
+      </div>
+    </ng-template>
+  </section>
+</div>
