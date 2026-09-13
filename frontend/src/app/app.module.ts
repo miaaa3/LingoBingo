@@ -12,6 +12,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AllQuizzesComponent } from './Components/Quizzes/All-quizzes/all-quizzes.component';
 import { DisplayQuizComponent } from './Components/Quizzes/Display-quiz/display-quiz.component';
 import { CreateQuizComponent } from './Components/Quizzes/create-quiz/create-quiz.component';
+import { GenerateQuizComponent } from './Components/Quizzes/generate-quiz/generate-quiz.component';
 import { FooterComponent } from './Components/Home/footer/footer.component';
 import { LoginComponent } from './Components/Auth/login/login.component';
 import { RegisterComponent } from './Components/Auth/register/register.component';
@@ -54,6 +55,7 @@ import { DashboardComponent } from './Components/Dashboard/dashboard.component';
     AllQuizzesComponent,
     DisplayQuizComponent,
     CreateQuizComponent,
+    GenerateQuizComponent,
     FooterComponent,
     LoginComponent,
     RegisterComponent,

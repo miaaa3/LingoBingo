@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './Components/Home/home-page/home-page.component';
 import { AllQuizzesComponent } from './Components/Quizzes/All-quizzes/all-quizzes.component';
 import { CreateQuizComponent } from './Components/Quizzes/create-quiz/create-quiz.component';
+import { GenerateQuizComponent } from './Components/Quizzes/generate-quiz/generate-quiz.component';
 import { LoginComponent } from './Components/Auth/login/login.component';
 import { RegisterComponent } from './Components/Auth/register/register.component';
 import { ResetPasswordComponent } from './Components/Auth/reset-password/reset-password.component';
@@ -50,6 +51,7 @@ const routes: Routes = [
   {path:'Courses/create', component: CreateCourseComponent, canActivate: [AuthGuard]},
   {path:'Courses/:id', component: CourseViewerComponent, canActivate: [AuthGuard]},
   {path:'Quizzes', component: QuizHubComponent, canActivate: [AuthGuard]},
+  {path:'Quizzes/generate', component: GenerateQuizComponent, canActivate: [AuthGuard]},
   {path:'Quizzes/:id/take', component: TakeQuizComponent, canActivate: [AuthGuard]},
   {path:'Quizzes/:id/gradebook', component: GradebookComponent, canActivate: [AuthGuard]},
   {path:'Planning', component: PlanningComponent, canActivate: [AuthGuard]},

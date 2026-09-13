@@ -1,17 +1,27 @@
 <div class="max-w-4xl mx-auto">
-  <h1 class="text-3xl font-extrabold text-cloud-burst-900 mb-1">Quizzes</h1>
-  <p class="text-gray-500 mb-6">{{ isTeacher ? 'Your quizzes and their gradebooks.' : 'Take a quiz and test yourself.' }}</p>
+  <div class="flex items-start justify-between gap-3 flex-wrap mb-6">
+    <div>
+      <h1 class="text-3xl font-extrabold text-cloud-burst-900 dark:text-gray-100 mb-1">Quizzes</h1>
+      <p class="text-gray-500 dark:text-gray-400">{{ isTeacher ? 'Your quizzes and their gradebooks.' : 'Take a quiz and test yourself.' }}</p>
+    </div>
+    <a *ngIf="isTeacher" routerLink="/Quizzes/generate"
+       class="flex items-center gap-2 text-white text-sm font-bold px-4 py-2.5 rounded-full hover:scale-105 transition-transform"
+       style="background: linear-gradient(135deg,#bb20d9,#655ef6);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="m12 2 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/></svg>
+      Generate quiz
+    </a>
+  </div>
 
-  <div *ngIf="loading" class="text-gray-400">Loading...</div>
-  <div *ngIf="!loading && quizzes.length === 0" class="text-center text-gray-400 py-10">
+  <div *ngIf="loading" class="text-gray-400 dark:text-gray-500">Loading...</div>
+  <div *ngIf="!loading && quizzes.length === 0" class="text-center text-gray-400 dark:text-gray-500 py-10">
     {{ isTeacher ? 'You have no quizzes yet.' : 'No quizzes available yet.' }}
   </div>
 
   <div class="grid gap-4 sm:grid-cols-2">
-    <div *ngFor="let q of quizzes" class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+    <div *ngFor="let q of quizzes" class="bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl p-5 shadow-sm">
       <h3 class="text-xl font-bold text-blue-ribbon-800">{{ q.name }}</h3>
-      <p class="text-gray-500 text-sm mt-1">{{ q.description }}</p>
-      <p class="text-xs text-gray-400 mt-2">{{ qCount(q) }} {{ qCount(q) === 1 ? 'question' : 'questions' }}</p>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ q.description }}</p>
+      <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ qCount(q) }} {{ qCount(q) === 1 ? 'question' : 'questions' }}</p>
       <div class="mt-4 flex gap-3">
         <a [routerLink]="['/Quizzes', q.id, 'take']"
            class="py-2 px-4 bg-blue-ribbon-600 text-white text-sm font-bold rounded-full hover:scale-105 transition-transform">

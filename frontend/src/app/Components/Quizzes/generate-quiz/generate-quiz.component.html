@@ -1,0 +1,144 @@
+<div class="max-w-5xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-2xl bg-mauve-100 dark:bg-[#2a2340] flex items-center justify-center">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#bb20d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/></svg>
+    </div>
+    <div>
+      <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">Quiz Generator</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400">Turn one of your flashcard sets into a quiz. You review and edit everything before saving.</div>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-[360px_1fr] gap-5 items-start">
+
+    <!-- Controls -->
+    <div class="card p-6">
+      <label class="block font-semibold mb-2 text-cloud-burst-900 dark:text-gray-200">Flashcard set</label>
+      <div *ngIf="loadingSets" class="text-sm text-gray-400 dark:text-gray-500">Loading your sets...</div>
+      <div *ngIf="!loadingSets && sets.length === 0" class="text-sm text-gray-400 dark:text-gray-500">
+        You have no flashcard sets yet. Create one first, then come back here.
+      </div>
+      <select *ngIf="!loadingSets && sets.length > 0" [(ngModel)]="selectedSetId" (ngModelChange)="onSelectSet()"
+        class="w-full rounded-xl border border-gray-200 dark:border-[#2a2f47] bg-white dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 px-3 py-2.5 mb-1">
+        <option [ngValue]="null" disabled>Choose a set...</option>
+        <option *ngFor="let s of sets" [ngValue]="s.id">{{ s.title }}</option>
+      </select>
+      <div *ngIf="selectedSetId != null && !loadingCards" class="text-xs text-gray-400 dark:text-gray-500 mb-4">
+        {{ usableCount }} usable card(s) in this set.
+      </div>
+      <div *ngIf="loadingCards" class="text-xs text-gray-400 dark:text-gray-500 mb-4">Loading cards...</div>
+
+      <label class="block font-semibold mb-2 text-cloud-burst-900 dark:text-gray-200">Question style</label>
+      <div class="flex gap-2 mb-5">
+        <button type="button" (click)="mode='TERM'"
+          [ngClass]="mode==='TERM' ? 'bg-blue-ribbon-600 text-white' : 'bg-blue-ribbon-50 dark:bg-[#232842] text-gray-500 dark:text-gray-400'"
+          class="flex-1 text-center py-2 rounded-full text-xs font-semibold transition-colors">Term to definition</button>
+        <button type="button" (click)="mode='DEFINITION'"
+          [ngClass]="mode==='DEFINITION' ? 'bg-blue-ribbon-600 text-white' : 'bg-blue-ribbon-50 dark:bg-[#232842] text-gray-500 dark:text-gray-400'"
+          class="flex-1 text-center py-2 rounded-full text-xs font-semibold transition-colors">Definition to term</button>
+        <button type="button" (click)="mode='RANDOM'"
+          [ngClass]="mode==='RANDOM' ? 'bg-blue-ribbon-600 text-white' : 'bg-blue-ribbon-50 dark:bg-[#232842] text-gray-500 dark:text-gray-400'"
+          class="flex-1 text-center py-2 rounded-full text-xs font-semibold transition-colors">Mixed</button>
+      </div>
+
+      <label class="block font-semibold mb-2 text-cloud-burst-900 dark:text-gray-200">Number of questions</label>
+      <div class="flex items-center gap-4 mb-6">
+        <input type="range" min="2" [max]="usableCount < 2 ? 2 : usableCount" [(ngModel)]="count"
+          [disabled]="!canGenerate" class="flex-1 accent-blue-ribbon-600">
+        <span class="display font-bold text-lg text-cloud-burst-900 dark:text-gray-100 w-8 text-center">{{ count }}</span>
+      </div>
+
+      <button type="button" (click)="generate()" [disabled]="!canGenerate"
+        class="w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-full transition-opacity"
+        [ngClass]="canGenerate ? 'opacity-100' : 'opacity-50 cursor-not-allowed'"
+        style="background: linear-gradient(135deg,#bb20d9,#655ef6);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="m12 2 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/></svg>
+        {{ drafts.length ? 'Regenerate' : 'Generate questions' }}
+      </button>
+      <div class="text-xs text-gray-400 dark:text-gray-500 text-center mt-3">Runs on your device — no account needed elsewhere.</div>
+    </div>
+
+    <!-- Drafts -->
+    <div>
+      <!-- Empty state -->
+      <div *ngIf="drafts.length === 0" class="card p-10 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-blue-ribbon-50 dark:bg-[#232842] flex items-center justify-center mx-auto mb-4">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#363af5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="display text-lg font-bold text-cloud-burst-900 dark:text-gray-100 mb-1">No questions yet</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">Pick a set on the left and hit Generate.</div>
+      </div>
+
+      <!-- Draft list -->
+      <div *ngIf="drafts.length > 0" class="flex flex-col gap-4">
+
+        <!-- Quiz meta -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="display text-lg font-bold text-cloud-burst-900 dark:text-gray-100">Your quiz <span class="text-gray-400 dark:text-gray-500 font-medium">({{ drafts.length }} questions · {{ totalPoints() }} pts)</span></div>
+            <label class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 select-none">
+              <input type="checkbox" [(ngModel)]="isPublic" class="accent-blue-ribbon-600 w-4 h-4"> Public
+            </label>
+          </div>
+          <input [(ngModel)]="quizName" placeholder="Quiz name"
+            class="w-full rounded-xl border border-gray-200 dark:border-[#2a2f47] bg-white dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 px-3 py-2.5 mb-2 font-semibold">
+          <input [(ngModel)]="quizDescription" placeholder="Short description (optional)"
+            class="w-full rounded-xl border border-gray-200 dark:border-[#2a2f47] bg-white dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 px-3 py-2.5 text-sm">
+        </div>
+
+        <!-- Questions -->
+        <div *ngFor="let q of drafts; let qi = index" class="card p-5">
+          <div class="flex items-start gap-3 mb-3">
+            <span class="display font-bold text-blue-ribbon-600 mt-2">{{ qi + 1 }}.</span>
+            <input [(ngModel)]="q.questionText"
+              class="flex-1 rounded-xl border border-gray-200 dark:border-[#2a2f47] bg-white dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 px-3 py-2 font-semibold">
+            <div class="flex items-center gap-1 bg-mustard-100 dark:bg-[#3a3115] rounded-full px-2.5 py-1.5">
+              <input type="number" min="1" [(ngModel)]="q.points" class="w-10 bg-transparent text-mustard-800 dark:text-mustard-300 font-bold text-sm text-center outline-none">
+              <span class="text-xs text-mustard-700 dark:text-mustard-400">pts</span>
+            </div>
+            <button type="button" (click)="removeQuestion(qi)" title="Remove question"
+              class="text-gray-400 hover:text-red-500 mt-1.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+            </button>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-2.5 pl-6">
+            <div *ngFor="let opt of q.options; let oi = index"
+              class="flex items-center gap-2 rounded-xl px-3 py-2 border transition-colors"
+              [ngClass]="opt.correct ? 'border-2 border-green-400 bg-green-50 dark:bg-[#0f2a1a] dark:border-green-600' : 'border-gray-200 dark:border-[#2a2f47]'">
+              <button type="button" (click)="markCorrect(q, oi)" [title]="opt.correct ? 'Correct answer' : 'Mark correct'"
+                class="shrink-0 w-5 h-5 rounded-full flex items-center justify-center border-2"
+                [ngClass]="opt.correct ? 'bg-green-500 border-green-500' : 'border-gray-300 dark:border-gray-600'">
+                <svg *ngIf="opt.correct" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              </button>
+              <span class="display text-xs font-bold text-gray-400 dark:text-gray-500 w-3">{{ optionKey(oi) }}</span>
+              <input [(ngModel)]="opt.text"
+                class="flex-1 bg-transparent text-sm text-cloud-burst-900 dark:text-gray-100 outline-none min-w-0">
+              <button type="button" (click)="removeOption(q, oi)" *ngIf="q.options.length > 2" title="Remove option"
+                class="shrink-0 text-gray-300 hover:text-red-400">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="button" (click)="addOption(q)" *ngIf="q.options.length < 4"
+            class="ml-6 mt-2.5 text-xs font-semibold text-blue-ribbon-600 hover:text-blue-ribbon-700">+ Add option</button>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 sticky bottom-0 py-3">
+          <button type="button" (click)="save()" [disabled]="saving"
+            class="flex-1 bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold py-3 rounded-full transition-colors disabled:opacity-60">
+            {{ saving ? 'Saving...' : 'Save as quiz' }}
+          </button>
+          <button type="button" (click)="generate()" [disabled]="saving"
+            class="px-6 py-3 rounded-full font-bold border-2 border-blue-ribbon-200 dark:border-[#2a2f47] text-blue-ribbon-600 dark:text-blue-ribbon-300 bg-white dark:bg-[#191d31] hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] transition-colors">
+            Regenerate
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
