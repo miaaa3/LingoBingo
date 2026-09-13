@@ -3,7 +3,7 @@
     <div class="p-5 mt-5">
       <div *ngFor="let flashcard of flashcardSet.flashcards; let i=index">
         <div *ngIf="i === currentFlashcardIndex" class="flashcard-container px-8">
-          <div class="flashcard-content h-72 w-full bg-white rounded-lg items-center justify-center flex border shadow-md p-20 *:cursor-pointer *:font-normal *:text-2xl *:text-center" [class.flipped]="flashcard.flipped" (click)="flipFlashcard(flashcard)">
+          <div class="flashcard-content h-72 w-full bg-white dark:bg-[#191d31] rounded-lg items-center justify-center flex border shadow-md p-20 *:cursor-pointer *:font-normal *:text-2xl *:text-center" [class.flipped]="flashcard.flipped" (click)="flipFlashcard(flashcard)">
             <h1  *ngIf="!flashcard.flipped">{{ flashcard.term }}</h1>
             <p class="definition " *ngIf="flashcard.flipped">{{ flashcard.definition }}</p>
           </div>

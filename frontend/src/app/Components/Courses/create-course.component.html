@@ -1,28 +1,28 @@
 <div class="max-w-3xl mx-auto">
-  <h1 class="text-3xl font-extrabold text-blue-ribbon-800 mb-6">New course</h1>
+  <h1 class="text-3xl font-extrabold text-blue-ribbon-800 dark:text-blue-ribbon-300 mb-6">New course</h1>
   <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
     <div>
-      <label class="block font-bold text-gray-800 mb-1">Title</label>
+      <label class="block font-bold text-gray-800 dark:text-gray-200 mb-1">Title</label>
       <input formControlName="title" placeholder="Course title"
-             class="w-full border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+             class="w-full border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
     </div>
 
-    <label class="flex items-center gap-2 text-gray-700">
+    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
       <input type="checkbox" formControlName="isPublic" class="w-4 h-4" /> Public (visible to all students)
     </label>
 
     <div formArrayName="sections" class="space-y-4">
       <div *ngFor="let sec of sections.controls; let i = index" [formGroupName]="i"
-           class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+           class="bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl p-4 shadow-sm">
         <div class="flex items-center justify-between mb-2">
-          <span class="font-bold text-gray-700">Section {{ i + 1 }}</span>
+          <span class="font-bold text-gray-700 dark:text-gray-300">Section {{ i + 1 }}</span>
           <button type="button" (click)="removeSection(i)" class="text-red-500 text-sm hover:underline">Remove</button>
         </div>
         <input formControlName="heading" placeholder="Section heading"
-               class="w-full border border-gray-300 rounded-lg py-2 px-3 mb-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+               class="w-full border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 mb-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
         <textarea formControlName="content" rows="4" placeholder="Section content"
-                  class="w-full border border-gray-300 rounded-lg py-2 px-3 mb-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500"></textarea>
-        <label class="block text-sm text-gray-600">Image (optional)
+                  class="w-full border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 mb-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500"></textarea>
+        <label class="block text-sm text-gray-600 dark:text-gray-300">Image (optional)
           <input type="file" accept="image/*" (change)="onFile(i, $event)" class="mt-1 block text-sm" />
         </label>
       </div>
@@ -35,7 +35,7 @@
               class="py-2 px-6 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">
         {{ saving ? 'Saving...' : 'Create course' }}
       </button>
-      <a routerLink="/Courses" class="py-2 px-6 text-gray-600 font-semibold self-center">Cancel</a>
+      <a routerLink="/Courses" class="py-2 px-6 text-gray-600 dark:text-gray-300 font-semibold self-center">Cancel</a>
     </div>
   </form>
 </div>

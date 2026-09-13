@@ -1,48 +1,48 @@
 <div class="max-w-3xl mx-auto">
-  <h1 class="text-3xl font-extrabold text-cloud-burst-900 mb-1">Planning</h1>
-  <p class="text-gray-500 mb-6">{{ isTeacher ? 'Schedule deadlines and live sessions for your classes.' : 'Your upcoming deadlines and sessions.' }}</p>
+  <h1 class="text-3xl font-extrabold text-cloud-burst-900 dark:text-gray-100 mb-1">Planning</h1>
+  <p class="text-gray-500 dark:text-gray-400 mb-6">{{ isTeacher ? 'Schedule deadlines and live sessions for your classes.' : 'Your upcoming deadlines and sessions.' }}</p>
 
-  <div *ngIf="isTeacher" class="bg-white border border-gray-200 rounded-2xl p-5 mb-8 shadow-sm">
-    <h2 class="text-lg font-bold text-cloud-burst-900 mb-3">Add to the calendar</h2>
+  <div *ngIf="isTeacher" class="bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl p-5 mb-8 shadow-sm">
+    <h2 class="text-lg font-bold text-cloud-burst-900 dark:text-gray-100 mb-3">Add to the calendar</h2>
     <form [formGroup]="form" (ngSubmit)="add()" class="grid gap-3 sm:grid-cols-2">
-      <select formControlName="classId" class="border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
+      <select formControlName="classId" class="border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
         <option value="" disabled>Select a class</option>
         <option *ngFor="let c of classes" [value]="c.id">{{ c.name }}</option>
       </select>
-      <select formControlName="type" class="border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
+      <select formControlName="type" class="border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
         <option value="QUIZ_DUE">Quiz due</option>
         <option value="LIVE_SESSION">Live session</option>
         <option value="OTHER">Other</option>
       </select>
       <input formControlName="title" placeholder="Title"
-             class="sm:col-span-2 border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+             class="sm:col-span-2 border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
       <input formControlName="description" placeholder="Description (optional)"
-             class="sm:col-span-2 border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+             class="sm:col-span-2 border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
       <input type="datetime-local" formControlName="dueDate"
-             class="border border-gray-300 rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
+             class="border border-gray-300 dark:border-[#2a2f47] rounded-lg py-2 px-3 outline-none focus:ring-2 focus:ring-blue-ribbon-500" />
       <button type="submit" [disabled]="form.invalid"
               class="py-2 px-5 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform disabled:opacity-50">Add</button>
     </form>
   </div>
 
-  <div *ngIf="loading" class="text-gray-400">Loading...</div>
-  <div *ngIf="!loading && events.length === 0" class="text-center text-gray-400 py-10">
+  <div *ngIf="loading" class="text-gray-400 dark:text-gray-500">Loading...</div>
+  <div *ngIf="!loading && events.length === 0" class="text-center text-gray-400 dark:text-gray-500 py-10">
     {{ isTeacher ? 'Nothing scheduled yet.' : 'No upcoming deadlines.' }}
   </div>
 
   <div class="space-y-3">
-    <div *ngFor="let ev of events" class="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+    <div *ngFor="let ev of events" class="flex items-center gap-4 bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl p-4 shadow-sm">
       <div class="text-center w-16 shrink-0">
         <div class="text-2xl font-black text-blue-ribbon-700">{{ ev.dueDate | date:'d' }}</div>
-        <div class="text-xs uppercase text-gray-400">{{ ev.dueDate | date:'MMM' }}</div>
+        <div class="text-xs uppercase text-gray-400 dark:text-gray-500">{{ ev.dueDate | date:'MMM' }}</div>
       </div>
       <div class="flex-1">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="font-bold text-gray-800">{{ ev.title }}</span>
+          <span class="font-bold text-gray-800 dark:text-gray-200">{{ ev.title }}</span>
           <span class="text-xs font-semibold px-2 py-0.5 rounded-full" [ngClass]="typeClass(ev.type)">{{ typeLabels[ev.type] || ev.type }}</span>
         </div>
-        <div class="text-sm text-gray-500">{{ ev.className }} &middot; {{ ev.dueDate | date:'EEE, MMM d, h:mm a' }}</div>
-        <div *ngIf="ev.description" class="text-sm text-gray-400 mt-1">{{ ev.description }}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">{{ ev.className }} &middot; {{ ev.dueDate | date:'EEE, MMM d, h:mm a' }}</div>
+        <div *ngIf="ev.description" class="text-sm text-gray-400 dark:text-gray-500 mt-1">{{ ev.description }}</div>
       </div>
       <button *ngIf="isTeacher" (click)="remove(ev)" class="text-red-500 text-sm font-semibold hover:underline shrink-0">Delete</button>
     </div>

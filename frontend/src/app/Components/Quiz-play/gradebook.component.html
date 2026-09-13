@@ -1,11 +1,11 @@
 <div class="max-w-3xl mx-auto">
   <a routerLink="/Quizzes" class="text-blue-ribbon-600 font-semibold hover:underline">&larr; Back to quizzes</a>
-  <h1 class="text-3xl font-extrabold text-cloud-burst-900 mt-4 mb-6">Gradebook</h1>
-  <div *ngIf="loading" class="text-gray-400">Loading...</div>
-  <div *ngIf="!loading && results.length === 0" class="text-center text-gray-400 py-10">No submissions yet.</div>
-  <div *ngIf="!loading && results.length" class="overflow-x-auto bg-white border border-gray-200 rounded-2xl shadow-sm">
+  <h1 class="text-3xl font-extrabold text-cloud-burst-900 dark:text-gray-100 mt-4 mb-6">Gradebook</h1>
+  <div *ngIf="loading" class="text-gray-400 dark:text-gray-500">Loading...</div>
+  <div *ngIf="!loading && results.length === 0" class="text-center text-gray-400 dark:text-gray-500 py-10">No submissions yet.</div>
+  <div *ngIf="!loading && results.length" class="overflow-x-auto bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl shadow-sm">
     <table class="w-full text-left">
-      <thead class="bg-blue-ribbon-50 text-cloud-burst-800 text-sm">
+      <thead class="bg-blue-ribbon-50 text-cloud-burst-800 dark:text-gray-100 text-sm">
         <tr>
           <th class="py-3 px-4">Student</th>
           <th class="py-3 px-4">Score</th>
@@ -14,11 +14,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let r of results" class="border-t border-gray-100">
-          <td class="py-3 px-4 font-medium text-gray-800">{{ r.studentName }}<div class="text-xs text-gray-400">{{ r.studentEmail }}</div></td>
+        <tr *ngFor="let r of results" class="border-t border-gray-100 dark:border-[#2a2f47]">
+          <td class="py-3 px-4 font-medium text-gray-800 dark:text-gray-200">{{ r.studentName }}<div class="text-xs text-gray-400 dark:text-gray-500">{{ r.studentEmail }}</div></td>
           <td class="py-3 px-4 font-bold text-mustard-600">{{ r.score }} / {{ r.maxScore }}</td>
-          <td class="py-3 px-4 text-gray-600">{{ r.correctCount }}/{{ r.totalQuestions }}</td>
-          <td class="py-3 px-4 text-gray-500 text-sm">{{ r.submittedAt | date:'short' }}</td>
+          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">{{ r.correctCount }}/{{ r.totalQuestions }}</td>
+          <td class="py-3 px-4 text-gray-500 dark:text-gray-400 text-sm">{{ r.submittedAt | date:'short' }}</td>
         </tr>
       </tbody>
     </table>

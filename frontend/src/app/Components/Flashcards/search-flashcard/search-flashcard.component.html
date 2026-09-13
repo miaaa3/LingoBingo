@@ -1,37 +1,37 @@
 <div class="max-w-5xl mx-auto">
   <div class="text-center space-y-2 mb-8">
-    <h1 class="font-extrabold text-3xl sm:text-4xl text-cloud-burst-900">Search LingoBingo</h1>
-    <p class="text-gray-500">Find flashcard sets and quizzes to study.</p>
+    <h1 class="font-extrabold text-3xl sm:text-4xl text-cloud-burst-900 dark:text-gray-100">Search LingoBingo</h1>
+    <p class="text-gray-500 dark:text-gray-400">Find flashcard sets and quizzes to study.</p>
   </div>
 
   <div class="flex justify-center gap-2 mb-8">
     <input type="text" placeholder="Search for a set or quiz..."
       [(ngModel)]="filterValue" (input)="onFilterChange($event)"
       aria-label="Search quizzes and flashcard sets"
-      class="bg-white border border-gray-200 rounded-lg outline-none shadow-sm focus:ring-2 focus:ring-blue-ribbon-500 w-full max-w-xl h-12 px-4" />
+      class="bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-lg outline-none shadow-sm focus:ring-2 focus:ring-blue-ribbon-500 w-full max-w-xl h-12 px-4" />
     <button type="button" class="bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold px-5 rounded-lg transition-colors">Search</button>
   </div>
 
-  <div *ngIf="loading" class="text-center text-gray-400">Loading results...</div>
+  <div *ngIf="loading" class="text-center text-gray-400 dark:text-gray-500">Loading results...</div>
   <div *ngIf="error" class="text-red-600 text-center">{{ error }}</div>
 
   <div *ngIf="ownFlashcardSets.length > 0 || publicFlashcardSets.length > 0" class="space-y-8">
     <div *ngIf="ownFlashcardSets.length > 0">
-      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Your flashcard sets</h2>
+      <h2 class="text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Your flashcard sets</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div *ngFor="let set of ownFlashcardSets" [routerLink]="['/Display-set-of-flashcard', set.id]"
-          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
-          <h3 class="font-bold text-cloud-burst-900">{{ set.name || set.title }}</h3>
-          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="set.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 text-gray-500'">{{ set.isPublic ? 'Public' : 'Private' }}</span>
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900 dark:text-gray-100">{{ set.name || set.title }}</h3>
+          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="set.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 dark:bg-[#232842] text-gray-500 dark:text-gray-400'">{{ set.isPublic ? 'Public' : 'Private' }}</span>
         </div>
       </div>
     </div>
     <div *ngIf="publicFlashcardSets.length > 0">
-      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Public flashcard sets</h2>
+      <h2 class="text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Public flashcard sets</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div *ngFor="let set of publicFlashcardSets" [routerLink]="['/Display-set-of-flashcard', set.id]"
-          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
-          <h3 class="font-bold text-cloud-burst-900">{{ set.name || set.title }}</h3>
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900 dark:text-gray-100">{{ set.name || set.title }}</h3>
           <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap bg-blue-ribbon-50 text-blue-ribbon-700">Public</span>
         </div>
       </div>
@@ -40,28 +40,28 @@
 
   <div *ngIf="ownQuizzes.length > 0 || publicQuizzes.length > 0" class="space-y-8 mt-8">
     <div *ngIf="ownQuizzes.length > 0">
-      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Your quizzes</h2>
+      <h2 class="text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Your quizzes</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div *ngFor="let quiz of ownQuizzes" [routerLink]="['/Quizzes', quiz.id, 'take']"
-          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
-          <h3 class="font-bold text-cloud-burst-900">{{ quiz.name }}</h3>
-          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="quiz.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 text-gray-500'">{{ quiz.isPublic ? 'Public' : 'Private' }}</span>
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900 dark:text-gray-100">{{ quiz.name }}</h3>
+          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="quiz.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 dark:bg-[#232842] text-gray-500 dark:text-gray-400'">{{ quiz.isPublic ? 'Public' : 'Private' }}</span>
         </div>
       </div>
     </div>
     <div *ngIf="publicQuizzes.length > 0">
-      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Public quizzes</h2>
+      <h2 class="text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Public quizzes</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div *ngFor="let quiz of publicQuizzes" [routerLink]="['/Quizzes', quiz.id, 'take']"
-          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
-          <h3 class="font-bold text-cloud-burst-900">{{ quiz.name }}</h3>
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900 dark:text-gray-100">{{ quiz.name }}</h3>
           <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap bg-blue-ribbon-50 text-blue-ribbon-700">Public</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!loading && ownFlashcardSets.length === 0 && publicFlashcardSets.length === 0 && ownQuizzes.length === 0 && publicQuizzes.length === 0" class="text-center text-gray-400 py-10">
+  <div *ngIf="!loading && ownFlashcardSets.length === 0 && publicFlashcardSets.length === 0 && ownQuizzes.length === 0 && publicQuizzes.length === 0" class="text-center text-gray-400 dark:text-gray-500 py-10">
     No results found.
   </div>
 </div>
