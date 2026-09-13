@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalService } from './Services/Auth/local.service';
+import { ThemeService } from './Services/Theme/theme.service';
 import { initFlowbite } from 'flowbite';
 
 @Component({
@@ -11,7 +12,7 @@ import { initFlowbite } from 'flowbite';
 export class AppComponent implements OnInit {
   title = 'LingoBingo';
 
-  constructor(private router: Router, private local: LocalService) {}
+  constructor(private router: Router, private local: LocalService, private theme: ThemeService) {}
 
   shouldDisplay(): boolean {
     const currentRoute = this.router.url;
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.theme.init();
     initFlowbite();
   }
 }

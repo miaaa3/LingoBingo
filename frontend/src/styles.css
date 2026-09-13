@@ -7,16 +7,45 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
-html { height: 100%; color: #282e4a; }
+/* Semantic theme tokens. Only these flip between light and dark, so most
+   surfaces get dark mode for free by referencing them (or the .card class). */
+:root {
+  --lb-bg:       #f3f6fb;  /* app background        */
+  --lb-surface:  #ffffff;  /* cards / raised panels */
+  --lb-panel:    #f6f7fb;  /* inset content panel   */
+  --lb-text:     #282e4a;  /* primary text          */
+  --lb-muted:    #7a839c;  /* secondary text        */
+  --lb-border:   #e3e8f4;  /* hairline borders      */
+  --lb-shadow:   0 8px 24px rgba(40, 46, 74, 0.06);
+}
+
+html.dark {
+  --lb-bg:       #0f1222;
+  --lb-surface:  #191d31;
+  --lb-panel:    #141829;
+  --lb-text:     #e8ebf7;
+  --lb-muted:    #9aa2b8;
+  --lb-border:   #2a2f47;
+  --lb-shadow:   0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+html { height: 100%; color: var(--lb-text); }
 body {
   height: 100%;
   margin: 0;
   font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
-  background-color: #f3f6fb;
-  color: #282e4a;
+  background-color: var(--lb-bg);
+  color: var(--lb-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .display { font-family: 'Fredoka', 'Rubik', sans-serif; letter-spacing: -0.01em; }
-.card { background: #ffffff; border-radius: 24px; box-shadow: 0 8px 24px rgba(40,46,74,0.06); }
+.card {
+  background: var(--lb-surface);
+  color: var(--lb-text);
+  border-radius: 24px;
+  box-shadow: var(--lb-shadow);
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}

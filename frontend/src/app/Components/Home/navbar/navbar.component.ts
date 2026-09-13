@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { LocalService } from 'src/app/Services/Auth/local.service';
+import { ThemeService } from 'src/app/Services/Theme/theme.service';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 
 
@@ -31,8 +32,12 @@ export class NavbarComponent {
   zIndexForNotification = 100;
   isUser: BehaviorSubject<boolean>;
 
-  constructor(private local: LocalService) {
+  constructor(private local: LocalService, public theme: ThemeService) {
     this.isUser = new BehaviorSubject<boolean>(this.local.getData("userApiKey2") !== "");
+  }
+
+  toggleTheme(): void {
+    this.theme.toggle();
   }
 
   

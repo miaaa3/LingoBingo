@@ -5,17 +5,17 @@
   <div *ngIf="shouldDisplay()" class="pt-24 px-4 sm:px-6 pb-6">
     <!-- Mobile navigation (sidebar is hidden on small screens) -->
     <nav class="md:hidden flex gap-2 overflow-x-auto pb-3 mb-1">
-      <a routerLink="/Home" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white text-sm font-medium text-gray-700 shadow-sm">Home</a>
-      <a routerLink="/Classes" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white text-sm font-medium text-gray-700 shadow-sm">Classes</a>
-      <a routerLink="/Courses" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white text-sm font-medium text-gray-700 shadow-sm">Courses</a>
-      <a routerLink="/Search" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white text-sm font-medium text-gray-700 shadow-sm">Flashcards</a>
-      <a routerLink="/Quizzes" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white text-sm font-medium text-gray-700 shadow-sm">Quizzes</a>
-      <a routerLink="/Planning" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white text-sm font-medium text-gray-700 shadow-sm">Planning</a>
+      <a routerLink="/Home" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white dark:bg-[#191d31] text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm">Home</a>
+      <a routerLink="/Classes" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white dark:bg-[#191d31] text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm">Classes</a>
+      <a routerLink="/Courses" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white dark:bg-[#191d31] text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm">Courses</a>
+      <a routerLink="/Search" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white dark:bg-[#191d31] text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm">Flashcards</a>
+      <a routerLink="/Quizzes" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white dark:bg-[#191d31] text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm">Quizzes</a>
+      <a routerLink="/Planning" routerLinkActive="bg-blue-ribbon-600 text-white" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-white dark:bg-[#191d31] text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm">Planning</a>
     </nav>
 
     <div class="flex gap-6 items-start">
       <app-sidebar class="hidden md:block shrink-0"></app-sidebar>
-      <main class="flex-1 min-w-0 relative overflow-hidden p-4 sm:p-6 bg-[#f6f7fb] rounded-2xl min-h-[calc(100vh-9rem)]">
+      <main class="flex-1 min-w-0 relative overflow-hidden p-4 sm:p-6 bg-[#f6f7fb] dark:bg-[#141829] rounded-2xl min-h-[calc(100vh-9rem)]">
         <router-outlet></router-outlet>
       </main>
     </div>

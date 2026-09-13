@@ -1,4 +1,4 @@
-<div *ngIf="loading" class="text-gray-400">Loading your dashboard...</div>
+<div *ngIf="loading" class="text-gray-400 dark:text-gray-500">Loading your dashboard...</div>
 
 <div *ngIf="!loading && d" class="max-w-5xl mx-auto">
   <!-- Header -->
@@ -8,8 +8,8 @@
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 3.5 8 9 9 5.5-1 9-4 9-9V7l-9-5z"/><path d="m9 12 2 2 4-4"/></svg>
       </div>
       <div>
-        <div class="display text-2xl font-bold text-cloud-burst-900">Hey {{ d.name }}!</div>
-        <div class="text-sm text-gray-500">Ready to keep your streak alive?</div>
+        <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">Hey {{ d.name }}!</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">Ready to keep your streak alive?</div>
       </div>
     </div>
     <div class="flex items-center gap-2">
@@ -26,36 +26,36 @@
   <!-- Stat cards -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
     <div class="card p-5">
-      <div class="text-xs text-gray-500 mb-1">XP to Level {{ d.level + 1 }}</div>
-      <div class="display text-2xl font-bold text-cloud-burst-900">{{ d.xpIntoLevel }} <span class="text-sm text-gray-400 font-medium">/ {{ d.xpForLevel }}</span></div>
-      <div class="h-2.5 bg-gray-100 rounded-full mt-3 overflow-hidden">
-        <div class="h-full rounded-full bg-blue-ribbon-500" [style.width.%]="xpPct()"></div>
+      <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">XP to Level {{ d.level + 1 }}</div>
+      <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">{{ d.xpIntoLevel }} <span class="text-sm text-gray-400 dark:text-gray-500 font-medium">/ {{ d.xpForLevel }}</span></div>
+      <div class="h-2.5 bg-gray-100 dark:bg-[#232842] rounded-full mt-3 overflow-hidden">
+        <div class="h-full rounded-full bg-blue-ribbon-50 dark:bg-[#232842]0" [style.width.%]="xpPct()"></div>
       </div>
     </div>
     <div class="card p-5 flex items-center gap-3">
-      <div class="w-11 h-11 rounded-xl bg-blue-ribbon-50 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#363af5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-      <div><div class="display text-2xl font-bold text-cloud-burst-900">{{ d.quizzesDone }}</div><div class="text-xs text-gray-500">quizzes done</div></div>
+      <div class="w-11 h-11 rounded-xl bg-blue-ribbon-50 dark:bg-[#232842] flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#363af5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <div><div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">{{ d.quizzesDone }}</div><div class="text-xs text-gray-500 dark:text-gray-400">quizzes done</div></div>
     </div>
     <div class="card p-5 flex items-center gap-3">
       <div class="w-11 h-11 rounded-xl bg-mustard-100 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="#f9a207"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg></div>
-      <div><div class="display text-2xl font-bold text-cloud-burst-900">{{ d.points }}</div><div class="text-xs text-gray-500">points earned</div></div>
+      <div><div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">{{ d.points }}</div><div class="text-xs text-gray-500 dark:text-gray-400">points earned</div></div>
     </div>
     <div class="card p-5 flex items-center gap-3">
       <div class="w-11 h-11 rounded-xl bg-mauve-100 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#bb20d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5h4"/><path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/><path d="M6 3h12v6a6 6 0 0 1-12 0V3z"/><path d="M9 21h6M12 15v6"/></svg></div>
-      <div><div class="display text-2xl font-bold text-cloud-burst-900">{{ d.rank ? '#' + d.rank : '-' }}</div><div class="text-xs text-gray-500">{{ d.className || 'join a class' }}</div></div>
+      <div><div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">{{ d.rank ? '#' + d.rank : '-' }}</div><div class="text-xs text-gray-500 dark:text-gray-400">{{ d.className || 'join a class' }}</div></div>
     </div>
   </div>
 
   <div class="grid lg:grid-cols-3 gap-4">
     <!-- Badges -->
     <div class="card p-6">
-      <div class="display text-lg font-bold text-cloud-burst-900 mb-4">Badges</div>
+      <div class="display text-lg font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Badges</div>
       <div class="grid grid-cols-4 gap-3">
         <div *ngFor="let b of d.badges" class="flex flex-col items-center gap-1.5" [class.opacity-40]="!b.earned">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center" [ngClass]="b.earned ? 'bg-mustard-100' : 'bg-gray-100'">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center" [ngClass]="b.earned ? 'bg-mustard-100' : 'bg-gray-100 dark:bg-[#232842]'">
             <svg width="22" height="22" viewBox="0 0 24 24" [attr.fill]="b.earned ? '#f9a207' : '#9aa2b8'"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
           </div>
-          <span class="text-[10px] text-gray-500 text-center leading-tight">{{ b.label }}</span>
+          <span class="text-[10px] text-gray-500 dark:text-gray-400 text-center leading-tight">{{ b.label }}</span>
         </div>
       </div>
     </div>
@@ -63,25 +63,25 @@
     <!-- Leaderboard -->
     <div class="card p-6">
       <div class="flex items-center justify-between mb-4">
-        <div class="display text-lg font-bold text-cloud-burst-900">Leaderboard</div>
-        <span class="text-xs text-gray-500">{{ d.className || '-' }}</span>
+        <div class="display text-lg font-bold text-cloud-burst-900 dark:text-gray-100">Leaderboard</div>
+        <span class="text-xs text-gray-500 dark:text-gray-400">{{ d.className || '-' }}</span>
       </div>
-      <div *ngIf="d.leaderboard.length === 0" class="text-sm text-gray-400">Join a class to see rankings.</div>
+      <div *ngIf="d.leaderboard.length === 0" class="text-sm text-gray-400 dark:text-gray-500">Join a class to see rankings.</div>
       <div class="flex flex-col gap-2">
         <div *ngFor="let e of d.leaderboard" class="flex items-center gap-3 px-3 py-2 rounded-xl"
-             [ngClass]="e.isMe ? 'bg-blue-ribbon-50 outline outline-2 outline-blue-ribbon-500' : ''">
-          <span class="display w-5 font-bold" [ngClass]="e.isMe ? 'text-blue-ribbon-700' : 'text-gray-400'">{{ e.rank }}</span>
+             [ngClass]="e.isMe ? 'bg-blue-ribbon-50 dark:bg-[#232842] outline outline-2 outline-blue-ribbon-500' : ''">
+          <span class="display w-5 font-bold" [ngClass]="e.isMe ? 'text-blue-ribbon-700' : 'text-gray-400 dark:text-gray-500'">{{ e.rank }}</span>
           <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" [ngClass]="e.isMe ? 'bg-blue-ribbon-600' : 'bg-perano-400'">{{ e.name ? e.name.charAt(0).toUpperCase() : '?' }}</div>
-          <span class="flex-1 font-semibold text-sm" [ngClass]="e.isMe ? 'text-blue-ribbon-700' : 'text-cloud-burst-900'">{{ e.isMe ? 'You' : e.name }}</span>
-          <span class="font-bold text-sm text-gray-600">{{ e.points }}</span>
+          <span class="flex-1 font-semibold text-sm" [ngClass]="e.isMe ? 'text-blue-ribbon-700' : 'text-cloud-burst-900 dark:text-gray-100'">{{ e.isMe ? 'You' : e.name }}</span>
+          <span class="font-bold text-sm text-gray-600 dark:text-gray-300">{{ e.points }}</span>
         </div>
       </div>
     </div>
 
     <!-- Upcoming -->
     <div class="card p-6">
-      <div class="display text-lg font-bold text-cloud-burst-900 mb-4">Upcoming</div>
-      <div *ngIf="d.upcoming.length === 0" class="text-sm text-gray-400">Nothing scheduled yet.</div>
+      <div class="display text-lg font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Upcoming</div>
+      <div *ngIf="d.upcoming.length === 0" class="text-sm text-gray-400 dark:text-gray-500">Nothing scheduled yet.</div>
       <div class="flex flex-col gap-3">
         <div *ngFor="let ev of d.upcoming" class="flex gap-3 items-center">
           <div class="w-11 h-11 rounded-xl bg-mustard-100 flex flex-col items-center justify-center leading-none">
@@ -89,10 +89,10 @@
             <span class="text-[10px] text-mustard-700">{{ ev.dueDate | date:'MMM' | uppercase }}</span>
           </div>
           <div class="flex-1">
-            <div class="font-semibold text-sm text-cloud-burst-900">{{ ev.title }}</div>
-            <div class="text-xs text-gray-500">{{ ev.dueDate | date:'EEE, h:mm a' }}</div>
+            <div class="font-semibold text-sm text-cloud-burst-900 dark:text-gray-100">{{ ev.title }}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">{{ ev.dueDate | date:'EEE, h:mm a' }}</div>
           </div>
-          <span class="text-[10px] font-bold text-blue-ribbon-700 bg-blue-ribbon-50 px-2 py-0.5 rounded-full">{{ typeLabel(ev.type) }}</span>
+          <span class="text-[10px] font-bold text-blue-ribbon-700 bg-blue-ribbon-50 dark:bg-[#232842] px-2 py-0.5 rounded-full">{{ typeLabel(ev.type) }}</span>
         </div>
       </div>
     </div>
