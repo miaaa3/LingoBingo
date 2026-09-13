@@ -12,3 +12,6 @@ Thumbs.db
 .env
 **/.env
 !**/.env.example
+
+# Desktop app delivered files (not part of the app)
+build outputs/
