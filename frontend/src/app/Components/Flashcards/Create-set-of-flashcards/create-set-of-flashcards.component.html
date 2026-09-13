@@ -1,0 +1,90 @@
+<hr class="border-t border-gray-100">
+<div [ngClass]="{'fixed-header': isFixedHeaderVisible, 'fixed-header-hidden': !isFixedHeaderVisible}" class="px-48">
+  <div class="flex justify-between items-center my-8">
+    <h1 class="text-xl font-bold text-gray-700">Create a new Set of Flashcards</h1>
+    <button
+      type="submit"
+      [disabled]="!flashcardSetForm.valid"
+      [class.bg-blue-500]="flashcardSetForm.valid"
+      [class.bg-gray-200]="!flashcardSetForm.valid"
+      class="text-white px-4 py-2 rounded-lg"  
+      (click)="createFlashcardSet()">
+      Create
+    </button>
+  </div>
+</div>
+
+<div class="flex justify-between items-center mb-8">
+  <h1 class="text-xl font-bold text-gray-700">Create a new Set of Flashcards</h1>
+  <button
+    type="submit"
+    [disabled]="!flashcardSetForm.valid"
+    [class.bg-blue-500]="flashcardSetForm.valid"
+    [class.bg-gray-200]="!flashcardSetForm.valid"
+    class="text-white px-4 py-2 rounded-lg"
+    (click)="createFlashcardSet()"  >
+    Create
+  </button>
+</div>
+
+<div class="set-description&title">
+  <form [formGroup]="flashcardSetForm" (ngSubmit)="createFlashcardSet()">
+    <div class="grid grid-cols-2 gap-5 mt-3 ">
+      <!-- Title and Description Fields -->
+      <input class="w-full h-11 rounded-lg shadow-sm p-2 placeholder:font-medium focus:outline-none focus:border-b-perano-400 focus:border-b-2"
+            type="text" name="name" id="title" formControlName="name" placeholder="Enter a title, name for your set ...">
+      <input class="w-full h-11 rounded-lg shadow-sm p-2 placeholder:font-medium focus:outline-none focus:border-b-perano-400 focus:border-b-2"
+            type="text" name="description" id="description" formControlName="description" placeholder="Enter a description for your set ...">
+    </div>
+    <!-- Adding flashcards Fields -->
+    <div class="mt-16" formArrayName="flashcards" cdkDropList (cdkDropListDropped)="onQuestionDrop($event)">
+      <div class="bg-white rounded-lg shadow-sm mb-4" *ngFor="let flashcard of flashcardsArray; let i = index" [formGroupName]="i" cdkDrag>
+        <div class="flex justify-between border-b-2 py-3 px-4 text-gray-400">
+          <h1 class="font-bold text-lg">{{ i+1 }}</h1>
+          <div class="flex items-center gap-2">
+            <svg class="size-5 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/>
+            </svg>
+            <svg class="delete-svg size-5 dark:text-white" aria-hidden="true" (click)="deleteCard(i)"
+                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                    d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4c0-.5.2-1 .6-1.4ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                    clip-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center gap-14 py-4 px-9">
+          <div class="flex w-[80%] flex-row gap-3 items-center justify-center">
+            <input class="w-full h-11 p-2 placeholder:font-medium focus:border-yellow-400 focus:border-b-4 border-b focus:outline-gray-200 focus:outline-1"
+                 type="text" name="term" placeholder="Enter Term"
+                 formControlName="term">
+            <input class="w-full h-11 p-2 placeholder:font-medium focus:border-yellow-400 focus:border-b-4 border-b focus:outline-gray-200 focus:outline-1"
+                  type="text" name="definition" placeholder="Enter definition"
+                  formControlName="definition">
+          </div>
+          <div class="h-[80px] w-[20%] p-2 hover:cursor-pointer flex flex-col items-center justify-center border rounded-md border-gray-400 placeholder:font-medium focus:border-yellow-400 focus:border-b-4 border-b focus:outline-gray-200 focus:outline-1">
+            <label for="dropzone-file" class="block text-lg font-medium text-gray-900 dark:text-white"></label>
+            <div class="flex flex-row items-center justify-center gap-2">
+              <svg class="size-5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+              </svg>
+              <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload </span></p>
+            </div>
+            <input id="dropzone-file" type="file" class="hidden" />
+        </div> 
+        </div>
+
+        
+
+      </div>
+    </div>
+
+    <!-- Add Card Button -->
+    <div class="flex justify-center bg-white p-6 rounded-lg shadow-sm" (click)="addNewCard()">
+      <div class="text-base uppercase font-bold border-b-4 border-cyan-400 p-1 hover:text-yellow-400 hover:border-yellow-400 cursor-pointer">
+        + Add Card
+      </div>
+    </div>
+  </form>
+</div>

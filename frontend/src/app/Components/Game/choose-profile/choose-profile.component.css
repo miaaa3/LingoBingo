@@ -1,0 +1,96 @@
+.profile-wrapper {
+  max-width: 500px;
+  margin: 60px auto;
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.username-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  text-align: center;
+}
+
+.avatar-list {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.avatar-list img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.avatar-list img.selected {
+  border-color: #4b4be2;
+  transform: scale(1.1);
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.continue-button {
+  background-color: #4b4be2;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.continue-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.continue-button:hover:enabled {
+  background-color: #3838cc;
+}
+
+/* LOADING SCREEN */
+.waiting-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+  text-align: center;
+}
+
+.waiting-text {
+  font-size: 20px;
+  margin-top: 20px;
+  color: #333;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #4b4be2;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

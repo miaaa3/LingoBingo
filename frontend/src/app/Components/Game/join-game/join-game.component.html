@@ -1,0 +1,19 @@
+<div class="wrapper">
+  <div class="title">LingoBingo</div>
+  <div class="join-game-box">
+    <h2>Enter Game Code</h2>
+    <input
+      type="text"
+      [(ngModel)]="gameCode"
+      placeholder="Enter the game code"
+      class="game-code-input"
+    />
+    <button
+      (click)="proceed()"
+      class="join-button"
+      [disabled]="!gameCode.trim()"
+    >
+      Join Game
+    </button>
+  </div>
+</div>

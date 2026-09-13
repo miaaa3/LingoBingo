@@ -1,0 +1,116 @@
+/* Loading Indicator */
+.loading-indicator {
+  border: 4px solid white; /* Set the border color to white */
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+/* Adjust the position of the form */
+.register-form-container {
+  margin-top: 80px; /* You can adjust the value to control how far down the form should go */
+}
+
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pendulum Animation */
+.pendulum-container {
+  display: flex;
+  justify-content: center; /* Horizontally center the pendulum */
+  align-items: center;     /* Vertically center the pendulum */
+  height: 100vh;           /* Make the container take up the full screen height */
+}
+
+.pendulum {
+  width: 220px;
+  height: 180px;
+  background-color: #f8c6cf;
+  border-radius: 5%;
+  align-items: center;
+  border-top: 15px solid #eee7d5;
+}
+
+.pendulum_box {
+  display: flex;
+  padding: 120px 0 0 10px;
+  position: absolute;
+  flex: 1;
+}
+
+.ball {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background-color: #455681;
+  position: relative;
+  transform-origin: 50% -300%;
+}
+
+.ball::before {
+  content: '';
+  width: 2px;
+  height: 120px;
+  background-color: #fffeff;
+  left: 18px;
+  top: -120px;
+  position: absolute;
+}
+
+.ball.first {
+  animation: firstball 0.9s alternate ease-in infinite;
+}
+
+@keyframes firstball {
+  0% {
+    transform: rotate(35deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+}
+
+.ball.last {
+  animation: lastball 0.9s alternate ease-out infinite;
+}
+
+@keyframes lastball {
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-35deg);
+  }
+}
+
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f7fafc;
+}
+
+form {
+  position: relative;
+  z-index: 10; /* Ensure form is above pendulum */
+}
+
+@media (max-width: 1024px) {
+  .pendulum {
+    width: 180px; /* Smaller pendulum size for responsiveness */
+    height: 150px;
+  }
+}

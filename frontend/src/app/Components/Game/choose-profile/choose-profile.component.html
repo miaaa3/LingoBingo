@@ -1,0 +1,45 @@
+<!-- FORMULAIRE CHOIX DU PROFIL -->
+<div class="profile-wrapper" *ngIf="!isLoading">
+  <h2>Choose Your Profile</h2>
+
+  <!-- Input username -->
+  <input
+    type="text"
+    [(ngModel)]="username"
+    placeholder="Enter your username"
+    class="username-input"
+  />
+
+  <h3>Select Your Avatar</h3>
+
+  <!-- Avatars générés dynamiquement -->
+  <div class="avatar-list">
+    <img
+      *ngFor="let avatar of avatars"
+      [src]="avatar"
+      (click)="selectAvatar(avatar)"
+      [class.selected]="avatar === selectedAvatar"
+      alt="avatar"
+    />
+  </div>
+
+  <!-- Erreur si aucun pseudo ou avatar -->
+  <div class="error" *ngIf="showError">
+    ⚠ Please enter a username and choose an avatar.
+  </div>
+
+  <!-- Bouton continuer -->
+  <button
+    class="continue-button"
+    (click)="confirm()"
+    [disabled]="!username.trim() || !selectedAvatar"
+  >
+    Continue
+  </button>
+</div>
+
+<!-- ÉCRAN DE CHARGEMENT -->
+<div class="waiting-screen" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p class="waiting-text">Waiting for other players to join the game...</p>
+</div>

@@ -1,0 +1,32 @@
+footer {
+    background-color: #f6f7fb;
+    color: #000000;
+    padding: 50px;
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ccc;
+  }
+
+  .footer-section {
+    max-width: 300px;
+  }
+
+  ul {
+    list-style-type: none; 
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  a {
+    color: #000000;
+    text-decoration: none;
+  }
+
+  h3 {
+    margin-bottom: 20px; /* Add space between title and list items */
+    font-weight: bold;   /* Make the h3 elements bold */
+
+  }

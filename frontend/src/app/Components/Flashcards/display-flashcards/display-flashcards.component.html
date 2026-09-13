@@ -1,0 +1,23 @@
+<div *ngIf="flashcardSet">
+    <h1 class="text-center text-3xl font-semibold">{{ flashcardSet.name }}</h1>
+    <div class="p-5 mt-5">
+      <div *ngFor="let flashcard of flashcardSet.flashcards; let i=index">
+        <div *ngIf="i === currentFlashcardIndex" class="flashcard-container px-8">
+          <div class="flashcard-content h-72 w-full bg-white rounded-lg items-center justify-center flex border shadow-md p-20 *:cursor-pointer *:font-normal *:text-2xl *:text-center" [class.flipped]="flashcard.flipped" (click)="flipFlashcard(flashcard)">
+            <h1  *ngIf="!flashcard.flipped">{{ flashcard.term }}</h1>
+            <p class="definition " *ngIf="flashcard.flipped">{{ flashcard.definition }}</p>
+          </div>
+          
+          <div class="flex gap-4 p-3 items-center justify-center *:size-12 *:bg-amber-400 *:text-white *:rounded-2xl *:p-1 *:cursor-pointer">
+            <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" (click)="goToPreviousFlashcard()">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+            </svg>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" (click)="goToNextFlashcard()">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,31 @@
+<section class="h-screen items-center">
+    <div class="p-3 text-lg " *ngIf="quiz && currentQuestionIndex < questions.length">
+        <h1 class="text-center text-3xl font-semibold">{{ quiz.name }}</h1>
+        <div class="p-3 my-8 flex flex-col justify-center *:my-2">
+            <div class="flex gap-3">
+                <h1 class="font-bold">Question {{ currentQuestionIndex+1 }} :</h1>
+                <h3>{{ questions[currentQuestionIndex].questionText }}</h3>
+            </div>
+        
+            <div class="grid grid-cols-2 justify-between p-2 gap-3 " >
+                <label class="flex p-3 gap-3 border-[1.5px] rounded-lg cursor-pointer  items-baseline my-2" *ngFor="let entry of questions[currentQuestionIndex].answers | keyvalue">
+                    <input type="radio" [(ngModel)]="questions[currentQuestionIndex].userAnswer" [value]="entry.key">
+                    <h1 class="font-bold">{{ entry.key }}</h1> - {{ entry.value }}
+                </label>
+            </div>
+            
+            <div class="flex justify-between text-base  *:hover:bg-blue-400 p-2 *:p-2 *:bg-blue-600 *:text-white *:rounded-lg ">
+                <button class="disabled:bg-gray-300 disabled:text-gray-50" (click)="submitAnswer()"  [disabled]="questions[currentQuestionIndex].userAnswer === null">Submit Answer</button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="flex items-center flex-col p-7 text-center text-3xl font-bold space-y-6 " *ngIf="currentQuestionIndex >= questions.length">
+        <p>Congratulations! You have completed the quiz.</p>
+        <div class="flex items-center justify-center gap-5">
+        <p>Your Score:</p>
+        <p class="font-normal p-3 bg-blue-600 text-white rounded-lg"  > {{ getScore() }}</p>
+        </div>
+    </div>
+</section>   

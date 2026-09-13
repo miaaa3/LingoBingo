@@ -1,0 +1,9 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE (per-tool ignores also live in frontend/ and backend/)
+.idea/
+.vscode/
+*.swp
+*~

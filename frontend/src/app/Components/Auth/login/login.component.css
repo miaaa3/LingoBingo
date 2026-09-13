@@ -1,0 +1,98 @@
+/* Loading Indicator */
+.loading-indicator {
+  border: 4px solid white; /* Set the border color to white */
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+/* Adjust the position of the form */
+.login-form-container {
+  margin-top: 80px; /* You can adjust the value to control how far down the form should go */
+}
+
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Body Background */
+body {
+  background-color: #98cfb2;
+}
+
+/* Pendulum Animation */
+.pendulum {
+  position: absolute; 
+  width: 220px;
+  height: 180px;
+  background-color: #f8c6cf;
+  top: 50%;
+  left: 20%; /* Move pendulum to the left side */
+  border-radius: 5%;
+  align-items: center;
+  border-top: 15px solid #eee7d5;
+  transform: translateY(-50%); /* Vertically center it */
+}
+
+.pendulum_box {
+  display: flex;
+  padding: 120px 0 0 10px;
+  position: absolute;
+  flex: 1;
+}
+
+.ball {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background-color: #455681;
+  position: relative;
+  transform-origin: 50% -300%;
+}
+
+.ball::before {
+  content: '';
+  width: 2px;
+  height: 120px;
+  background-color: #fffeff;
+  left: 18px;
+  top: -120px;
+  position: absolute;
+}
+
+.ball.first {
+  animation: firstball 0.9s alternate ease-in infinite;
+}
+
+@keyframes firstball {
+  0% {
+    transform: rotate(35deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+}
+
+.ball.last {
+  animation: lastball 0.9s alternate ease-out infinite;
+}
+
+@keyframes lastball {
+  50% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-35deg);
+  }
+}
+

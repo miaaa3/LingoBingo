@@ -1,0 +1,31 @@
+<section >
+    <h1 class="text-center text-4xl font-bold">Navigate our Quizzes</h1>
+        <div *ngIf="!isLoading">
+            <div class="grid grid-cols-3 gap-5 p-3 *:flex-col *:p-3 *:space-y-5 *:rounded-md *:border *:bg-white " >
+                <div class="group cursor-pointer" *ngFor="let item of quizzes" [routerLink]="'/Display-quiz/' + item.id">
+                    <div class="flex justify-between">
+                        <p class="text-xl">{{item.name}}</p>
+                        <svg class="size-5 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4C5.5-1.5-1.5 5.5 4 11l7 7 7-7c5.458-5.458-1.542-12.458-7-7Z"/>
+                        </svg>
+                    </div>    
+                    <div class="flex justify-between *:rounded-3xl *:py-0.5 *:px-2 *:text-[12px]">   
+                        <p class="bg-perano-500">{{item.questions.length}} Questions</p>
+                        <!-- <p class="bg-red-500 text-white">{{item.difficulty}}</p> -->
+                    </div>
+                </div>
+            </div>
+            
+        </div> 
+        <div class="flex flex-col items-center justify-center h-screen" *ngIf="isLoading">
+            <div role="status" class="flex items-center">
+                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" class="animate-spin w-12 h-12 stroke-slate-500">
+                    <path d="M12 3v3m6.366-.366-2.12 2.12M21 12h-3m.366 6.366-2.12-2.12M12 21v-3m-6.366.366 2.12-2.12M3 12h3m-.366-6.366 2.12 2.12"></path>
+                </svg>
+            </div>
+        </div>
+        
+    
+</section>
+
+
