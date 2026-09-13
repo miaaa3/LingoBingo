@@ -16,15 +16,15 @@
   <div class="w-full mx-auto p-4 md:p-8 lg:w-2/3 xl:w-1/2 login-form-container">
     <div class="py-4 px-6 md:px-10 rounded-md">
       <form [formGroup]="loginForm" class="flex flex-col space-y-4 items-center justify-center">
-        <h2 class="text-4xl font-extrabold text-blue-ribbon-800 mb-4">Login to Your Account</h2>
+        <h2 class="text-4xl font-extrabold text-blue-ribbon-800 dark:text-blue-ribbon-300 mb-4">Login to Your Account</h2>
 
         <div class="w-full mb-4">
-          <label for="email" class="block text-gray-800 font-bold">Email:</label>
-          <input type="text" name="email" formControlName="email" autocomplete="email" id="email" placeholder="Enter your email" class="w-full border border-gray-300 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
+          <label for="email" class="block text-gray-800 dark:text-gray-200 font-bold">Email:</label>
+          <input type="text" name="email" formControlName="email" autocomplete="email" id="email" placeholder="Enter your email" class="w-full border border-gray-300 dark:border-[#2a2f47] bg-white dark:bg-[#191d31] text-cloud-burst-900 dark:text-gray-100 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500">
         </div>
 
         <div class="relative w-full mb-4">
-          <label for="password" class="block text-gray-800 font-bold">Password:</label>
+          <label for="password" class="block text-gray-800 dark:text-gray-200 font-bold">Password:</label>
           <div class="flex items-center">
             <input
               type="{{ showPassword ? 'text' : 'password' }}"
@@ -32,7 +32,7 @@
               name="password"
               autocomplete="current-password"
               placeholder="Enter your password"
-              class="w-full border border-gray-300 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500"
+              class="w-full border border-gray-300 dark:border-[#2a2f47] bg-white dark:bg-[#191d31] text-cloud-burst-900 dark:text-gray-100 py-3 px-4 rounded-lg mt-2 outline-none focus:ring-2 focus:ring-blue-ribbon-500"
             />
             <button type="button" class="absolute right-0 mr-3 focus:outline-none" (click)="togglePasswordVisibility()">
               <svg class="h-6 w-6 text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@
           <span *ngIf="!isLoading">Log in</span>
         </button>
 
-        <p class="text-gray-600 mt-4">Not a member yet? <a routerLink="/Register" routerLinkActive="router-link-active" class="text-blue-ribbon-600 font-bold hover:underline">Sign up here</a></p>
+        <p class="text-gray-600 dark:text-gray-300 mt-4">Not a member yet? <a routerLink="/Register" routerLinkActive="router-link-active" class="text-blue-ribbon-600 font-bold hover:underline">Sign up here</a></p>
       </form>
     </div>
   </div>
