@@ -1,101 +1,67 @@
-<section class="space-y-9">
-  <div class="flex text-center flex-col space-y-4">
-    <h1 class="font-bold text-5xl">Search LingoBingo</h1>
-    <p class="text-xl">Unleash Your Potential: Embark on a Limitless Learning Journey with Us!</p>
+<div class="max-w-5xl mx-auto">
+  <div class="text-center space-y-2 mb-8">
+    <h1 class="font-extrabold text-3xl sm:text-4xl text-cloud-burst-900">Search LingoBingo</h1>
+    <p class="text-gray-500">Find flashcard sets and quizzes to study.</p>
   </div>
 
-  <div class="flex justify-center flex-row">
-    <input
-      type="text"
-      placeholder="Search for your techy quiz adventure..."
-      [(ngModel)]="filterValue"
-      (input)="onFilterChange($event)"
+  <div class="flex justify-center gap-2 mb-8">
+    <input type="text" placeholder="Search for a set or quiz..."
+      [(ngModel)]="filterValue" (input)="onFilterChange($event)"
       aria-label="Search quizzes and flashcard sets"
-      class="bg-white border border-gray-100 text-base rounded-lg outline-none shadow-md focus:ring-gray-300 focus:border-gray-700 block w-[600px] h-12 ps-10 p-2"
-    />
-    <button
-      class="bg-blue-ribbon-500 shadow-xl hover:bg-blue-ribbon-700 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
-      type="button">
-      Search
-    </button>
+      class="bg-white border border-gray-200 rounded-lg outline-none shadow-sm focus:ring-2 focus:ring-blue-ribbon-500 w-full max-w-xl h-12 px-4" />
+    <button type="button" class="bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold px-5 rounded-lg transition-colors">Search</button>
   </div>
 
-  <div *ngIf="loading" class="text-center mt-6">Loading results...</div>
-  <div *ngIf="error" class="text-red-600 text-center mt-6">{{ error }}</div>
+  <div *ngIf="loading" class="text-center text-gray-400">Loading results...</div>
+  <div *ngIf="error" class="text-red-600 text-center">{{ error }}</div>
 
-  <!-- Flashcard Sets Section -->
-  <div *ngIf="ownFlashcardSets.length > 0 || publicFlashcardSets.length > 0" class="mt-10 space-y-8">
+  <div *ngIf="ownFlashcardSets.length > 0 || publicFlashcardSets.length > 0" class="space-y-8">
     <div *ngIf="ownFlashcardSets.length > 0">
-      <h2 class="text-2xl font-semibold mb-4">Your Flashcard Sets</h2>
-      <div class="grid grid-cols-3 gap-6">
-        <div
-          *ngFor="let set of ownFlashcardSets"
-          class="p-5 rounded-lg shadow-md cursor-pointer bg-perano-300 hover:bg-perano-100 flex justify-between items-center border"
-          [routerLink]="['/Display-set-of-flashcard', set.id]"
-        >
-          <h3 class="font-bold">{{ set.name }}</h3>
-          <span class="py-1 px-2 text-xs rounded-full bg-[#f3f3f3]">{{ set.isPublic ? 'Public' : 'Private' }}</span>
+      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Your flashcard sets</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let set of ownFlashcardSets" [routerLink]="['/Display-set-of-flashcard', set.id]"
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900">{{ set.name || set.title }}</h3>
+          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="set.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 text-gray-500'">{{ set.isPublic ? 'Public' : 'Private' }}</span>
         </div>
       </div>
     </div>
-
     <div *ngIf="publicFlashcardSets.length > 0">
-      <h2 class="text-2xl font-semibold mb-4">Public Flashcard Sets</h2>
-      <div class="grid grid-cols-3 gap-6">
-        <div
-          *ngFor="let set of publicFlashcardSets"
-          class="p-5 rounded-lg shadow-md cursor-pointer bg-perano-300 hover:bg-perano-100 flex justify-between items-center border"
-          [routerLink]="['/Display-set-of-flashcard', set.id]"
-        >
-          <h3 class="font-bold">{{ set.name }}</h3>
-          <span class="py-1 px-2 text-xs rounded-full bg-[#f3f3f3]">Public</span>
+      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Public flashcard sets</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let set of publicFlashcardSets" [routerLink]="['/Display-set-of-flashcard', set.id]"
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900">{{ set.name || set.title }}</h3>
+          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap bg-blue-ribbon-50 text-blue-ribbon-700">Public</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Quizzes Section -->
-  <div *ngIf="ownQuizzes.length > 0 || publicQuizzes.length > 0" class="mt-10 space-y-8">
+  <div *ngIf="ownQuizzes.length > 0 || publicQuizzes.length > 0" class="space-y-8 mt-8">
     <div *ngIf="ownQuizzes.length > 0">
-      <h2 class="text-2xl font-semibold mb-4">Your Quizzes</h2>
-      <div class="grid grid-cols-3 gap-6">
-        <div
-          *ngFor="let quiz of ownQuizzes"
-          class="p-5 rounded-lg shadow-md cursor-pointer bg-perano-300 hover:bg-perano-100 flex justify-between items-center border"
-          [routerLink]="['/quiz', quiz.id]"
-        >
-          <h3 class="font-bold">{{ quiz.name }}</h3>
-          <span class="py-1 px-2 text-xs rounded-full bg-[#f3f3f3]">{{ quiz.isPublic ? 'Public' : 'Private' }}</span>
+      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Your quizzes</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let quiz of ownQuizzes" [routerLink]="['/Quizzes', quiz.id, 'take']"
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900">{{ quiz.name }}</h3>
+          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="quiz.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 text-gray-500'">{{ quiz.isPublic ? 'Public' : 'Private' }}</span>
         </div>
       </div>
     </div>
-
     <div *ngIf="publicQuizzes.length > 0">
-      <h2 class="text-2xl font-semibold mb-4">Public Quizzes</h2>
-      <div class="grid grid-cols-3 gap-6">
-        <div
-          *ngFor="let quiz of publicQuizzes"
-          class="p-5 rounded-lg shadow-md cursor-pointer bg-perano-300 hover:bg-perano-100 flex justify-between items-center border"
-          [routerLink]="['/quiz', quiz.id]"
-        >
-          <h3 class="font-bold">{{ quiz.name }}</h3>
-          <span class="py-1 px-2 text-xs rounded-full bg-[#f3f3f3]">Public</span>
+      <h2 class="text-xl font-bold text-cloud-burst-900 mb-4">Public quizzes</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let quiz of publicQuizzes" [routerLink]="['/Quizzes', quiz.id, 'take']"
+          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white border border-gray-200 hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <h3 class="font-bold text-cloud-burst-900">{{ quiz.name }}</h3>
+          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap bg-blue-ribbon-50 text-blue-ribbon-700">Public</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- No Results -->
-  <div
-    *ngIf="
-      !loading &&
-      ownFlashcardSets.length === 0 &&
-      publicFlashcardSets.length === 0 &&
-      ownQuizzes.length === 0 &&
-      publicQuizzes.length === 0
-    "
-    class="text-center mt-6"
-  >
+  <div *ngIf="!loading && ownFlashcardSets.length === 0 && publicFlashcardSets.length === 0 && ownQuizzes.length === 0 && publicQuizzes.length === 0" class="text-center text-gray-400 py-10">
     No results found.
   </div>
-</section>
+</div>
