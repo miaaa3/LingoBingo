@@ -3,6 +3,7 @@ package com.lingobingo.Controller;
 
 import com.lingobingo.Dto.AuthenticationRequest;
 import com.lingobingo.Dto.RegisterRequest;
+import com.lingobingo.Dto.ChangePasswordRequest;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
 import com.lingobingo.Service.Authentication.AuthenticationService;
@@ -41,5 +42,13 @@ public class AuthenticationController {
         } else {
             return ResponseEntity.status(401).body("User not authenticated");
         }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(Principal principal, @RequestBody ChangePasswordRequest request) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("User not authenticated");
+        }
+        return authenticationService.changePassword(principal.getName(), request);
     }
 }

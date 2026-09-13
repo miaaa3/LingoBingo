@@ -22,4 +22,8 @@ export class AuthenticationService {
   getAuthenticatedUser(): Observable<any> {
     return this.http.get(`${this.baseUrl}/user`);
   }
+
+  changePassword(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/change-password`, data);
+  }
 }

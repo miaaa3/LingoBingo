@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { LocalService } from 'src/app/Services/Auth/local.service';
 import { RestApiService } from 'src/app/Services/Auth/rest-api.service';
+import { AuthenticationService } from 'src/app/Services/Auth/authentication.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -20,7 +21,8 @@ export class ResetPasswordComponent {
     private api: RestApiService,
     private local: LocalService,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private authService: AuthenticationService
   ) {
     this.resetForm = this.fb.group({
       old_password: ['', [Validators.required, Validators.minLength(8)]],
@@ -48,7 +50,7 @@ export class ResetPasswordComponent {
       "new_password" : this.resetForm.get('password')?.value,
     };
 
-    this.api.resetPassword(data).subscribe(
+    this.authService.changePassword(data).subscribe(
       res => {
         this.isLoading = false;
         this.toastr.success('Password changed successfully.', 'Success');

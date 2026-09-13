@@ -4,6 +4,7 @@ package com.lingobingo.Service.Authentication;
 import com.lingobingo.Dto.AuthenticationRequest;
 import com.lingobingo.Dto.AuthenticationResponse;
 import com.lingobingo.Dto.RegisterRequest;
+import com.lingobingo.Dto.ChangePasswordRequest;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +73,18 @@ public class AuthenticationService {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    public ResponseEntity<?> changePassword(String email, ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        if (!passwordEncoder.matches(request.getOld_password(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Old password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNew_password()));
+        userRepository.save(user);
+        return ResponseEntity.ok("Password changed successfully");
     }
 }
