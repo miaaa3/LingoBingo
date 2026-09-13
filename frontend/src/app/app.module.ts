@@ -38,6 +38,7 @@ import { QuizHubComponent } from './Components/Quiz-play/quiz-hub.component';
 import { TakeQuizComponent } from './Components/Quiz-play/take-quiz.component';
 import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 import { PlanningComponent } from './Components/Planning/planning.component';
+import { DashboardComponent } from './Components/Dashboard/dashboard.component';
 
 
 
@@ -75,6 +76,7 @@ import { PlanningComponent } from './Components/Planning/planning.component';
     TakeQuizComponent,
     GradebookComponent,
     PlanningComponent,
+    DashboardComponent,
     
   
   ],
