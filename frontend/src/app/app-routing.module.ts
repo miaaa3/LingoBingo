@@ -29,6 +29,7 @@ import { TakeQuizComponent } from './Components/Quiz-play/take-quiz.component';
 import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 import { PlanningComponent } from './Components/Planning/planning.component';
 import { DashboardComponent } from './Components/Dashboard/dashboard.component';
+import { TypeTranslationComponent } from './Components/Practice/type-translation.component';
 
 
 const routes: Routes = [
@@ -56,6 +57,7 @@ const routes: Routes = [
   {path:'Quizzes/:id/gradebook', component: GradebookComponent, canActivate: [AuthGuard]},
   {path:'Planning', component: PlanningComponent, canActivate: [AuthGuard]},
   {path:'Dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+  {path:'Practice', component: TypeTranslationComponent, canActivate: [AuthGuard]},
 
 
 

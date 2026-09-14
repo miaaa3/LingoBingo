@@ -40,6 +40,7 @@ import { TakeQuizComponent } from './Components/Quiz-play/take-quiz.component';
 import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 import { PlanningComponent } from './Components/Planning/planning.component';
 import { DashboardComponent } from './Components/Dashboard/dashboard.component';
+import { TypeTranslationComponent } from './Components/Practice/type-translation.component';
 
 
 
@@ -56,6 +57,7 @@ import { DashboardComponent } from './Components/Dashboard/dashboard.component';
     DisplayQuizComponent,
     CreateQuizComponent,
     GenerateQuizComponent,
+    TypeTranslationComponent,
     FooterComponent,
     LoginComponent,
     RegisterComponent,

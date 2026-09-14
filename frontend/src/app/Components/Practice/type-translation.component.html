@@ -1,0 +1,128 @@
+<div class="max-w-2xl mx-auto">
+
+  <!-- ============ CHOOSE ============ -->
+  <div *ngIf="phase === 'choose'">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 rounded-2xl bg-mustard-100 dark:bg-[#3a3115] flex items-center justify-center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f9a207" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+      </div>
+      <div>
+        <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">Type the translation</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">Pick a set and practice by typing. Typos are forgiven.</div>
+      </div>
+    </div>
+
+    <div *ngIf="loadingSets" class="text-gray-400 dark:text-gray-500">Loading your sets...</div>
+    <div *ngIf="!loadingSets && sets.length === 0" class="text-center text-gray-400 dark:text-gray-500 py-10">No flashcard sets yet — create one first.</div>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+      <button type="button" *ngFor="let s of sets" (click)="start(s)"
+        class="card p-5 text-left hover:-translate-y-0.5 transition-transform">
+        <div class="flex items-center justify-between gap-2">
+          <div class="display font-bold text-cloud-burst-900 dark:text-gray-100">{{ s.title }}</div>
+          <span *ngIf="s.sourceLang && s.targetLang" class="text-lg shrink-0">{{ lang.flag(s.sourceLang) }}→{{ lang.flag(s.targetLang) }}</span>
+        </div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ s.description || 'Practice this set' }}</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ PLAY ============ -->
+  <div *ngIf="phase === 'play'">
+    <!-- top bar -->
+    <div class="flex items-center gap-3 mb-4">
+      <button type="button" (click)="chooseAnother()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" title="Back to sets">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="flex-1 h-3 bg-gray-100 dark:bg-[#232842] rounded-full overflow-hidden">
+        <div class="h-full bg-blue-ribbon-500 rounded-full transition-all duration-300" [style.width.%]="progressPct"></div>
+      </div>
+      <div class="flex items-center gap-1 text-mustard-700 dark:text-mustard-400 font-bold text-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#f9a207"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>{{ xp }}
+      </div>
+      <div *ngIf="currentStreak > 1" class="flex items-center gap-1 text-orange-500 font-bold text-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#f97316"><path d="M12 2c1 3-1 4-1 6a3 3 0 0 0 6 0c0-1 0-2-1-3 2 1 4 4 4 8a8 8 0 1 1-16 0c0-3 2-5 3-7 1 2 2 2 3 1 1-1 1-3-1-5z"/></svg>{{ currentStreak }}
+      </div>
+    </div>
+
+    <!-- direction toggle -->
+    <div class="flex justify-center mb-4" *ngIf="set?.sourceLang && set?.targetLang">
+      <div class="inline-flex bg-gray-100 dark:bg-[#232842] rounded-full p-1 text-xs font-semibold">
+        <button type="button" (click)="setDirection('forward')" [ngClass]="direction==='forward' ? 'bg-white dark:bg-[#191d31] text-blue-ribbon-700 dark:text-blue-ribbon-300 shadow-sm' : 'text-gray-500 dark:text-gray-400'" class="px-3 py-1.5 rounded-full">{{ lang.flag(set.sourceLang) }} → {{ lang.flag(set.targetLang) }}</button>
+        <button type="button" (click)="setDirection('reverse')" [ngClass]="direction==='reverse' ? 'bg-white dark:bg-[#191d31] text-blue-ribbon-700 dark:text-blue-ribbon-300 shadow-sm' : 'text-gray-500 dark:text-gray-400'" class="px-3 py-1.5 rounded-full">{{ lang.flag(set.targetLang) }} → {{ lang.flag(set.sourceLang) }}</button>
+      </div>
+    </div>
+
+    <!-- prompt -->
+    <div class="card p-8 text-center">
+      <div class="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-3">
+        Translate{{ answerLangCode ? (' to ' + lang.name(answerLangCode)) : '' }} {{ lang.flag(answerLangCode) }}
+      </div>
+      <div class="display text-4xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-6 break-words">{{ prompt }}</div>
+
+      <input #answerInput [(ngModel)]="answer" (keyup.enter)="submit()" [readonly]="status !== 'idle'"
+        [placeholder]="'Type in ' + (answerLangCode ? lang.name(answerLangCode) : 'the answer') + '...'"
+        class="w-full text-center text-lg py-3.5 px-4 rounded-xl border-2 outline-none transition-colors bg-gray-50 dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100"
+        [ngClass]="{
+          'border-gray-200 dark:border-[#2a2f47] focus:border-blue-ribbon-400': status==='idle',
+          'border-green-400 bg-green-50 dark:bg-[#0f2a1a]': status==='correct' || status==='almost',
+          'border-red-400 bg-red-50 dark:bg-[#2a0f14]': status==='wrong'
+        }">
+
+      <!-- hint underscores -->
+      <div *ngIf="revealed > 0 && status==='idle'" class="mt-3 display tracking-[0.3em] text-gray-400 dark:text-gray-500 text-lg">{{ hintDisplay }}</div>
+
+      <!-- feedback -->
+      <div *ngIf="status !== 'idle'" class="mt-4 text-left">
+        <div *ngIf="status==='correct'" class="font-bold text-green-600 dark:text-green-400">✓ Correct!</div>
+        <div *ngIf="status==='almost'" class="font-bold text-green-600 dark:text-green-400">✓ Almost — the exact spelling is <span class="underline">{{ expected }}</span></div>
+        <div *ngIf="status==='wrong'" class="font-bold text-red-500">✗ Answer: <span class="underline">{{ expected }}</span></div>
+      </div>
+    </div>
+
+    <!-- actions -->
+    <div class="flex gap-3 mt-4">
+      <ng-container *ngIf="status==='idle'">
+        <button type="button" (click)="submit()" class="flex-1 bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold py-3 rounded-full transition-colors">Check</button>
+        <button type="button" (click)="hint()" class="px-5 py-3 rounded-full font-bold border-2 border-mustard-300 dark:border-[#3a3115] text-mustard-700 dark:text-mustard-400 hover:bg-mustard-50 dark:hover:bg-[#3a3115] transition-colors" title="Reveal a letter">Hint</button>
+        <button type="button" (click)="skip()" class="px-5 py-3 rounded-full font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">Skip</button>
+      </ng-container>
+      <button type="button" *ngIf="status !== 'idle'" (click)="next()"
+        class="flex-1 bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold py-3 rounded-full transition-colors">
+        Continue <span class="opacity-70 text-sm">(Enter)</span>
+      </button>
+    </div>
+    <div class="text-center text-xs text-gray-400 dark:text-gray-500 mt-3">{{ index + 1 }} / {{ total }}</div>
+  </div>
+
+  <!-- ============ DONE ============ -->
+  <div *ngIf="phase === 'done'" class="card p-8 text-center">
+    <div class="text-5xl mb-3">{{ accuracy >= 80 ? '🎉' : accuracy >= 50 ? '👏' : '💪' }}</div>
+    <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">Session complete!</div>
+    <div class="text-gray-500 dark:text-gray-400 mb-6">{{ set?.title }}</div>
+
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div class="bg-mustard-50 dark:bg-[#3a3115] rounded-2xl py-4">
+        <div class="display text-2xl font-bold text-mustard-800 dark:text-mustard-300">{{ xp }}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400">XP</div>
+      </div>
+      <div class="bg-blue-ribbon-50 dark:bg-[#232842] rounded-2xl py-4">
+        <div class="display text-2xl font-bold text-blue-ribbon-700 dark:text-blue-ribbon-300">{{ accuracy }}%</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400">accuracy</div>
+      </div>
+      <div class="bg-orange-50 dark:bg-[#2a1a0f] rounded-2xl py-4">
+        <div class="display text-2xl font-bold text-orange-500">{{ bestStreak }}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400">best streak</div>
+      </div>
+    </div>
+
+    <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      {{ correctCount }} correct · {{ almostCount }} almost · {{ wrongCount }} missed
+    </div>
+
+    <div class="flex gap-3 justify-center">
+      <button type="button" (click)="restart()" class="bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold px-6 py-3 rounded-full transition-colors">Practice again</button>
+      <button type="button" (click)="chooseAnother()" class="border-2 border-blue-ribbon-200 dark:border-[#2a2f47] text-blue-ribbon-600 dark:text-blue-ribbon-300 font-bold px-6 py-3 rounded-full hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] transition-colors">Another set</button>
+    </div>
+  </div>
+</div>
