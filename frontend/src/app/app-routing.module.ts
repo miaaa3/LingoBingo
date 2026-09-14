@@ -34,7 +34,7 @@ import { TypeTranslationComponent } from './Components/Practice/type-translation
 
 
 const routes: Routes = [
-  {path:'Home', component:HomePageComponent},
+  {path:'Home', component:HomePageComponent, canActivate: [AuthGuard]},
   {path:'Search', component:SearchFlashcardComponent, canActivate: [AuthGuard]},
   {path:'All-quizzes', component:AllQuizzesComponent, canActivate: [AuthGuard]},
   {path:'Create-quiz', component:CreateQuizComponent, canActivate: [AuthGuard]},
@@ -69,7 +69,7 @@ const routes: Routes = [
 
   {path:'Welcome', component: WelcomeComponent},
   {path:'', redirectTo:'Welcome', pathMatch:'full'},
-  {path:'**',redirectTo:'Home'},
+  {path:'**', redirectTo:'Welcome'},
   
 
   

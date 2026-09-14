@@ -60,11 +60,7 @@
           *ngFor="let player of joinedPlayers"
           class="flex flex-row items-center justify-between p-3 text-center border shadow-md rounded-md"
         >
-          <img
-            class="w-16 h-16 rounded-full  object-cover mb-2"
-            [src]="player.avatarUrl || '/assets/images/Profile.jpg'"
-            alt="{{ player.username }}'s avatar"
-          />
+          <app-avatar [name]="player.username" [size]="44"></app-avatar>
           <h5 class="text-lg font-medium text-gray-900 dark:text-white">
             {{ player.username }}
           </h5>

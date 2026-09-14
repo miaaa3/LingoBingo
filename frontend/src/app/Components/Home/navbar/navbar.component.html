@@ -58,7 +58,7 @@
   
       <div *ngIf="isUser | async" [style.zIndex]="zIndexForProfile" (click.away)="closeDropdownProfile()" [attr.x-data]="{ openForProfile: false }">
         <button type="button" (click)="toggleDropdownProfile()" class="flex text-sm border rounded-full md:me-0 focus:ring-4  active:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-          <img class="size-9 rounded-full object-cover" src="/assets/images/Profile.jpg" alt="user photo">
+          <app-avatar [name]="displayName" [size]="36"></app-avatar>
         </button>
         <div *ngIf="openForProfile" [@dropdownAnimation]="'visible'" class="absolute right-3 w-44 mt-2 origin-top-right rounded-md shadow-lg md:w-28">
           <div class="bg-white rounded-md shadow dark-mode:bg-gray-800">

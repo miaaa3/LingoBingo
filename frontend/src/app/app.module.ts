@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomePageComponent } from './Components/Home/home-page/home-page.component';
 import { WelcomeComponent } from './Components/Welcome/welcome.component';
+import { AvatarComponent } from './Components/Shared/avatar.component';
 import { NavbarComponent } from './Components/Home/navbar/navbar.component';
 import { SidebarComponent } from './Components/Home/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -60,6 +61,7 @@ import { TypeTranslationComponent } from './Components/Practice/type-translation
     GenerateQuizComponent,
     TypeTranslationComponent,
     WelcomeComponent,
+    AvatarComponent,
     FooterComponent,
     LoginComponent,
     RegisterComponent,

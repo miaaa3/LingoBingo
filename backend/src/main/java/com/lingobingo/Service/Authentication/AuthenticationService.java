@@ -50,6 +50,7 @@ public class AuthenticationService {
         return ResponseEntity.ok(AuthenticationResponse.builder()
                 .id(createdUser.getId())
                 .email(createdUser.getEmail())
+                .name(createdUser.getName())
                 .access_token(jwtAccessToken)
                 .role(createdUser.getRole()).build());
     }
@@ -69,6 +70,7 @@ public class AuthenticationService {
                     .access_token(jwtAccessToken)
                     .id(user.getId())
                     .email(user.getEmail())
+                    .name(user.getName())
                     .role(user.getRole()).build());
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

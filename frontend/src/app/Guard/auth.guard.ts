@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
       return true;
     } else {
       this.toastr.info('You are not authenticated. Please log in to access this resource.', '');
-      this.router.navigate(['/Home']);
+      this.router.navigate(['/Welcome']);
       return false;
     }
   }
