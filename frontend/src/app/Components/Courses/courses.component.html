@@ -1,8 +1,8 @@
-<div class="max-w-4xl mx-auto">
+<div class="page">
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-3xl font-extrabold text-blue-ribbon-800 dark:text-blue-ribbon-300">Courses</h1>
-      <p class="text-gray-500 dark:text-gray-400">{{ isTeacher ? 'Build and manage your courses.' : 'Explore public courses.' }}</p>
+      <h1 class="page-title">Courses</h1>
+      <p class="page-sub">{{ isTeacher ? 'Build and manage your courses.' : 'Explore public courses.' }}</p>
     </div>
     <a *ngIf="isTeacher" routerLink="/Courses/create"
        class="py-2 px-5 bg-blue-ribbon-600 text-white font-bold rounded-full hover:scale-105 transition-transform">+ New course</a>

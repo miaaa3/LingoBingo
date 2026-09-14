@@ -1,48 +1,84 @@
-<div class="flex-1">
-  <!-- Hero -->
-  <div class="mb-8">
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-cloud-burst-900 dark:text-gray-100">How do you want to study today?</h1>
-    <p class="text-gray-500 dark:text-gray-400 mt-1">Pick a path below and keep your streak going.</p>
+<div class="page">
+  <!-- Greeting -->
+  <div class="page-head">
+    <h1 class="page-title">Hi {{ currentUser.name || 'there' }} 👋</h1>
+    <p class="page-sub">What would you like to do today?</p>
   </div>
 
-  <!-- Study options -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <a routerLink="/Search" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
-      <img class="h-44 w-full object-cover group-hover:opacity-90 transition-opacity" src="assets/images/image_firstpart.png" alt="Flashcards" />
-      <div class="p-6 bg-perano-100 group-hover:bg-perano-200 transition-colors">
-        <h3 class="font-bold text-lg text-cloud-burst-900 dark:text-gray-100">Discover New Horizons</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Dive into flashcards covering any subject you like.</p>
+  <!-- Quick actions -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <a routerLink="/Practice" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#ffe9c2;color:#b76e00">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h16v2M9 19h6M12 5v14"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Practice</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Type-the-translation drills with XP and streaks.</p>
       </div>
     </a>
 
-    <a routerLink="/Quizzes" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
-      <img class="h-44 w-full object-cover group-hover:opacity-90 transition-opacity" src="assets/images/image_secondpart.png" alt="Quizzes" />
-      <div class="p-6 bg-mustard-100 group-hover:bg-mustard-200 transition-colors">
-        <h3 class="font-bold text-lg text-cloud-burst-900 dark:text-gray-100">Test Your Knowledge</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Take quizzes to boost vocabulary, grammar, and fluency.</p>
+    <a routerLink="/Search" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#dfe4ff;color:#363af5">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 8h6M7 12h4"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Flashcards</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Study and create sets, with auto-translation.</p>
       </div>
     </a>
 
-    <a routerLink="/Courses" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
-      <img class="h-44 w-full object-cover group-hover:opacity-90 transition-opacity" src="assets/images/image_thirdpart.png" alt="Courses" />
-      <div class="p-6 bg-mauve-100 group-hover:bg-mauve-200 transition-colors">
-        <h3 class="font-bold text-lg text-cloud-burst-900 dark:text-gray-100">Explore Courses</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Learn from structured courses built by your teachers.</p>
+    <a routerLink="/Quizzes" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#f6d9ff;color:#bb20d9">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Quizzes</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Take quizzes or host a live game.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Courses" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#d7f6e3;color:#128a4b">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Courses</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Structured lessons built by teachers.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Classes" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#dfe4ff;color:#4a5eab">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Classes</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Join a class and see what's assigned.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Dashboard" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#fff0c2;color:#b76e00">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">My progress</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">XP, level, streak, badges and leaderboard.</p>
       </div>
     </a>
   </div>
 
   <!-- Recent activity -->
   <section class="mt-10">
-    <h2 class="text-2xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Recent activity</h2>
-    <div *ngIf="recentActivities && recentActivities.length; else noRecent" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] shadow-sm" *ngFor="let recentActivity of recentActivities">
+    <h2 class="display text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Recent activity</h2>
+    <div *ngIf="recentActivities && recentActivities.length; else noRecent" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="card p-5 flex items-center justify-between" *ngFor="let recentActivity of recentActivities">
         <h3 class="font-semibold text-cloud-burst-900 dark:text-gray-100">{{ recentActivity.title }}</h3>
-        <span class="py-1 px-3 text-xs font-semibold rounded-full bg-blue-ribbon-50 text-blue-ribbon-700">{{ recentActivity.type }}</span>
+        <span class="py-1 px-3 text-xs font-semibold rounded-full bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300">{{ recentActivity.type }}</span>
       </div>
     </div>
     <ng-template #noRecent>
-      <div class="text-center text-gray-400 dark:text-gray-500 py-10 bg-white dark:bg-[#191d31] rounded-2xl border border-gray-200 dark:border-[#2a2f47]">
+      <div class="card text-center text-gray-400 dark:text-gray-500 py-10">
         No recent activity yet. Start studying and it will show up here.
       </div>
     </ng-template>

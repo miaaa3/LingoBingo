@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RecentActivity } from 'src/app/Models/recent-activity.model';
 import { RecentActivityService } from 'src/app/Services/recent-activity.service';
+import { CurrentUserService } from 'src/app/Services/Auth/current-user.service';
 
 @Component({
   selector: 'app-home-page',
@@ -10,7 +11,7 @@ import { RecentActivityService } from 'src/app/Services/recent-activity.service'
 export class HomePageComponent implements OnInit {
   recentActivities: RecentActivity[];
 
-  constructor(private recentActivityService: RecentActivityService) {}
+  constructor(private recentActivityService: RecentActivityService, public currentUser: CurrentUserService) {}
 
   ngOnInit(): void {
     this.loadRecentActivities();

@@ -38,6 +38,10 @@ export class TypeTranslationComponent implements OnInit {
   revealed = 0;                 // hint letters shown for current answer
   private helped = false;       // used a hint on this question
 
+  // Answering style: 'type' (keyboard) or 'tap' (word bank, beginner-friendly)
+  inputMode: 'type' | 'tap' = 'type';
+  currentOptions: string[] = [];
+
   // stats
   xp = 0;
   correctCount = 0;
@@ -92,7 +96,33 @@ export class TypeTranslationComponent implements OnInit {
     this.saved = false;
   }
 
-  setDirection(d: Direction): void { this.direction = d; }
+  setDirection(d: Direction): void {
+    this.direction = d;
+    if (this.inputMode === 'tap' && this.status === 'idle') { this.buildOptions(); }
+  }
+
+  setInputMode(m: 'type' | 'tap'): void {
+    this.inputMode = m;
+    if (m === 'tap') { this.buildOptions(); }
+    else { setTimeout(() => this.answerInput?.nativeElement.focus(), 30); }
+  }
+
+  /** Word-bank options for the current question: correct answer + up to 3 distractors from the set. */
+  private buildOptions(): void {
+    if (!this.queue.length) { this.currentOptions = []; return; }
+    const correct = this.expected;
+    const pool = this.queue
+      .map(c => (this.direction === 'forward' ? c.definition : c.term))
+      .filter(v => v && v.trim());
+    const seen = new Set<string>([correct.trim().toLowerCase()]);
+    const distractors: string[] = [];
+    for (const v of this.shuffle(pool)) {
+      const k = v.trim().toLowerCase();
+      if (!seen.has(k)) { seen.add(k); distractors.push(v); }
+      if (distractors.length >= 3) break;
+    }
+    this.currentOptions = this.shuffle([correct, ...distractors]);
+  }
 
   // ---- question helpers ----
   private get card(): Card { return this.queue[this.index]; }
@@ -106,7 +136,8 @@ export class TypeTranslationComponent implements OnInit {
     this.status = 'idle';
     this.revealed = 0;
     this.helped = false;
-    setTimeout(() => this.answerInput?.nativeElement.focus(), 30);
+    if (this.inputMode === 'tap') { this.buildOptions(); }
+    else { setTimeout(() => this.answerInput?.nativeElement.focus(), 30); }
   }
 
   // ---- hint (the "keyboard suggestion" while typing) ----
@@ -124,6 +155,17 @@ export class TypeTranslationComponent implements OnInit {
   submit(): void {
     if (this.status !== 'idle') { this.next(); return; }        // Enter advances after feedback
     if (!this.answer.trim() && this.revealed === 0) { return; }
+    this.grade();
+  }
+
+  /** Tap a word-bank option. */
+  choose(opt: string): void {
+    if (this.status !== 'idle') { return; }
+    this.answer = opt;
+    this.grade();
+  }
+
+  private grade(): void {
     const result = this.checker.check(this.answer, this.expected);
     this.status = result;
     if (result === 'correct') { this.xp += this.helped ? 5 : 10; this.correctCount++; this.bumpStreak(); }
