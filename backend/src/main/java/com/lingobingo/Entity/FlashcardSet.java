@@ -48,5 +48,9 @@ public class FlashcardSet {
     @Column(nullable = false)
     private Boolean isPublic = true;
 
+    // Language pair for translation decks (ISO codes, e.g. "en" / "fr").
+    // Null for non-language sets; drives auto-translate and practice direction.
+    private String sourceLang;
+    private String targetLang;
 
 }
