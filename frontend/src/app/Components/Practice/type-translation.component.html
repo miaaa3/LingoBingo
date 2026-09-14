@@ -1,15 +1,10 @@
-<div class="page" style="max-width:42rem">
+<div class="page">
 
   <!-- ============ CHOOSE ============ -->
   <div *ngIf="phase === 'choose'">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="w-12 h-12 rounded-2xl bg-mustard-100 dark:bg-[#3a3115] flex items-center justify-center">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f9a207" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-      </div>
-      <div>
-        <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100">Type the translation</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400">Pick a set and practice by typing. Typos are forgiven.</div>
-      </div>
+    <div class="page-head">
+      <h1 class="page-title">Practice</h1>
+      <p class="page-sub">Pick a set and practice by typing. Typos are forgiven.</p>
     </div>
 
     <div *ngIf="loadingSets" class="text-gray-400 dark:text-gray-500">Loading your sets...</div>
