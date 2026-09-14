@@ -28,11 +28,8 @@ import { DisplayFlashcardsComponent } from './Components/Flashcards/display-flas
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import { DisplaySetOfFlashcardsComponent } from './Components/Flashcards/display-set-of-flashcards/display-set-of-flashcards.component';
 import { GameLobbyComponent } from './Components/Game/game-lobby/game-lobby.component';
-import { GameSessionComponent } from './Components/Game/game-session/game-session.component';
 import { JoinGameComponent } from './Components/Game/join-game/join-game.component';
 import { DisplayGameComponent } from './Components/Game/display-game/display-game.component';
-import { ChooseProfileComponent } from './Components/Game/choose-profile/choose-profile.component';
-import { LeaderboardComponent } from './Components/Game/leaderboard/leaderboard.component';
 import { ClassesComponent } from './Components/Classes/classes.component';
 import { CoursesComponent } from './Components/Courses/courses.component';
 import { CreateCourseComponent } from './Components/Courses/create-course.component';
@@ -71,11 +68,8 @@ import { TypeTranslationComponent } from './Components/Practice/type-translation
     DisplayFlashcardsComponent,
     DisplaySetOfFlashcardsComponent,
     GameLobbyComponent,
-    GameSessionComponent,
     JoinGameComponent,
     DisplayGameComponent,
-    ChooseProfileComponent,
-    LeaderboardComponent,
     ClassesComponent,
     CoursesComponent,
     CreateCourseComponent,

@@ -16,11 +16,8 @@ import { DisplayFlashcardsComponent } from './Components/Flashcards/display-flas
 import { SearchFlashcardComponent } from './Components/Flashcards/search-flashcard/search-flashcard.component';
 import { DisplaySetOfFlashcardsComponent } from './Components/Flashcards/display-set-of-flashcards/display-set-of-flashcards.component';
 import { GameLobbyComponent } from './Components/Game/game-lobby/game-lobby.component';
-import { GameSessionComponent } from './Components/Game/game-session/game-session.component';
 import { DisplayGameComponent } from './Components/Game/display-game/display-game.component';
 import { JoinGameComponent } from './Components/Game/join-game/join-game.component';
-import { ChooseProfileComponent } from './Components/Game/choose-profile/choose-profile.component';
-import { LeaderboardComponent } from './Components/Game/leaderboard/leaderboard.component';
 import { ClassesComponent } from './Components/Classes/classes.component';
 import { CoursesComponent } from './Components/Courses/courses.component';
 import { CreateCourseComponent } from './Components/Courses/create-course.component';
@@ -43,11 +40,8 @@ const routes: Routes = [
   {path: 'Display-flashcard/:id', component: DisplayFlashcardsComponent, canActivate: [AuthGuard] }, 
   {path: 'Display-set-of-flashcard/:id', component: DisplaySetOfFlashcardsComponent, canActivate: [AuthGuard] }, 
   {path: 'GameLobby/:gameCode', component: GameLobbyComponent }, 
-  {path: 'GameSession', component: GameSessionComponent, canActivate: [AuthGuard] }, 
   {path:'Join', component: JoinGameComponent},
-  {path: 'choose-profile/:gameCode', component: ChooseProfileComponent },
   {path: 'game/:gameCode/play', component: DisplayGameComponent },
-  {path: 'leaderboard/:gameCode', component: LeaderboardComponent },
   {path:'Classes', component: ClassesComponent, canActivate: [AuthGuard]},
   {path:'Courses', component: CoursesComponent, canActivate: [AuthGuard]},
   {path:'Courses/create', component: CreateCourseComponent, canActivate: [AuthGuard]},

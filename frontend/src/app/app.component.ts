@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 
   onlyOneComponent(): boolean {
     const currentRoute = this.router.url;
-    const endpoints = ['/Login', '/Register', 'Reset-password', 'Forgot-password', 'dashboard', 'Welcome'];
+    const endpoints = ['/Login', '/Register', 'Reset-password', 'Forgot-password', 'dashboard', 'Welcome', 'GameLobby', 'Join', '/game/'];
     return endpoints.some(endpoint => currentRoute.includes(endpoint));
   }
 
