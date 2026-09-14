@@ -1,19 +1,20 @@
-<div class="wrapper">
-  <div class="title">LingoBingo</div>
-  <div class="join-game-box">
-    <h2>Enter Game Code</h2>
-    <input
-      type="text"
-      [(ngModel)]="gameCode"
-      placeholder="Enter the game code"
-      class="game-code-input"
-    />
-    <button
-      (click)="proceed()"
-      class="join-button"
-      [disabled]="!gameCode.trim()"
-    >
-      Join Game
+<div class="lb-join-screen">
+  <div class="card w-full max-w-sm p-8 text-center">
+    <div class="text-4xl mb-2">🎮</div>
+    <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-1">Join the game</div>
+    <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">Enter the code your teacher is showing.</div>
+
+    <input [(ngModel)]="code" (input)="code = code.toUpperCase()" placeholder="GAME CODE" maxlength="12"
+      class="w-full text-center tracking-widest font-bold text-lg py-3 px-4 rounded-xl border-2 border-gray-200 dark:border-[#2a2f47] bg-gray-50 dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 outline-none focus:border-blue-ribbon-400 mb-3">
+    <input [(ngModel)]="name" (keyup.enter)="join()" placeholder="Your name" maxlength="20"
+      class="w-full text-center text-lg py-3 px-4 rounded-xl border-2 border-gray-200 dark:border-[#2a2f47] bg-gray-50 dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 outline-none focus:border-blue-ribbon-400 mb-2">
+
+    <div *ngIf="error" class="text-sm text-red-500 mb-2">{{ error }}</div>
+
+    <button type="button" (click)="join()" [disabled]="joining"
+      class="w-full text-white font-bold py-3.5 rounded-full text-lg transition-transform hover:scale-105 disabled:opacity-50"
+      style="background: linear-gradient(135deg,#363af5,#6f5bff);">
+      {{ joining ? 'Joining…' : 'Join game' }}
     </button>
   </div>
 </div>

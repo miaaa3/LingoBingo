@@ -1,78 +1,93 @@
-<section class="flex flex-row h-screen">
-  <div class="flex flex-col h-screen justify-between w-1/4 max-w-sm p-6 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+<div class="max-w-4xl mx-auto">
 
-    <!-- On a computer section -->
-    <div class="mb-8 text-center w-full">
-      <h5 class="mb-4 text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-        Game Code
-      </h5>
-      <p class="mb-3 text-lg font-serif font-semibold uppercase text-gray-700 dark:text-gray-300">
-        On a computer
-      </p>
-      <div
-        class="inline-block bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-6 py-3 shadow-sm select-all font-mono text-xl text-gray-900 dark:text-white"
-        style="min-width: 12rem;"
-      >
-        <!-- Display dynamic gameCode here -->
-        {{ gameCode || 'Loading...' }}
+  <!-- WAITING: lobby -->
+  <div *ngIf="phase === 'WAITING'">
+    <div class="text-center mb-6">
+      <div class="display text-3xl font-extrabold text-cloud-burst-900 dark:text-gray-100">Live game lobby</div>
+      <div class="text-gray-500 dark:text-gray-400">Players join with the code or QR — then press Start.</div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="card p-6 flex flex-col items-center justify-center text-center">
+        <div class="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Join code</div>
+        <div class="display text-4xl font-extrabold text-blue-ribbon-600 tracking-widest mb-4">{{ gameCode }}</div>
+        <img *ngIf="qrUrl" [src]="qrUrl" alt="Join QR code" class="w-44 h-44 rounded-xl border border-gray-200 dark:border-[#2a2f47]">
+        <div class="text-xs text-gray-400 dark:text-gray-500 mt-3 break-all">{{ joinUrl }}</div>
       </div>
-    </div>
 
-    <!-- On a mobile device section -->
-    <div class="text-center w-full !-mt-16">
-      <p class="mb-3 text-lg font-serif font-semibold uppercase text-gray-700 dark:text-gray-300">
-        On a mobile device
-      </p>
-      <!-- Display dynamic QR code image here -->
-      <img
-        *ngIf="qrCodeUrl; else loadingQRCode"
-        [src]="qrCodeUrl"
-        alt="QR Code"
-        class="object-contain w-40 h-40 mx-auto rounded-md shadow-md"
-      />
-      <ng-template #loadingQRCode>
-        <p>Loading QR code...</p>
-      </ng-template>
-      <p class="mt-3 font-normal text-gray-700 dark:text-gray-400">Scan to join</p>
-    </div>
-
-    <div class="flex items-end justify-center w-full mt-auto">
-      <button
-        class="start-game-btn text-center w-32 py-2 rounded-md text-white disabled:opacity-50 disabled:cursor-not-allowed"
-        [disabled]="joinedPlayers.length < 2"
-        [class.bg-gray-400]="joinedPlayers.length < 2"
-        [class.bg-green-500]="joinedPlayers.length >= 2"
-        (click)="startGame()"
-      >
-        Start Game
-      </button>
-    </div>
-  </div>
-
-  <div class="flex w-3/4">
-    <!-- Players grid -->
-    <div
-      *ngIf="joinedPlayers.length > 0; else waitingTemplate"
-      class="w-full max-w-4xl bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 p-5 ml-4"
-    >
-      <div class="grid grid-cols-4 gap-6">
-        <div
-          *ngFor="let player of joinedPlayers"
-          class="flex flex-row items-center justify-between p-3 text-center border shadow-md rounded-md"
-        >
-          <app-avatar [name]="player.username" [size]="44"></app-avatar>
-          <h5 class="text-lg font-medium text-gray-900 dark:text-white">
-            {{ player.username }}
-          </h5>
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="display text-lg font-bold text-cloud-burst-900 dark:text-gray-100">Players</div>
+          <span class="bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300 font-bold text-sm px-3 py-1 rounded-full">{{ players.length }}</span>
+        </div>
+        <div *ngIf="players.length === 0" class="text-sm text-gray-400 dark:text-gray-500 py-6 text-center">Waiting for players to join…</div>
+        <div class="flex flex-wrap gap-2">
+          <div *ngFor="let p of players" class="flex items-center gap-2 bg-gray-50 dark:bg-[#141829] rounded-full pl-1 pr-3 py-1">
+            <app-avatar [name]="p.username" [size]="28"></app-avatar>
+            <span class="text-sm font-medium text-cloud-burst-900 dark:text-gray-200">{{ p.username }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Waiting message -->
-    <ng-template #waitingTemplate>
-      <p class="text-gray-600 dark:text-gray-400 italic m-4">
-        Waiting for players...
-      </p>
-    </ng-template>
+    <div class="text-center mt-6">
+      <button type="button" (click)="start()" [disabled]="starting || players.length === 0"
+        class="text-white font-bold px-10 py-3.5 rounded-full text-lg transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+        style="background: linear-gradient(135deg,#363af5,#6f5bff);">
+        {{ starting ? 'Starting…' : 'Start game' }}
+      </button>
+    </div>
   </div>
-</section>
+
+  <!-- ACTIVE: host live view -->
+  <div *ngIf="phase === 'ACTIVE'">
+    <div class="flex items-center justify-between mb-4">
+      <div class="text-sm font-semibold text-gray-500 dark:text-gray-400">Question {{ questionNumber }} / {{ state?.totalQuestions }}</div>
+      <button type="button" (click)="next()" class="bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold px-5 py-2 rounded-full text-sm">Next →</button>
+    </div>
+
+    <div class="card p-8 text-center mb-5">
+      <div class="display text-3xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-6">{{ state?.question?.text }}</div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div *ngFor="let opt of state?.question?.options; let i = index"
+          class="rounded-xl px-4 py-4 text-left font-semibold border-2 border-gray-200 dark:border-[#2a2f47] text-cloud-burst-900 dark:text-gray-100"
+          [ngClass]="'opt-' + i">
+          <span class="display text-gray-400 mr-2">{{ ['A','B','C','D'][i] }}</span>{{ opt }}
+        </div>
+      </div>
+      <div class="mt-5 h-6">
+        <span *ngIf="state?.currentAnswered" class="text-green-600 dark:text-green-400 font-bold">Someone got it! Moving on…</span>
+        <span *ngIf="!state?.currentAnswered" class="text-gray-400 dark:text-gray-500 text-sm">First correct answer wins the point.</span>
+      </div>
+    </div>
+
+    <div class="card p-5">
+      <div class="display text-sm font-bold text-gray-500 dark:text-gray-400 mb-3">Live scores</div>
+      <div class="flex flex-col gap-2">
+        <div *ngFor="let p of players; let r = index" class="flex items-center gap-3">
+          <span class="display w-6 font-bold" [ngClass]="r === 0 ? 'text-mustard-600' : 'text-gray-400'">{{ r + 1 }}</span>
+          <app-avatar [name]="p.username" [size]="30"></app-avatar>
+          <span class="flex-1 font-semibold text-sm text-cloud-burst-900 dark:text-gray-200">{{ p.username }}</span>
+          <span class="font-bold text-blue-ribbon-600">{{ p.score }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENDED: final board -->
+  <div *ngIf="phase === 'ENDED'" class="card p-8 text-center">
+    <div class="text-5xl mb-2">🏆</div>
+    <div class="display text-2xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-1">Game over!</div>
+    <div class="text-gray-500 dark:text-gray-400 mb-6" *ngIf="players.length">Winner: <span class="font-bold text-blue-ribbon-600">{{ players[0].username }}</span></div>
+    <div class="max-w-md mx-auto flex flex-col gap-2">
+      <div *ngFor="let p of players; let r = index"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl"
+        [ngClass]="r === 0 ? 'bg-mustard-100 dark:bg-[#3a3115]' : 'bg-gray-50 dark:bg-[#141829]'">
+        <span class="display w-6 font-extrabold" [ngClass]="r === 0 ? 'text-mustard-700 dark:text-mustard-300' : 'text-gray-400'">{{ r + 1 }}</span>
+        <app-avatar [name]="p.username" [size]="34"></app-avatar>
+        <span class="flex-1 font-semibold text-left text-cloud-burst-900 dark:text-gray-200">{{ p.username }}</span>
+        <span class="font-bold text-blue-ribbon-600">{{ p.score }}</span>
+      </div>
+    </div>
+  </div>
+</div>

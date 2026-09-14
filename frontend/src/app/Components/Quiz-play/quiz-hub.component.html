@@ -31,6 +31,11 @@
            class="py-2 px-4 border-2 border-blue-ribbon-600 text-blue-ribbon-700 text-sm font-bold rounded-full hover:bg-blue-ribbon-50 transition-colors">
           Gradebook
         </a>
+        <button *ngIf="isTeacher" type="button" (click)="hostGame(q)" [disabled]="hosting"
+           class="py-2 px-4 text-white text-sm font-bold rounded-full transition-transform hover:scale-105 disabled:opacity-50"
+           style="background: linear-gradient(135deg,#bb20d9,#655ef6);">
+          🎮 Host live game
+        </button>
       </div>
     </div>
   </div>

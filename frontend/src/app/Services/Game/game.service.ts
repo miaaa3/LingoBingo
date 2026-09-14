@@ -149,4 +149,25 @@ export class GameService {
 
     return this.http.post(`${this.apiUrl}/updateScore/${gameId}`, null, { params });
   }
+
+  // ---- Synchronized (Kahoot-style) live game ----
+
+  /** Poll the shared game state (~1s). */
+  getState(gameCode: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${gameCode}/state`);
+  }
+
+  /** Submit an answer for the current question. First correct wins & advances everyone. */
+  submitAnswer(gameId: number, playerId: number, questionIndex: number, answer: string): Observable<any> {
+    const params = new HttpParams()
+      .set('playerId', playerId.toString())
+      .set('questionIndex', questionIndex.toString())
+      .set('answer', answer);
+    return this.http.post<any>(`${this.apiUrl}/${gameId}/answer`, null, { params });
+  }
+
+  /** Host forces the next question. */
+  nextQuestion(gameId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${gameId}/next`, null);
+  }
 }
