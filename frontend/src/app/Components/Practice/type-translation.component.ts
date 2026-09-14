@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FlashcardSetService } from 'src/app/Services/Flashcards/flashcardSet.service';
 import { AnswerCheckService, MatchResult } from 'src/app/Services/Practice/answer-check.service';
 import { TranslationService } from 'src/app/Services/Translation/translation.service';
+import { PracticeService } from 'src/app/Services/Practice/practice.service';
 
 type Phase = 'choose' | 'play' | 'done';
 type Direction = 'forward' | 'reverse';   // forward: prompt=term, answer=definition
@@ -44,11 +45,13 @@ export class TypeTranslationComponent implements OnInit {
   wrongCount = 0;
   currentStreak = 0;
   bestStreak = 0;
+  saved = false;   // XP persisted to profile
 
   constructor(
     private setsApi: FlashcardSetService,
     private checker: AnswerCheckService,
     public lang: TranslationService,
+    private practiceApi: PracticeService,
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +89,7 @@ export class TypeTranslationComponent implements OnInit {
   private resetStats(): void {
     this.xp = 0; this.correctCount = 0; this.almostCount = 0; this.wrongCount = 0;
     this.currentStreak = 0; this.bestStreak = 0;
+    this.saved = false;
   }
 
   setDirection(d: Direction): void { this.direction = d; }
@@ -137,9 +141,17 @@ export class TypeTranslationComponent implements OnInit {
   }
 
   next(): void {
-    if (this.index + 1 >= this.total) { this.phase = 'done'; return; }
+    if (this.index + 1 >= this.total) { this.finish(); return; }
     this.index++;
     this.newQuestion();
+  }
+
+  private finish(): void {
+    this.phase = 'done';
+    if (this.xp > 0) {
+      this.practiceApi.complete({ xp: this.xp, correct: this.correctCount + this.almostCount, total: this.total })
+        .subscribe(res => { this.saved = !!res; });
+    }
   }
 
   // ---- end / restart ----

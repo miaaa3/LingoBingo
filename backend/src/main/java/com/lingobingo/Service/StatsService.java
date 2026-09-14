@@ -7,10 +7,12 @@ import com.lingobingo.Dto.PlanningEventDto;
 import com.lingobingo.Entity.Classroom;
 import com.lingobingo.Entity.Enrollment;
 import com.lingobingo.Entity.QuizResult;
+import com.lingobingo.Entity.PracticeSession;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.EnrollmentRepository;
 import com.lingobingo.Repository.PlanningEventRepository;
 import com.lingobingo.Repository.QuizResultRepository;
+import com.lingobingo.Repository.PracticeSessionRepository;
 import com.lingobingo.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +36,7 @@ public class StatsService {
     private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
     private final PlanningEventRepository planningEventRepository;
+    private final PracticeSessionRepository practiceSessionRepository;
 
     @Transactional(readOnly = true)
     public DashboardDto forStudent(String email) {
@@ -40,11 +44,14 @@ public class StatsService {
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
         List<QuizResult> myResults = quizResultRepository.findByStudentEmail(email);
-        int points = myResults.stream().mapToInt(QuizResult::getScore).sum();
+        List<PracticeSession> myPractice = practiceSessionRepository.findByStudentEmail(email);
+        int quizPoints = myResults.stream().mapToInt(QuizResult::getScore).sum();
+        int practiceXp = myPractice.stream().mapToInt(PracticeSession::getXp).sum();
+        int points = quizPoints + practiceXp;
         int quizzesDone = myResults.size();
         int level = points / XP_PER_LEVEL + 1;
         int xpIntoLevel = points % XP_PER_LEVEL;
-        int streak = computeStreak(myResults);
+        int streak = computeStreak(activeDays(myResults, myPractice));
 
         String className = null;
         int rank = 0;
@@ -58,7 +65,9 @@ public class StatsService {
             for (Enrollment en : enrollmentRepository.findByClassroomId(cls.getId())) {
                 User s = en.getStudent();
                 int p = quizResultRepository.findByStudentEmail(s.getEmail()).stream()
-                        .mapToInt(QuizResult::getScore).sum();
+                        .mapToInt(QuizResult::getScore).sum()
+                        + practiceSessionRepository.findByStudentEmail(s.getEmail()).stream()
+                        .mapToInt(PracticeSession::getXp).sum();
                 entries.add(new LeaderboardEntryDto(0, s.getName(), p, s.getEmail().equals(email)));
             }
             entries.sort((a, b) -> Integer.compare(b.getPoints(), a.getPoints()));
@@ -94,11 +103,17 @@ public class StatsService {
                 streak, quizzesDone, rank, className, badges, leaderboard, upcoming);
     }
 
-    private int computeStreak(List<QuizResult> results) {
-        Set<LocalDate> days = results.stream()
-                .filter(r -> r.getSubmittedAt() != null)
-                .map(r -> r.getSubmittedAt().toLocalDate())
-                .collect(Collectors.toSet());
+    /** Union of the calendar days on which the student did a quiz or practiced. */
+    private Set<LocalDate> activeDays(List<QuizResult> results, List<PracticeSession> practice) {
+        Set<LocalDate> days = new HashSet<>();
+        results.stream().filter(r -> r.getSubmittedAt() != null)
+                .forEach(r -> days.add(r.getSubmittedAt().toLocalDate()));
+        practice.stream().filter(pr -> pr.getSubmittedAt() != null)
+                .forEach(pr -> days.add(pr.getSubmittedAt().toLocalDate()));
+        return days;
+    }
+
+    private int computeStreak(Set<LocalDate> days) {
         if (days.isEmpty()) return 0;
         LocalDate today = LocalDate.now();
         LocalDate cursor;

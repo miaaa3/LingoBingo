@@ -120,6 +120,8 @@
       {{ correctCount }} correct · {{ almostCount }} almost · {{ wrongCount }} missed
     </div>
 
+    <div *ngIf="saved" class="text-sm font-semibold text-green-600 dark:text-green-400 mb-6 -mt-3">✓ XP added to your profile</div>
+
     <div class="flex gap-3 justify-center">
       <button type="button" (click)="restart()" class="bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold px-6 py-3 rounded-full transition-colors">Practice again</button>
       <button type="button" (click)="chooseAnother()" class="border-2 border-blue-ribbon-200 dark:border-[#2a2f47] text-blue-ribbon-600 dark:text-blue-ribbon-300 font-bold px-6 py-3 rounded-full hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] transition-colors">Another set</button>
