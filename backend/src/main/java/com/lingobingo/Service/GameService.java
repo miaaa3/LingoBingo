@@ -1,6 +1,10 @@
 package com.lingobingo.Service;
 
 import com.lingobingo.Dto.QuestionDTO;
+import com.lingobingo.Dto.GameStateDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.concurrent.ConcurrentHashMap;
 import com.lingobingo.Entity.*;
 import com.lingobingo.Repository.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,8 @@ public class GameService {
     private final UserRepository userRepository;
     private final QRCodeService qrCodeService;
     private final PlayerRepository playerRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Map<Long, Object> gameLocks = new ConcurrentHashMap<>();
 
     public String generateQRCodeBase64(String content) throws Exception {
         byte[] qrBytes = qrCodeService.generateQRCodeByteArray(content);
@@ -94,17 +100,179 @@ public class GameService {
         return "GAME-" + (random.nextInt(900000) + 100000); // 6-digit code, padded
     }
 
+    /** Start a synchronized game: freeze one shared question set and go ACTIVE. */
     public boolean startGame(Long gameId) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new IllegalArgumentException("Game not found"));
 
-        if (game.getPlayers().isEmpty()) {
-            return false; // Minimum 1 player required
+        if (game.getPlayers() == null || game.getPlayers().isEmpty()) {
+            return false; // need at least one player
         }
-
+        List<QuestionDTO> questions = generateSharedQuestions(game);
+        if (questions.isEmpty()) {
+            return false;
+        }
+        try {
+            game.setQuestionsJson(objectMapper.writeValueAsString(questions));
+        } catch (Exception e) {
+            return false;
+        }
+        game.setPhase("ACTIVE");
         game.setIsActive(true);
+        game.setCurrentQuestionIndex(0);
+        game.setCurrentAnsweredBy(null);
+        game.setLastAnsweredIndex(-1);
+        game.setLastWinnerName(null);
+        if (game.getPlayerScores() == null) game.setPlayerScores(new HashMap<>());
+        for (Player p : game.getPlayers()) game.getPlayerScores().putIfAbsent(p.getId(), 0);
         gameRepository.save(game);
         return true;
+    }
+
+    // ---------- Synchronized (Kahoot-style) live game ----------
+
+    /** A fixed, distinct, shuffled question set generated once when the game starts. */
+    private List<QuestionDTO> generateSharedQuestions(Game game) {
+        List<QuestionDTO> out = new ArrayList<>();
+        Random random = new Random();
+
+        if (game.getQuiz() != null) {
+            List<Question> qs = new ArrayList<>(questionRepository.findByQuiz(game.getQuiz()));
+            Collections.shuffle(qs);
+            int n = game.getNumberOfQuestions() > 0 ? Math.min(game.getNumberOfQuestions(), qs.size()) : qs.size();
+            for (int i = 0; i < n; i++) {
+                Question qq = qs.get(i);
+                String correct = (qq.getAnswers() != null && qq.getCorrectAnswer() != null)
+                        ? qq.getAnswers().getOrDefault(qq.getCorrectAnswer(), qq.getCorrectAnswer())
+                        : qq.getCorrectAnswer();
+                List<String> options = new ArrayList<>();
+                if (qq.getAnswers() != null && !qq.getAnswers().isEmpty()) options.addAll(qq.getAnswers().values());
+                else if (correct != null) options.add(correct);
+                Collections.shuffle(options);
+                out.add(new QuestionDTO(qq.getQuestionId(), qq.getQuestionText(), options, correct));
+            }
+        } else if (game.getFlashcardSet() != null) {
+            List<Flashcard> cards = new ArrayList<>(flashcardRepository.findByFlashcardSet(game.getFlashcardSet()));
+            Collections.shuffle(cards);
+            int n = game.getNumberOfQuestions() > 0 ? Math.min(game.getNumberOfQuestions(), cards.size()) : cards.size();
+            for (int i = 0; i < n; i++) {
+                Flashcard fc = cards.get(i);
+                boolean askTerm = game.getQuestionType() == QuestionType.RANDOM ? random.nextBoolean()
+                        : game.getQuestionType() != QuestionType.DEFINITION;
+                String qtext = askTerm ? fc.getTerm() : fc.getDefinition();
+                String correct = askTerm ? fc.getDefinition() : fc.getTerm();
+                List<String> distractors = cards.stream()
+                        .filter(f -> !f.getId().equals(fc.getId()))
+                        .map(f -> askTerm ? f.getDefinition() : f.getTerm())
+                        .distinct().collect(Collectors.toList());
+                Collections.shuffle(distractors);
+                List<String> options = new ArrayList<>(distractors.stream().limit(3).collect(Collectors.toList()));
+                options.add(correct);
+                Collections.shuffle(options);
+                out.add(new QuestionDTO(fc.getId(), qtext, options, correct));
+            }
+        }
+        return out;
+    }
+
+    private List<QuestionDTO> readQuestions(Game game) {
+        if (game.getQuestionsJson() == null || game.getQuestionsJson().isBlank()) return new ArrayList<>();
+        try {
+            return objectMapper.readValue(game.getQuestionsJson(), new TypeReference<List<QuestionDTO>>() {});
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    /** Live state polled by every client. Never includes correct answers. */
+    public GameStateDto getState(String gameCode) {
+        Game game = getGameByCode(gameCode);
+        List<QuestionDTO> qs = readQuestions(game);
+        int total = qs.size();
+
+        GameStateDto.StateQuestion sq = null;
+        if ("ACTIVE".equals(game.getPhase()) && game.getCurrentQuestionIndex() < total) {
+            QuestionDTO q = qs.get(game.getCurrentQuestionIndex());
+            sq = new GameStateDto.StateQuestion(game.getCurrentQuestionIndex(), q.getQuestionText(), q.getOptions());
+        }
+
+        List<GameStateDto.PlayerScore> players = new ArrayList<>();
+        Map<Long, Integer> scores = game.getPlayerScores() != null ? game.getPlayerScores() : new HashMap<>();
+        if (game.getPlayers() != null) {
+            for (Player p : game.getPlayers())
+                players.add(new GameStateDto.PlayerScore(p.getId(), p.getUsername(), scores.getOrDefault(p.getId(), 0)));
+        }
+        players.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+
+        return new GameStateDto(gameCode, game.getPhase(), game.getCurrentQuestionIndex(), total, sq, players,
+                game.getCurrentAnsweredBy() != null, game.getLastWinnerName(), game.getLastAnsweredIndex());
+    }
+
+    /** A player answers the current question. First correct answer scores and advances everyone. */
+    public Map<String, Object> submitAnswer(Long gameId, Long playerId, int questionIndex, String answer) {
+        Map<String, Object> res = new HashMap<>();
+        synchronized (lockFor(gameId)) {
+            Game game = gameRepository.findById(gameId)
+                    .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            if (!"ACTIVE".equals(game.getPhase()) || questionIndex != game.getCurrentQuestionIndex()) {
+                res.put("correct", false); res.put("status", "tooLate"); return res;
+            }
+            List<QuestionDTO> qs = readQuestions(game);
+            if (questionIndex < 0 || questionIndex >= qs.size()) {
+                res.put("correct", false); res.put("status", "invalid"); return res;
+            }
+            String correct = qs.get(questionIndex).getCorrectAnswer();
+            boolean isCorrect = answer != null && correct != null && answer.trim().equalsIgnoreCase(correct.trim());
+            if (!isCorrect) { res.put("correct", false); res.put("status", "wrong"); return res; }
+            if (game.getCurrentAnsweredBy() != null) { res.put("correct", false); res.put("status", "tooLate"); return res; }
+
+            // First correct answer wins the question.
+            game.setCurrentAnsweredBy(playerId);
+            if (game.getPlayerScores() == null) game.setPlayerScores(new HashMap<>());
+            game.getPlayerScores().put(playerId, game.getPlayerScores().getOrDefault(playerId, 0) + 100);
+            Player winner = playerRepository.findById(playerId).orElse(null);
+            if (winner != null) {
+                winner.setScore((winner.getScore() == null ? 0L : winner.getScore()) + 100);
+                playerRepository.save(winner);
+                game.setLastWinnerName(winner.getUsername());
+            }
+            game.setLastAnsweredIndex(questionIndex);
+            advance(game, qs.size());
+            gameRepository.save(game);
+            res.put("correct", true); res.put("status", "correct"); return res;
+        }
+    }
+
+    /** Host forces the game to the next question (e.g. nobody got it). */
+    public void nextQuestion(Long gameId) {
+        synchronized (lockFor(gameId)) {
+            Game game = gameRepository.findById(gameId)
+                    .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            if (!"ACTIVE".equals(game.getPhase())) return;
+            List<QuestionDTO> qs = readQuestions(game);
+            if (game.getCurrentAnsweredBy() == null) {
+                game.setLastWinnerName(null);
+                game.setLastAnsweredIndex(game.getCurrentQuestionIndex());
+            }
+            advance(game, qs.size());
+            gameRepository.save(game);
+        }
+    }
+
+    private void advance(Game game, int total) {
+        int next = game.getCurrentQuestionIndex() + 1;
+        game.setCurrentAnsweredBy(null);
+        if (next >= total) {
+            game.setPhase("ENDED");
+            game.setIsActive(false);
+            game.setCurrentQuestionIndex(total);
+        } else {
+            game.setCurrentQuestionIndex(next);
+        }
+    }
+
+    private Object lockFor(Long gameId) {
+        return gameLocks.computeIfAbsent(gameId, k -> new Object());
     }
 
     /**

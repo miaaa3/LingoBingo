@@ -1,10 +1,12 @@
 package com.lingobingo.Dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class QuestionDTO {
     private Long questionId;
     private String questionText;

@@ -1,6 +1,9 @@
 package com.lingobingo.Controller;
 
 import com.lingobingo.Dto.QuestionDTO;
+import com.lingobingo.Dto.GameStateDto;
+import org.springframework.beans.factory.annotation.Value;
+import java.util.Map;
 import com.lingobingo.Entity.Game;
 import com.lingobingo.Entity.Player;
 import com.lingobingo.Entity.User;
@@ -30,6 +33,9 @@ public class GameController {
     private final GameService gameService;
     private final UserRepository userRepository;
 
+    @Value("${app.public-url:http://localhost:8088}")
+    private String appPublicUrl;
+
     @PostMapping("/create")
     public ResponseEntity<Game> createGame(
             @RequestParam String questionType,
@@ -51,11 +57,8 @@ public class GameController {
     public ResponseEntity<byte[]> getGameQRCode(@PathVariable String gameCode) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
-        // Frontend URL
-        String frontendBaseUrl = "http://10.192.138.232:4200";
-
-        // Full URL encoded in the QR code — directs to JoinGameComponent route
-        String qrContent = frontendBaseUrl + "/choose-profile/" + gameCode ;
+        // Encode the public join URL so a phone can scan and land on the join screen.
+        String qrContent = appPublicUrl + "/Join?code=" + gameCode;
 
         BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 250, 250);
 
@@ -71,7 +74,7 @@ public class GameController {
     public ResponseEntity<?> joinGame(
             @RequestParam String gameCode,
             @RequestParam String username,
-            @RequestParam String avatarUrl) {
+            @RequestParam(required = false, defaultValue = "") String avatarUrl) {
 
         Player player = gameService.joinGame(gameCode, username, avatarUrl);
         if (player != null) {
@@ -155,6 +158,27 @@ public class GameController {
         List<QuestionDTO> questions = gameService.generateQuestions(game);
 
         return ResponseEntity.ok(questions);
+    }
+
+    // ---- Synchronized live game ----
+
+    @GetMapping("/{gameCode}/state")
+    public ResponseEntity<GameStateDto> state(@PathVariable String gameCode) {
+        return ResponseEntity.ok(gameService.getState(gameCode));
+    }
+
+    @PostMapping("/{gameId}/answer")
+    public ResponseEntity<?> answer(@PathVariable Long gameId,
+                                    @RequestParam Long playerId,
+                                    @RequestParam int questionIndex,
+                                    @RequestParam String answer) {
+        return ResponseEntity.ok(gameService.submitAnswer(gameId, playerId, questionIndex, answer));
+    }
+
+    @PostMapping("/{gameId}/next")
+    public ResponseEntity<?> next(@PathVariable Long gameId) {
+        gameService.nextQuestion(gameId);
+        return ResponseEntity.ok(Map.of("ok", true));
     }
 
     @PostMapping("/updateScore/{gameId}")

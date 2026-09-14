@@ -79,6 +79,26 @@ public class Game {
     @Column(nullable = false)
     private int numberOfQuestions;
 
+    // ---- Synchronized (Kahoot-style) live game state ----
+    // WAITING (lobby) -> ACTIVE (playing) -> ENDED
+    private String phase = "WAITING";
+
+    // The question everyone is on right now (index into the shared set).
+    private int currentQuestionIndex = 0;
+
+    // Player who answered the current question correctly first (null until someone does).
+    private Long currentAnsweredBy;
+
+    // For the "X got it!" flash shown to everyone when the game advances.
+    private String lastWinnerName;
+    private int lastAnsweredIndex = -1;
+
+    // The fixed, shared question set for this game (JSON of QuestionDTO list),
+    // generated once at start so every player sees the same questions in order.
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String questionsJson;
+
     // Add a helper method to check if the game is flashcard or quiz based
     public boolean isFlashcardGame() {
         return flashcardSet != null;
