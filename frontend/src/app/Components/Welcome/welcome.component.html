@@ -1,0 +1,81 @@
+<div class="lb-landing">
+  <!-- animated background -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="glyph g1">あ</span>
+  <span class="glyph g2">é</span>
+  <span class="glyph g3">语</span>
+  <span class="glyph g4">ب</span>
+  <span class="glyph g5">Ñ</span>
+  <span class="glyph g6">力</span>
+
+  <!-- nav -->
+  <nav class="lb-nav">
+    <div class="lb-brand display">
+      <span class="lb-logo">🎓</span> LingoBingo
+    </div>
+    <div class="lb-nav-actions">
+      <a routerLink="/Login" class="lb-btn-ghost">Log in</a>
+      <a routerLink="/Register" class="lb-btn-solid">Sign up</a>
+    </div>
+  </nav>
+
+  <!-- hero -->
+  <header class="lb-hero">
+    <div class="lb-badge reveal" style="--d:0ms">✨ Learn · Play · Level up</div>
+    <h1 class="display reveal" style="--d:80ms">
+      Learn languages the <span class="lb-grad">fun</span> way.
+    </h1>
+    <p class="lb-sub reveal" style="--d:160ms">
+      Flashcards that translate themselves, typing practice that forgives your typos,
+      and live multiplayer quizzes your whole class can join with a code.
+    </p>
+
+    <div class="lb-cta reveal" style="--d:240ms">
+      <a routerLink="/Register" class="lb-btn-hero">Start learning — it's free</a>
+      <a routerLink="/Login" class="lb-btn-outline">I have an account</a>
+    </div>
+
+    <!-- join a live game -->
+    <div class="lb-join reveal" style="--d:320ms">
+      <span class="lb-join-label">🎮 Got a game code?</span>
+      <input [(ngModel)]="joinCode" (keyup.enter)="join()" maxlength="8" placeholder="ENTER CODE" class="lb-join-input" />
+      <button type="button" (click)="join()" class="lb-join-btn">Join &rarr;</button>
+    </div>
+  </header>
+
+  <!-- features -->
+  <section class="lb-features">
+    <div class="lb-card reveal" style="--d:120ms">
+      <div class="lb-ic" style="background:#dfe4ff;color:#363af5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 8h6M7 12h4"/></svg>
+      </div>
+      <h3 class="display">Smart flashcards</h3>
+      <p>Type a word and the translation appears — build EN↔FR decks in seconds.</p>
+    </div>
+    <div class="lb-card reveal" style="--d:200ms">
+      <div class="lb-ic" style="background:#ffe9c2;color:#b76e00">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h16v2M9 19h6M12 5v14"/></svg>
+      </div>
+      <h3 class="display">Type & practice</h3>
+      <p>Duolingo-style practice with hints, typo-tolerance, XP and daily streaks.</p>
+    </div>
+    <div class="lb-card reveal" style="--d:280ms">
+      <div class="lb-ic" style="background:#f6d9ff;color:#bb20d9">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4M8 10v4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+      </div>
+      <h3 class="display">Live game</h3>
+      <p>Host a quiz on the big screen; everyone joins by QR or code and races to answer.</p>
+    </div>
+    <div class="lb-card reveal" style="--d:360ms">
+      <div class="lb-ic" style="background:#d7f6e3;color:#128a4b">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
+      </div>
+      <h3 class="display">Climb the board</h3>
+      <p>Earn XP, unlock badges and top your class leaderboard.</p>
+    </div>
+  </section>
+
+  <footer class="lb-footer">Made for learners · LingoBingo</footer>
+</div>

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './Components/Home/home-page/home-page.component';
+import { WelcomeComponent } from './Components/Welcome/welcome.component';
 import { AllQuizzesComponent } from './Components/Quizzes/All-quizzes/all-quizzes.component';
 import { CreateQuizComponent } from './Components/Quizzes/create-quiz/create-quiz.component';
 import { GenerateQuizComponent } from './Components/Quizzes/generate-quiz/generate-quiz.component';
@@ -66,7 +67,8 @@ const routes: Routes = [
   {path:'Register', component:RegisterComponent},
   {path:'Login', component:LoginComponent},
 
-  {path:'', redirectTo:'Home', pathMatch:'full'},
+  {path:'Welcome', component: WelcomeComponent},
+  {path:'', redirectTo:'Welcome', pathMatch:'full'},
   {path:'**',redirectTo:'Home'},
   
 

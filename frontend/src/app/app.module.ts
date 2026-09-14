@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomePageComponent } from './Components/Home/home-page/home-page.component';
+import { WelcomeComponent } from './Components/Welcome/welcome.component';
 import { NavbarComponent } from './Components/Home/navbar/navbar.component';
 import { SidebarComponent } from './Components/Home/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -58,6 +59,7 @@ import { TypeTranslationComponent } from './Components/Practice/type-translation
     CreateQuizComponent,
     GenerateQuizComponent,
     TypeTranslationComponent,
+    WelcomeComponent,
     FooterComponent,
     LoginComponent,
     RegisterComponent,
