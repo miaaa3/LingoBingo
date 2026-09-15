@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './Components/Home/home-page/home-page.component';
 import { WelcomeComponent } from './Components/Welcome/welcome.component';
+import { ProfileComponent } from './Components/Profile/profile.component';
 import { AllQuizzesComponent } from './Components/Quizzes/All-quizzes/all-quizzes.component';
 import { CreateQuizComponent } from './Components/Quizzes/create-quiz/create-quiz.component';
 import { GenerateQuizComponent } from './Components/Quizzes/generate-quiz/generate-quiz.component';
@@ -52,6 +53,7 @@ const routes: Routes = [
   {path:'Quizzes/:id/gradebook', component: GradebookComponent, canActivate: [AuthGuard]},
   {path:'Planning', component: PlanningComponent, canActivate: [AuthGuard]},
   {path:'Dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+  {path:'Profile', component: ProfileComponent, canActivate: [AuthGuard]},
   {path:'Practice', component: TypeTranslationComponent, canActivate: [AuthGuard]},
 
 

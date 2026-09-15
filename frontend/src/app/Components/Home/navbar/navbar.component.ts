@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
 import { LocalService } from 'src/app/Services/Auth/local.service';
 import { ThemeService } from 'src/app/Services/Theme/theme.service';
 import { CurrentUserService } from 'src/app/Services/Auth/current-user.service';
@@ -33,7 +34,7 @@ export class NavbarComponent {
   zIndexForNotification = 100;
   isUser: BehaviorSubject<boolean>;
 
-  constructor(private local: LocalService, public theme: ThemeService, private currentUser: CurrentUserService) {
+  constructor(private local: LocalService, public theme: ThemeService, private currentUser: CurrentUserService, private router: Router) {
     this.isUser = new BehaviorSubject<boolean>(this.local.getData("userApiKey2") !== "");
   }
 
@@ -42,14 +43,19 @@ export class NavbarComponent {
   }
 
   get displayName(): string { return this.currentUser.name; }
+  get email(): string { return this.currentUser.email; }
 
   
 
   logout(): void {
-    this.local.removeData("userApiKey2");   
-    this.local.removeData("userid");     
-  
-    this.isUser.next(false); 
+    this.local.removeData("userApiKey2");
+    this.local.removeData("userid");
+    this.local.removeData("role");
+    this.local.removeData("username");
+    this.local.removeData("email");
+    this.isUser.next(false);
+    this.closeDropdownProfile();
+    this.router.navigate(['/Welcome']);
   }
   toggleDropdown(): void {
     this.open = !this.open;
