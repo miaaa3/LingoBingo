@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FlashcardSetService } from 'src/app/Services/Flashcards/flashcardSet.service';
 import { QuizService } from 'src/app/Services/Quiz/quiz.service';
+import { ToastrService } from 'ngx-toastr';
 import { Subject, forkJoin, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
@@ -25,8 +26,29 @@ export class SearchFlashcardComponent implements OnInit, OnDestroy {
 
   constructor(
     private flashcardSetService: FlashcardSetService,
-    private quizService: QuizService
+    private quizService: QuizService,
+    private toastr: ToastrService
   ) {}
+
+  toggleFavorite(set: any, event: Event): void {
+    event.stopPropagation();
+    this.flashcardSetService.toggleFavorite(set.id).subscribe({
+      next: (updated: any) => { set.isFavorite = updated?.isFavorite ?? !set.isFavorite; },
+      error: () => this.toastr.error('Could not update favorite'),
+    });
+  }
+
+  deleteSet(set: any, event: Event): void {
+    event.stopPropagation();
+    if (!confirm(`Delete "${set.name || set.title}"? This cannot be undone.`)) { return; }
+    this.flashcardSetService.deleteFlashcardSet(set.id).subscribe({
+      next: () => {
+        this.ownFlashcardSets = this.ownFlashcardSets.filter(s => s.id !== set.id);
+        this.toastr.success('Set deleted');
+      },
+      error: () => this.toastr.error('Could not delete set'),
+    });
+  }
 
   ngOnInit(): void {
     // Subscribe to the search subject and do live search

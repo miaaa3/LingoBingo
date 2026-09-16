@@ -54,11 +54,17 @@ public class GameController {
     }
 
     @GetMapping(value = "/{gameCode}/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> getGameQRCode(@PathVariable String gameCode) throws WriterException, IOException {
+    public ResponseEntity<byte[]> getGameQRCode(@PathVariable String gameCode,
+                                                @RequestParam(value = "base", required = false) String base)
+            throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
-        // Encode the public join URL so a phone can scan and land on the join screen.
-        String qrContent = appPublicUrl + "/Join?code=" + gameCode;
+        // Prefer the address the host page is actually open on (passed by the client),
+        // so a phone on the same network can reach it. Fall back to the configured URL.
+        String origin = (base != null && (base.startsWith("http://") || base.startsWith("https://")))
+                ? base.replaceAll("/+$", "")
+                : appPublicUrl;
+        String qrContent = origin + "/Join?code=" + gameCode;
 
         BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 250, 250);
 

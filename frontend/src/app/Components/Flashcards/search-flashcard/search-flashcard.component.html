@@ -20,9 +20,32 @@
       <h2 class="text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Your flashcard sets</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div *ngFor="let set of ownFlashcardSets" [routerLink]="['/Display-set-of-flashcard', set.id]"
-          class="p-5 rounded-2xl shadow-sm cursor-pointer bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] hover:shadow-md transition-shadow flex justify-between items-center gap-3">
-          <h3 class="font-bold text-cloud-burst-900 dark:text-gray-100">{{ set.name || set.title }}</h3>
-          <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="set.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 dark:bg-[#232842] text-gray-500 dark:text-gray-400'">{{ set.isPublic ? 'Public' : 'Private' }}</span>
+          class="group p-5 rounded-2xl shadow-sm cursor-pointer bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] hover:shadow-md transition-shadow flex justify-between items-center gap-3">
+          <div class="min-w-0 flex-1">
+            <h3 class="font-bold text-cloud-burst-900 dark:text-gray-100 truncate">{{ set.name || set.title }}</h3>
+            <span class="mt-1 inline-block py-0.5 px-2.5 text-xs font-semibold rounded-full whitespace-nowrap" [ngClass]="set.isPublic ? 'bg-blue-ribbon-50 text-blue-ribbon-700' : 'bg-gray-100 dark:bg-[#232842] text-gray-500 dark:text-gray-400'">{{ set.isPublic ? 'Public' : 'Private' }}</span>
+          </div>
+          <div class="flex items-center gap-1 shrink-0" (click)="$event.stopPropagation()">
+            <button type="button" (click)="toggleFavorite(set, $event)"
+              [attr.aria-label]="set.isFavorite ? 'Remove from favorites' : 'Add to favorites'" [attr.aria-pressed]="!!set.isFavorite"
+              class="p-2 rounded-lg text-gray-400 hover:text-mustard-500 hover:bg-mustard-50 dark:hover:bg-[#232842] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                [attr.fill]="set.isFavorite ? '#f9a207' : 'none'" [attr.stroke]="set.isFavorite ? '#f9a207' : 'currentColor'"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </button>
+            <button type="button" (click)="deleteSet(set, $event)" aria-label="Delete set"
+              class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-[#2a1f2a] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

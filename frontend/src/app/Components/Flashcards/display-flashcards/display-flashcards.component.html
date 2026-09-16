@@ -1,23 +1,36 @@
-<div *ngIf="flashcardSet">
-    <h1 class="text-center text-3xl font-semibold">{{ flashcardSet.name }}</h1>
-    <div class="p-5 mt-5">
-      <div *ngFor="let flashcard of flashcardSet.flashcards; let i=index">
-        <div *ngIf="i === currentFlashcardIndex" class="flashcard-container px-8">
-          <div class="flashcard-content h-72 w-full bg-white dark:bg-[#191d31] rounded-lg items-center justify-center flex border shadow-md p-20 *:cursor-pointer *:font-normal *:text-2xl *:text-center" [class.flipped]="flashcard.flipped" (click)="flipFlashcard(flashcard)">
-            <h1  *ngIf="!flashcard.flipped">{{ flashcard.term }}</h1>
-            <p class="definition " *ngIf="flashcard.flipped">{{ flashcard.definition }}</p>
+<div *ngIf="flashcardSet" class="max-w-2xl mx-auto">
+  <div *ngIf="flashcards.length === 0" class="text-center text-gray-400 dark:text-gray-500 py-12">
+    This set has no cards yet.
+  </div>
+
+  <ng-container *ngFor="let flashcard of flashcards; let i = index">
+    <div *ngIf="i === currentFlashcardIndex">
+      <!-- 3D flip card -->
+      <div class="flip-card" (click)="flipFlashcard(flashcard)">
+        <div class="flip-card-inner" [class.flipped]="flashcard.flipped">
+          <div class="flip-card-face card">
+            <span class="face-label">term</span>
+            <div class="face-text display">{{ flashcard.term }}</div>
+            <span class="tap-hint">tap to flip</span>
           </div>
-          
-          <div class="flex gap-4 p-3 items-center justify-center *:size-12 *:bg-amber-400 *:text-white *:rounded-2xl *:p-1 *:cursor-pointer">
-            <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" (click)="goToPreviousFlashcard()">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-            </svg>
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" (click)="goToNextFlashcard()">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-            </svg>
+          <div class="flip-card-face flip-card-back card">
+            <span class="face-label">translation</span>
+            <div class="face-text display">{{ flashcard.definition }}</div>
+            <span class="tap-hint">tap to flip back</span>
           </div>
         </div>
       </div>
+
+      <!-- progress + navigation -->
+      <div class="flex items-center justify-center gap-6 mt-6">
+        <button type="button" class="nav-btn" (click)="goToPreviousFlashcard()" [disabled]="currentFlashcardIndex === 0" aria-label="Previous">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 19-7-7 7-7"/></svg>
+        </button>
+        <span class="text-sm font-semibold text-gray-500 dark:text-gray-400">{{ currentFlashcardIndex + 1 }} / {{ flashcards.length }}</span>
+        <button type="button" class="nav-btn" (click)="goToNextFlashcard()" [disabled]="currentFlashcardIndex === flashcards.length - 1" aria-label="Next">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </div>
     </div>
-  </div>
-  
+  </ng-container>
+</div>

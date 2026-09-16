@@ -53,10 +53,10 @@ export class PlanningComponent implements OnInit {
   add(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.planning.create(this.form.value).subscribe(
-      (ev: any) => {
-        this.events = [...this.events, ev].sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
+      () => {
         this.form.patchValue({ title: '', description: '', dueDate: '' });
         this.toastr.success('Added to the calendar', 'Success');
+        this.load();   // refetch so the new event shows with its class name + formatted date
       },
       () => this.toastr.error('Could not add event', 'Error')
     );

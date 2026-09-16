@@ -104,4 +104,9 @@ searchFlashcardSetsSeparate(
   return this.http.get<{ ownSets: any[]; publicSets: any[] }>(`${this.baseUrl}/visible`);
 }
 
+  /** Toggle the favorite flag on a set; returns the updated set. */
+  toggleFavorite(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/favorite/toggle`, null);
+  }
+
 }

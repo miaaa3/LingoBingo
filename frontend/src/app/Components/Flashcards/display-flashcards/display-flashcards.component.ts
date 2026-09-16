@@ -38,7 +38,7 @@ export class DisplayFlashcardsComponent implements OnInit {
   currentFlashcardIndex: number = 0;
 
   goToNextFlashcard() {
-    if (this.currentFlashcardIndex < this.flashcardSet.flashcards.length - 1) {
+    if (this.currentFlashcardIndex < this.flashcards.length - 1) {
       this.currentFlashcardIndex++;
     }
   }

@@ -135,7 +135,9 @@ export class GameService {
    * GET /api/game/{gameCode}/qrcode
    */
   getGameQRCode(gameCode: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${gameCode}/qrcode`, { responseType: 'blob' });
+    // Pass the address this page is open on so the QR points somewhere the phone can reach.
+    const base = encodeURIComponent(window.location.origin);
+    return this.http.get(`${this.apiUrl}/${gameCode}/qrcode?base=${base}`, { responseType: 'blob' });
   }
 
    // Fetch game questions based on the gameCode
