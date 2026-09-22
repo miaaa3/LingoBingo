@@ -41,6 +41,7 @@ import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 import { PlanningComponent } from './Components/Planning/planning.component';
 import { DashboardComponent } from './Components/Dashboard/dashboard.component';
 import { TypeTranslationComponent } from './Components/Practice/type-translation.component';
+import { MessagesComponent } from './Components/Messages/messages.component';
 
 
 
@@ -81,8 +82,7 @@ import { TypeTranslationComponent } from './Components/Practice/type-translation
     GradebookComponent,
     PlanningComponent,
     DashboardComponent,
-    
-  
+    MessagesComponent,
   ],
   imports: [
     BrowserModule,

@@ -2,11 +2,74 @@
   <!-- Greeting -->
   <div class="page-head">
     <h1 class="page-title">Hi {{ currentUser.name || 'there' }} 👋</h1>
-    <p class="page-sub">What would you like to do today?</p>
+    <p class="page-sub">{{ isTeacher ? 'Build content and manage your classes.' : 'What would you like to do today?' }}</p>
   </div>
 
-  <!-- Quick actions -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <!-- Quick actions: TEACHER -->
+  <div *ngIf="isTeacher" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <a routerLink="/Create-flashcard" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#dfe4ff;color:#363af5">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M12 8v6M9 11h6"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">New flashcard set</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Build a deck, with auto-translation.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Quizzes/generate" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#f6d9ff;color:#bb20d9">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#bb20d9"><path d="m12 2 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Generate a quiz</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Turn your sets into a quiz to assign.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Classes" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#dfe4ff;color:#4a5eab">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">My classes</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage classes and assign content.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Courses" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#d7f6e3;color:#128a4b">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Courses</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Build and organize structured lessons.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Planning" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#ffe9c2;color:#b76e00">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Planning</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Schedule deadlines and live sessions.</p>
+      </div>
+    </a>
+
+    <a routerLink="/Messages" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#dfe4ff;color:#363af5">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div>
+        <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Messages</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Reach your students and classmates.</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- Quick actions: STUDENT -->
+  <div *ngIf="!isTeacher" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     <a routerLink="/Practice" class="card p-5 flex items-start gap-4 hover:-translate-y-0.5 transition-transform">
       <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background:#ffe9c2;color:#b76e00">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h16v2M9 19h6M12 5v14"/></svg>
@@ -23,7 +86,7 @@
       </div>
       <div>
         <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Flashcards</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Study and create sets, with auto-translation.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Study sets shared with you.</p>
       </div>
     </a>
 
@@ -33,7 +96,7 @@
       </div>
       <div>
         <h3 class="display font-bold text-cloud-burst-900 dark:text-gray-100">Quizzes</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Take quizzes or host a live game.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Take quizzes and join live games.</p>
       </div>
     </a>
 
@@ -72,14 +135,19 @@
   <section class="mt-10">
     <h2 class="display text-xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-4">Recent activity</h2>
     <div *ngIf="recentActivities && recentActivities.length; else noRecent" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <div class="card p-5 flex items-center justify-between" *ngFor="let recentActivity of recentActivities">
-        <h3 class="font-semibold text-cloud-burst-900 dark:text-gray-100">{{ recentActivity.title }}</h3>
-        <span class="py-1 px-3 text-xs font-semibold rounded-full bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300">{{ recentActivity.type }}</span>
+      <div class="card p-5 flex items-center justify-between gap-3" *ngFor="let a of recentActivities">
+        <div class="min-w-0">
+          <h3 class="font-semibold text-cloud-burst-900 dark:text-gray-100 truncate">
+            {{ actionText(a) }} {{ typeText(a) }}<span *ngIf="a.title">: {{ a.title }}</span>
+          </h3>
+          <span class="text-xs text-gray-400 dark:text-gray-500">{{ a.timestamp | date:'MMM d, h:mm a' }}</span>
+        </div>
+        <span class="py-1 px-3 text-xs font-semibold rounded-full whitespace-nowrap shrink-0" [ngClass]="actionClass(a)">{{ actionText(a) }}</span>
       </div>
     </div>
     <ng-template #noRecent>
       <div class="card text-center text-gray-400 dark:text-gray-500 py-10">
-        No recent activity yet. Start studying and it will show up here.
+        No recent activity yet. Create a set or quiz and it will show up here.
       </div>
     </ng-template>
   </section>

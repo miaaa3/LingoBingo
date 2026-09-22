@@ -55,3 +55,30 @@ body {
 .page-head { margin-bottom: 1.5rem; }
 .page-title { font-family: 'Fredoka','Rubik',sans-serif; font-size: 1.875rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.01em; color: var(--lb-text); }
 .page-sub { color: var(--lb-muted); margin-top: 0.25rem; }
+
+/* ---- Dark mode: native controls + form-control defaults ----
+   color-scheme themes native widgets (date/time pickers, checkboxes,
+   scrollbars). The input rules give any control that doesn't set its own
+   dark styles readable text, background, border and placeholder. Component
+   `dark:` utilities are more specific and still win where they're used. */
+:root { color-scheme: light; }
+html.dark { color-scheme: dark; }
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: var(--lb-surface);
+  color: var(--lb-text);
+  border-color: var(--lb-border);
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--lb-muted);
+  opacity: 1;
+}
+
+html.dark select option {
+  background-color: var(--lb-surface);
+  color: var(--lb-text);
+}

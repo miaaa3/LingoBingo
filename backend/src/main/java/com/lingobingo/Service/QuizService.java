@@ -40,14 +40,21 @@ public class QuizService {
         return quizzes.isEmpty() ? Optional.empty() : Optional.of(quizzes.get(quizzes.size() - 1));
     }
 
-    // Update an existing quiz by ID
+    // Update an existing quiz by ID. The body never carries the owner (createdBy
+    // is hidden from JSON), so preserve it - and createdAt - from the stored
+    // quiz, otherwise an edit would orphan the quiz from its creator.
     public Quiz updateQuiz(Long quizId, Quiz updatedQuiz) {
-        if (quizRepository.existsById(quizId)) {
-            updatedQuiz.setId(quizId);
-            return quizRepository.save(updatedQuiz);
-        } else {
+        Optional<Quiz> existingOpt = quizRepository.findById(quizId);
+        if (existingOpt.isEmpty()) {
             return null;
         }
+        Quiz existing = existingOpt.get();
+        updatedQuiz.setId(quizId);
+        updatedQuiz.setCreatedBy(existing.getCreatedBy());
+        if (updatedQuiz.getCreatedAt() == null) {
+            updatedQuiz.setCreatedAt(existing.getCreatedAt());
+        }
+        return quizRepository.save(updatedQuiz);
     }
 
     // Delete a quiz by ID

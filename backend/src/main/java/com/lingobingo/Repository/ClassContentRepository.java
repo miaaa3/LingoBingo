@@ -11,4 +11,7 @@ public interface ClassContentRepository extends JpaRepository<ClassContent, Long
     List<ClassContent> findByClassroomId(Long classroomId);
     List<ClassContent> findByClassroomIdIn(List<Long> classroomIds);
     boolean existsByClassroomIdAndContentTypeAndContentId(Long classroomId, String contentType, Long contentId);
+
+    // Every class this piece of content is assigned to (used by the due-soon reminder).
+    List<ClassContent> findByContentTypeAndContentId(String contentType, Long contentId);
 }

@@ -3,6 +3,7 @@ package com.lingobingo.Service;
 import com.lingobingo.Dto.ClassContentDto;
 import com.lingobingo.Entity.ClassContent;
 import com.lingobingo.Entity.Classroom;
+import com.lingobingo.Entity.Enrollment;
 import com.lingobingo.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ClassContentService {
     private final QuizRepository quizRepository;
     private final LessonRepository lessonRepository;
     private final FlashcardSetRepository flashcardSetRepository;
+    private final NotificationService notificationService;
 
     public ClassContent assign(String teacherEmail, Long classId, String contentType, Long contentId) {
         Classroom classroom = classroomRepository.findById(classId)
@@ -35,7 +37,32 @@ public class ClassContentService {
         cc.setClassroom(classroom);
         cc.setContentType(contentType);
         cc.setContentId(contentId);
-        return classContentRepository.save(cc);
+        ClassContent saved = classContentRepository.save(cc);
+        notifyStudents(classroom, contentType, contentId);
+        return saved;
+    }
+
+    /** Tell every enrolled student that new content just landed in their class. */
+    private void notifyStudents(Classroom classroom, String contentType, Long contentId) {
+        String title = resolveTitle(contentType, contentId);
+        String kind = "QUIZ".equals(contentType) ? "quiz"
+                : "FLASHCARD_SET".equals(contentType) ? "flashcard set"
+                : "COURSE".equals(contentType) ? "course" : "item";
+        String message = "New " + kind + " in " + classroom.getName() + ": " + title;
+        String link = linkFor(contentType, contentId);
+        for (Enrollment e : enrollmentRepository.findByClassroomId(classroom.getId())) {
+            notificationService.notify(e.getStudent(), "NEW_" + contentType, message, link);
+        }
+    }
+
+    private String linkFor(String type, Long id) {
+        if (type == null || id == null) { return "/Home"; }
+        switch (type) {
+            case "QUIZ":          return "/Quizzes/" + id + "/take";
+            case "FLASHCARD_SET": return "/Display-set-of-flashcard/" + id;
+            case "COURSE":        return "/Courses/" + id;
+            default:              return "/Home";
+        }
     }
 
     public boolean unassign(Long id, String teacherEmail) {

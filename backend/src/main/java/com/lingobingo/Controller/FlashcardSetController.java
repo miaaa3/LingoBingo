@@ -6,11 +6,14 @@ import com.lingobingo.Dto.FlashcardResponseDTO;
 import com.lingobingo.Dto.FlashcardSetDTO;
 import com.lingobingo.Dto.FlashcardSetResponseDTO;
 import com.lingobingo.Dto.FlashcardSetJsonDTO;
+import com.lingobingo.Entity.ActivityType;
 import com.lingobingo.Entity.Flashcard;
 import com.lingobingo.Entity.FlashcardSet;
+import com.lingobingo.Entity.Role;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
 import com.lingobingo.Service.FlashcardSetService;
+import com.lingobingo.Service.RecentActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,6 +35,19 @@ public class FlashcardSetController {
 
     private final FlashcardSetService flashcardSetService;
     private final UserRepository userRepository;
+    private final RecentActivityService recentActivityService;
+
+    private User currentUser(Principal principal) {
+        return (principal != null) ? userRepository.findByEmail(principal.getName()).orElse(null) : null;
+    }
+
+    /** Only the set's creator (or an admin) may manage it. */
+    private boolean canManage(FlashcardSet set, User user) {
+        if (set == null || user == null) return false;
+        if (user.getRole() == Role.ADMIN) return true;
+        return set.getCreatedBy() != null && user.getId() != null
+                && user.getId().equals(set.getCreatedBy().getId());
+    }
 
     // Get all flashcard sets
     @GetMapping("/all")
@@ -40,9 +56,13 @@ public class FlashcardSetController {
         return new ResponseEntity<>(flashcardSets, HttpStatus.OK);
     }
 
-    // Toggle public status (true/false)
+    // Toggle public status (true/false) - owner (or admin) only
     @PutMapping("/{id}/public/toggle")
-    public ResponseEntity<FlashcardSet> togglePublic(@PathVariable Long id) {
+    public ResponseEntity<FlashcardSet> togglePublic(@PathVariable Long id, Principal principal) {
+        FlashcardSet existing = flashcardSetService.getFlashcardSetById(id).orElse(null);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         FlashcardSet updatedSet = flashcardSetService.togglePublic(id);
         return (updatedSet != null) ?
                 new ResponseEntity<>(updatedSet, HttpStatus.OK) :
@@ -124,6 +144,7 @@ public class FlashcardSetController {
 
         // Save flashcard set via service
         FlashcardSet createdSet = flashcardSetService.createFlashcardSet(flashcardSet);
+        recentActivityService.log(currentUser(principal), "CREATED", ActivityType.FLASHCARD_SET, createdSet.getTitle());
 
         // Prepare response DTO with flashcards (without raw media)
         FlashcardSetResponseDTO responseDTO = new FlashcardSetResponseDTO(
@@ -138,25 +159,40 @@ public class FlashcardSetController {
     }
 
 
-    // Update existing flashcard set
+    // Update existing flashcard set - owner (or admin) only
     @PutMapping("/{id}/update")
-    public ResponseEntity<FlashcardSet> updateFlashcardSet(@PathVariable Long id, @RequestBody FlashcardSet updatedFlashcardSet) {
+    public ResponseEntity<FlashcardSet> updateFlashcardSet(@PathVariable Long id, @RequestBody FlashcardSet updatedFlashcardSet, Principal principal) {
+        FlashcardSet existing = flashcardSetService.getFlashcardSetById(id).orElse(null);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         FlashcardSet flashcardSet = flashcardSetService.updateFlashcardSet(id, updatedFlashcardSet);
+        if (flashcardSet != null) {
+            recentActivityService.log(currentUser(principal), "UPDATED", ActivityType.FLASHCARD_SET, flashcardSet.getTitle());
+        }
         return (flashcardSet != null) ?
                 new ResponseEntity<>(flashcardSet, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Delete flashcard set
+    // Delete flashcard set - owner (or admin) only
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<String> deleteFlashcardSet(@PathVariable Long id) {
+    public ResponseEntity<String> deleteFlashcardSet(@PathVariable Long id, Principal principal) {
+        FlashcardSet existing = flashcardSetService.getFlashcardSetById(id).orElse(null);
+        if (existing == null) return new ResponseEntity<>("FlashcardSet not found", HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>("Not your set", HttpStatus.FORBIDDEN);
+
+        String title = existing.getTitle();
         boolean deleted = flashcardSetService.deleteFlashcardSet(id);
+        if (deleted) {
+            recentActivityService.log(currentUser(principal), "DELETED", ActivityType.FLASHCARD_SET, title);
+        }
         return (deleted) ?
                 new ResponseEntity<>("FlashcardSet deleted successfully", HttpStatus.OK) :
                 new ResponseEntity<>("FlashcardSet not found", HttpStatus.NOT_FOUND);
     }
 
-    // Set favorite status (true/false)
+    // Set favorite status (true/false) - a personal bookmark, allowed for any signed-in user
     @PutMapping("/{id}/favorite/{status}")
     public ResponseEntity<FlashcardSet> setFavorite(@PathVariable Long id, @PathVariable boolean status) {
         FlashcardSet updatedSet = flashcardSetService.setFavorite(id, status);
@@ -206,9 +242,13 @@ public class FlashcardSetController {
         return ResponseEntity.ok(body);
     }
 
-    // Set visibility to an explicit value
+    // Set visibility to an explicit value - owner (or admin) only
     @PutMapping("/{id}/visibility")
-    public ResponseEntity<FlashcardSet> setVisibility(@PathVariable Long id, @RequestParam boolean isPublic) {
+    public ResponseEntity<FlashcardSet> setVisibility(@PathVariable Long id, @RequestParam boolean isPublic, Principal principal) {
+        FlashcardSet existing = flashcardSetService.getFlashcardSetById(id).orElse(null);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         FlashcardSet updated = flashcardSetService.setPublic(id, isPublic);
         return (updated != null)
                 ? new ResponseEntity<>(updated, HttpStatus.OK)
@@ -237,6 +277,7 @@ public class FlashcardSetController {
             userRepository.findByEmail(principal.getName()).ifPresent(flashcardSet::setCreatedBy);
         }
         FlashcardSet created = flashcardSetService.createFlashcardSet(flashcardSet);
+        recentActivityService.log(currentUser(principal), "CREATED", ActivityType.FLASHCARD_SET, created.getTitle());
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 }

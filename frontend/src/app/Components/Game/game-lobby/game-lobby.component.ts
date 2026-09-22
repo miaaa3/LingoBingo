@@ -19,11 +19,23 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   qrUrl: string | null = null;
   joinUrl = '';
   starting = false;
+  isFullscreen = false;
   private poll: any = null;
+  private readonly onFsChange = () => { this.isFullscreen = !!document.fullscreenElement; };
 
   constructor(private route: ActivatedRoute, private game: GameService) {}
 
+  /** Project the game: expand to the whole screen (hides browser + OS chrome). */
+  toggleFullscreen(): void {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }
+
   ngOnInit(): void {
+    document.addEventListener('fullscreenchange', this.onFsChange);
     this.gameCode = this.route.snapshot.paramMap.get('gameCode') || '';
     this.joinUrl = `${window.location.origin}/Join?code=${this.gameCode}`;
 
@@ -40,6 +52,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.removeEventListener('fullscreenchange', this.onFsChange);
+    if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); }
     if (this.poll) clearInterval(this.poll);
     if (this.qrUrl) URL.revokeObjectURL(this.qrUrl);
   }

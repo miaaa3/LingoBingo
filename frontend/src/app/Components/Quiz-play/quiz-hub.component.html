@@ -22,11 +22,18 @@
       <h3 class="text-xl font-bold text-blue-ribbon-800">{{ q.name }}</h3>
       <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ q.description }}</p>
       <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ qCount(q) }} {{ qCount(q) === 1 ? 'question' : 'questions' }}</p>
+      <p *ngIf="q.dueDate" class="text-xs font-semibold mt-1" [ngClass]="isClosed(q) ? 'text-red-500' : 'text-mustard-700 dark:text-mustard-400'">
+        {{ isClosed(q) ? 'Closed' : 'Due' }} {{ q.dueDate | date:'MMM d, h:mm a' }}
+      </p>
       <div class="mt-4 flex gap-3">
-        <a [routerLink]="['/Quizzes', q.id, 'take']"
+        <a *ngIf="isTeacher || !isClosed(q)" [routerLink]="['/Quizzes', q.id, 'take']"
            class="py-2 px-4 bg-blue-ribbon-600 text-white text-sm font-bold rounded-full hover:scale-105 transition-transform">
           {{ isTeacher ? 'Preview' : 'Take quiz' }}
         </a>
+        <span *ngIf="!isTeacher && isClosed(q)"
+           class="py-2 px-4 bg-gray-200 dark:bg-[#232842] text-gray-500 dark:text-gray-400 text-sm font-bold rounded-full">
+          Closed
+        </span>
         <a *ngIf="isTeacher" [routerLink]="['/Quizzes', q.id, 'gradebook']"
            class="py-2 px-4 border-2 border-blue-ribbon-600 text-blue-ribbon-700 text-sm font-bold rounded-full hover:bg-blue-ribbon-50 transition-colors">
           Gradebook

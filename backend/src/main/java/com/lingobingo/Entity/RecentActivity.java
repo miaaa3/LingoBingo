@@ -1,5 +1,7 @@
 package com.lingobingo.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +26,10 @@ public class RecentActivity {
     @Column
     private String category;
 
+    // CREATED, UPDATED or DELETED
+    private String action;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -31,14 +37,17 @@ public class RecentActivity {
     @Enumerated(EnumType.STRING)
     private ActivityType type;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "flashcard_set_id")
     private FlashcardSet flashcardSet;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "timestamp")
-    private Date timestamp = Date.from(LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant());
+    private Date timestamp = new Date();
 }

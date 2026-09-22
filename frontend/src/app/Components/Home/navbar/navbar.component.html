@@ -1,5 +1,5 @@
-<nav class="flex justify-between items-center gap-6 px-4 py-2 fixed z-10 w-full bg-white dark:bg-[#191d31] border-b border-gray-100 dark:border-[#2a2f47]">
-  <a routerLink="/Home" class="display text-2xl font-extrabold text-cloud-burst-900 dark:text-gray-100">
+<nav class="flex justify-between items-center gap-6 px-6 py-3.5 fixed z-10 w-full bg-white dark:bg-[#191d31] border-b border-gray-100 dark:border-[#2a2f47]">
+  <a routerLink="/Home" class="display text-[1.6rem] leading-none font-extrabold text-cloud-burst-900 dark:text-gray-100">
     Lingo<span class="text-blue-ribbon-600">Bingo</span>
   </a>
 
@@ -12,28 +12,48 @@
     </button>
 
     <!-- Notifications -->
-    <div class="relative" (click.away)="closeDropdownNotification()">
-      <button type="button" (click)="toggleDropdownNotification()" aria-label="Notifications"
-        class="flex items-center justify-center size-9 rounded-full border border-gray-200 dark:border-[#2a2f47] text-cloud-burst-950 dark:text-[#e8ebf7] hover:bg-gray-100 dark:hover:bg-[#232842] transition-colors">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div *ngIf="isUser | async" class="relative">
+      <button type="button" (click)="toggleDropdownNotification($event)" aria-label="Notifications"
+        class="relative flex items-center justify-center size-10 rounded-full border border-gray-200 dark:border-[#2a2f47] text-cloud-burst-950 dark:text-[#e8ebf7] hover:bg-gray-100 dark:hover:bg-[#232842] transition-colors">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span *ngIf="unread > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">{{ unread > 9 ? '9+' : unread }}</span>
       </button>
-      <div *ngIf="openForNotification" [@dropdownAnimation]="'visible'"
-        class="absolute right-0 mt-2 w-72 origin-top-right rounded-2xl border border-gray-100 dark:border-[#2a2f47] bg-white dark:bg-[#191d31] shadow-xl overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-100 dark:border-[#2a2f47] font-bold text-cloud-burst-900 dark:text-gray-100">Notifications</div>
-        <div class="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
+      <div *ngIf="openForNotification" [@dropdownAnimation]="'visible'" (click)="$event.stopPropagation()"
+        class="absolute right-0 mt-2 w-80 origin-top-right rounded-2xl border border-gray-100 dark:border-[#2a2f47] bg-white dark:bg-[#191d31] shadow-xl overflow-hidden">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-[#2a2f47]">
+          <span class="font-bold text-cloud-burst-900 dark:text-gray-100">Notifications</span>
+          <button *ngIf="notifications.length && unread > 0" type="button" (click)="markAllRead()"
+            class="text-xs font-semibold text-blue-ribbon-600 dark:text-blue-ribbon-300 hover:underline">Mark all read</button>
+        </div>
+
+        <div *ngIf="notifLoading" class="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">Loading…</div>
+
+        <div *ngIf="!notifLoading && notifications.length === 0" class="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
           <svg class="w-8 h-8 mx-auto mb-2 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           You're all caught up.
+        </div>
+
+        <div *ngIf="!notifLoading && notifications.length > 0" class="max-h-96 overflow-y-auto">
+          <button *ngFor="let n of notifications" type="button" (click)="openNotification(n)"
+            class="w-full text-left flex gap-3 px-4 py-3 border-b border-gray-50 dark:border-[#232842] hover:bg-gray-50 dark:hover:bg-[#232842] transition-colors"
+            [class.bg-blue-ribbon-50]="!n.read" [class.dark:bg-transparent]="!n.read">
+            <span class="mt-1.5 w-2 h-2 rounded-full shrink-0" [ngClass]="n.read ? 'bg-transparent' : 'bg-blue-ribbon-500'"></span>
+            <span class="min-w-0">
+              <span class="block text-sm text-cloud-burst-900 dark:text-gray-100" [class.font-semibold]="!n.read">{{ n.message }}</span>
+              <span class="block text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{ n.createdAt | date:'MMM d, h:mm a' }}</span>
+            </span>
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Create (+) -->
-    <div class="relative" (click.away)="closeDropdown()">
-      <button type="button" (click)="toggleDropdown()" aria-label="Create"
-        class="flex items-center justify-center size-9 rounded-full bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white transition-colors">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    <div class="relative">
+      <button type="button" (click)="toggleDropdown($event)" aria-label="Create"
+        class="flex items-center justify-center size-10 rounded-full bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white transition-colors">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </button>
-      <div *ngIf="open" [@dropdownAnimation]="'visible'"
+      <div *ngIf="open" [@dropdownAnimation]="'visible'" (click)="$event.stopPropagation()"
         class="absolute right-0 mt-2 w-60 origin-top-right rounded-2xl border border-gray-100 dark:border-[#2a2f47] bg-white dark:bg-[#191d31] shadow-xl overflow-hidden py-1">
         <a (click)="closeDropdown()" routerLink="/Create-quiz" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-cloud-burst-900 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#232842] transition-colors">
           <span class="text-blue-ribbon-600">＋</span> New quiz
@@ -48,11 +68,11 @@
     </div>
 
     <!-- Profile -->
-    <div *ngIf="isUser | async" class="relative" (click.away)="closeDropdownProfile()">
-      <button type="button" (click)="toggleDropdownProfile()" aria-label="Account" class="flex rounded-full focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700">
-        <app-avatar [name]="displayName || email" [size]="36"></app-avatar>
+    <div *ngIf="isUser | async" class="relative">
+      <button type="button" (click)="toggleDropdownProfile($event)" aria-label="Account" class="flex rounded-full focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700">
+        <app-avatar [name]="displayName || email" [size]="38"></app-avatar>
       </button>
-      <div *ngIf="openForProfile" [@dropdownAnimation]="'visible'"
+      <div *ngIf="openForProfile" [@dropdownAnimation]="'visible'" (click)="$event.stopPropagation()"
         class="absolute right-0 mt-2 w-64 origin-top-right rounded-2xl border border-gray-100 dark:border-[#2a2f47] bg-white dark:bg-[#191d31] shadow-xl overflow-hidden">
         <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-[#2a2f47]">
           <app-avatar [name]="displayName || email" [size]="40"></app-avatar>

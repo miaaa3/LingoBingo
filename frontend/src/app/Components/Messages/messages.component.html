@@ -1,0 +1,91 @@
+<div class="page">
+  <div class="page-head">
+    <h1 class="page-title">Messages</h1>
+    <p class="page-sub">Talk with your teachers and classmates.</p>
+  </div>
+
+  <div class="grid md:grid-cols-[300px_1fr] gap-4 items-stretch" style="min-height: 60vh;">
+
+    <!-- Left: conversations -->
+    <div class="card p-0 overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-[#2a2f47]">
+        <span class="font-bold text-cloud-burst-900 dark:text-gray-100">Chats</span>
+        <button type="button" (click)="showContacts = !showContacts"
+          class="text-xs font-bold text-blue-ribbon-600 dark:text-blue-ribbon-300 hover:underline">
+          {{ showContacts ? 'Back' : '+ New' }}
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto">
+        <div *ngIf="loading" class="p-4 text-sm text-gray-400 dark:text-gray-500">Loading…</div>
+
+        <!-- Contacts picker -->
+        <ng-container *ngIf="showContacts">
+          <div *ngIf="contacts.length === 0" class="p-4 text-sm text-gray-400 dark:text-gray-500">
+            No contacts yet. Join or create a class first.
+          </div>
+          <button *ngFor="let c of contacts" type="button" (click)="startWith(c)"
+            class="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#232842] transition-colors">
+            <span class="w-9 h-9 rounded-full bg-blue-ribbon-600 text-white flex items-center justify-center text-xs font-bold shrink-0">{{ initials(c.name || c.email) }}</span>
+            <span class="min-w-0">
+              <span class="block text-sm font-semibold text-cloud-burst-900 dark:text-gray-100 truncate">{{ c.name || c.email }}</span>
+              <span class="block text-xs text-gray-400 dark:text-gray-500">{{ c.role | titlecase }}</span>
+            </span>
+          </button>
+        </ng-container>
+
+        <!-- Conversations -->
+        <ng-container *ngIf="!showContacts">
+          <div *ngIf="!loading && threads.length === 0" class="p-4 text-sm text-gray-400 dark:text-gray-500">
+            No conversations yet. Tap “+ New” to start one.
+          </div>
+          <button *ngFor="let t of threads" type="button" (click)="open(t.otherId, t.otherName)"
+            class="w-full text-left flex items-center gap-3 px-4 py-3 border-b border-gray-50 dark:border-[#232842] hover:bg-gray-50 dark:hover:bg-[#232842] transition-colors"
+            [ngClass]="activeId === t.otherId ? 'bg-blue-ribbon-50 dark:bg-[#232842]' : ''">
+            <span class="w-9 h-9 rounded-full bg-perano-400 text-white flex items-center justify-center text-xs font-bold shrink-0">{{ initials(t.otherName) }}</span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-sm font-semibold text-cloud-burst-900 dark:text-gray-100 truncate">{{ t.otherName }}</span>
+              <span class="block text-xs text-gray-400 dark:text-gray-500 truncate">{{ t.lastMessage }}</span>
+            </span>
+            <span *ngIf="t.unread > 0" class="min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0">{{ t.unread }}</span>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Right: active thread -->
+    <div class="card p-0 overflow-hidden flex flex-col">
+      <div *ngIf="activeId == null" class="flex-1 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 p-8 text-center">
+        Pick a conversation, or start a new one.
+      </div>
+
+      <ng-container *ngIf="activeId != null">
+        <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-[#2a2f47]">
+          <span class="w-9 h-9 rounded-full bg-blue-ribbon-600 text-white flex items-center justify-center text-xs font-bold">{{ initials(activeName) }}</span>
+          <span class="font-bold text-cloud-burst-900 dark:text-gray-100">{{ activeName }}</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-[#f6f7fb] dark:bg-[#141829]">
+          <div *ngIf="threadLoading" class="text-sm text-gray-400 dark:text-gray-500 text-center">Loading…</div>
+          <div *ngIf="!threadLoading && messages.length === 0" class="text-sm text-gray-400 dark:text-gray-500 text-center">No messages yet — say hi.</div>
+          <div *ngFor="let m of messages" class="flex" [ngClass]="m.fromMe ? 'justify-end' : 'justify-start'">
+            <div class="max-w-[75%] rounded-2xl px-3.5 py-2"
+              [ngClass]="m.fromMe ? 'bg-blue-ribbon-600 text-white rounded-br-sm' : 'bg-white dark:bg-[#191d31] text-cloud-burst-900 dark:text-gray-100 border border-gray-100 dark:border-[#2a2f47] rounded-bl-sm'">
+              <div class="text-sm whitespace-pre-wrap break-words">{{ m.content }}</div>
+              <div class="text-[10px] mt-0.5" [ngClass]="m.fromMe ? 'text-blue-ribbon-100' : 'text-gray-400 dark:text-gray-500'">{{ m.createdAt | date:'MMM d, h:mm a' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <form class="flex items-center gap-2 p-3 border-t border-gray-100 dark:border-[#2a2f47]" (ngSubmit)="send()">
+          <input [(ngModel)]="draft" name="draft" placeholder="Write a message…" autocomplete="off"
+            class="flex-1 h-11 px-3 rounded-full outline-none border border-gray-200 dark:border-[#2a2f47] bg-white dark:bg-[#141829] text-cloud-burst-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-ribbon-500">
+          <button type="submit" [disabled]="sending || !draft.trim()"
+            class="h-11 px-5 rounded-full bg-blue-ribbon-600 hover:bg-blue-ribbon-700 text-white font-bold text-sm disabled:opacity-50">
+            {{ sending ? '…' : 'Send' }}
+          </button>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

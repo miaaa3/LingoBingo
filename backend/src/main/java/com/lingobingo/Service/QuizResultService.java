@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -30,6 +31,12 @@ public class QuizResultService {
     public SubmitQuizResponse submit(Long quizId, String studentEmail, Map<String, String> answers) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new NoSuchElementException("Quiz not found"));
+
+        // Deadline passed: the quiz is closed, no more submissions.
+        if (quiz.getDueDate() != null && LocalDateTime.now().isAfter(quiz.getDueDate())) {
+            throw new IllegalStateException("This quiz is closed");
+        }
+
         User student = userRepository.findByEmail(studentEmail)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 

@@ -1,8 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FlashcardSetService } from 'src/app/Services/Flashcards/flashcardSet.service';
 import { AnswerCheckService, MatchResult } from 'src/app/Services/Practice/answer-check.service';
 import { TranslationService } from 'src/app/Services/Translation/translation.service';
 import { PracticeService } from 'src/app/Services/Practice/practice.service';
+import { SpeechService, SpeechHandle } from 'src/app/Services/Speech/speech.service';
 
 type Phase = 'choose' | 'play' | 'done';
 type Direction = 'forward' | 'reverse';   // forward: prompt=term, answer=definition
@@ -42,6 +44,10 @@ export class TypeTranslationComponent implements OnInit {
   inputMode: 'type' | 'tap' = 'type';
   currentOptions: string[] = [];
 
+  // Voice dictation state
+  listening = false;
+  private speechHandle?: SpeechHandle;
+
   // stats
   xp = 0;
   correctCount = 0;
@@ -56,6 +62,8 @@ export class TypeTranslationComponent implements OnInit {
     private checker: AnswerCheckService,
     public lang: TranslationService,
     private practiceApi: PracticeService,
+    private route: ActivatedRoute,
+    public speech: SpeechService,
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +76,10 @@ export class TypeTranslationComponent implements OnInit {
       },
       error: () => { this.loadingSets = false; },
     });
+
+    // Deep link: /Practice?set=<id> starts that set straight away.
+    const setParam = this.route.snapshot.queryParamMap.get('set');
+    if (setParam) { this.start({ id: +setParam }); }
   }
 
   // ---- setup ----
@@ -132,6 +144,7 @@ export class TypeTranslationComponent implements OnInit {
   get answerLangCode(): string { return this.direction === 'forward' ? (this.set?.targetLang || '') : (this.set?.sourceLang || ''); }
 
   private newQuestion(): void {
+    this.stopDictation();
     this.answer = '';
     this.status = 'idle';
     this.revealed = 0;
@@ -163,6 +176,31 @@ export class TypeTranslationComponent implements OnInit {
     if (this.status !== 'idle') { return; }
     this.answer = opt;
     this.grade();
+  }
+
+  // ---- speech ----
+  /** Read the prompt word aloud in its own language. */
+  speakPrompt(): void {
+    this.speech.speak(this.prompt, this.promptLangCode);
+  }
+
+  /** Toggle voice answering: dictate into the answer box, then grade it. */
+  toggleDictation(): void {
+    if (this.listening) { this.speechHandle?.stop(); return; }
+    if (this.status !== 'idle') { return; }
+    this.listening = true;
+    this.answer = '';
+    this.speechHandle = this.speech.listen(this.answerLangCode, partial => { this.answer = partial; });
+    this.speechHandle.promise.then(finalText => {
+      this.listening = false;
+      this.speechHandle = undefined;
+      if (finalText) { this.answer = finalText; this.grade(); }
+    });
+  }
+
+  private stopDictation(): void {
+    if (this.speechHandle) { this.speechHandle.stop(); this.speechHandle = undefined; }
+    this.listening = false;
   }
 
   private grade(): void {

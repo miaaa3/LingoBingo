@@ -2,6 +2,7 @@ package com.lingobingo.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -52,5 +53,21 @@ public class FlashcardSet {
     // Null for non-language sets; drives auto-translate and practice direction.
     private String sourceLang;
     private String targetLang;
+
+    // Read-only owner identity for the client. `createdBy` itself is hidden by
+    // @JsonBackReference, so these expose just enough for the UI to decide who
+    // may edit/delete without leaking the full user graph. No setters: Jackson
+    // treats them as read-only and ignores them on the way back in.
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public String getOwnerEmail() {
+        return createdBy != null ? createdBy.getEmail() : null;
+    }
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public Long getOwnerId() {
+        return createdBy != null ? createdBy.getId() : null;
+    }
 
 }

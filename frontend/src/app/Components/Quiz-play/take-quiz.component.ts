@@ -25,6 +25,10 @@ export class TakeQuizComponent implements OnInit {
 
   select(qid: any, key: any): void { this.answers[qid] = key; }
 
+  get isClosed(): boolean {
+    return !!this.quiz?.dueDate && new Date(this.quiz.dueDate).getTime() < Date.now();
+  }
+
   allAnswered(): boolean {
     return this.quiz && this.quiz.questions && this.quiz.questions.every((q: any) => this.answers[q.questionId]);
   }

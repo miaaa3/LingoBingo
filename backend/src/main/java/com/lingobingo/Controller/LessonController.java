@@ -5,12 +5,14 @@ import com.lingobingo.Dto.LessonResponseDTO;
 import com.lingobingo.Dto.SectionDTO;
 import com.lingobingo.Dto.SectionResponseDTO;
 import com.lingobingo.Entity.Lesson;
+import com.lingobingo.Entity.Role;
 import com.lingobingo.Entity.Section;
 import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
 import com.lingobingo.Repository.SectionRepository;
 import com.lingobingo.Service.LessonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,27 @@ public class LessonController {
     private final LessonService lessonService;
     private final UserRepository userRepository;
     private final SectionRepository sectionRepository;
+
+    private User currentUser(Principal principal) {
+        return (principal != null) ? userRepository.findByEmail(principal.getName()).orElse(null) : null;
+    }
+
+    /** Only the course's creator (or an admin) may manage it. */
+    private boolean canManage(Lesson lesson, User user) {
+        if (lesson == null || user == null) return false;
+        if (user.getRole() == Role.ADMIN) return true;
+        return lesson.getCreatedBy() != null && user.getId() != null
+                && user.getId().equals(lesson.getCreatedBy().getId());
+    }
+
+    /** Load a lesson without throwing when it is missing. */
+    private Lesson findLesson(Long id) {
+        try {
+            return lessonService.getLessonById(id);
+        } catch (EntityNotFoundException e) {
+            return null;
+        }
+    }
 
 
     @PostMapping("/add")
@@ -119,30 +142,42 @@ public class LessonController {
         return new ResponseEntity<>(lessonService.getLessonsByUser(userId), HttpStatus.OK);
     }
 
-    /** Update an existing lesson */
+    /** Update an existing lesson - owner (or admin) only */
     @PutMapping("/{id}/update")
-    public ResponseEntity<Lesson> updateLesson(@PathVariable Long id, @RequestBody Lesson updatedLesson) {
+    public ResponseEntity<Lesson> updateLesson(@PathVariable Long id, @RequestBody Lesson updatedLesson, Principal principal) {
+        Lesson existing = findLesson(id);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         Lesson lesson = lessonService.updateLesson(id, updatedLesson);
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
-    /** Delete a lesson */
+    /** Delete a lesson - owner (or admin) only */
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<String> deleteLesson(@PathVariable Long id) {
+    public ResponseEntity<String> deleteLesson(@PathVariable Long id, Principal principal) {
+        Lesson existing = findLesson(id);
+        if (existing == null) return new ResponseEntity<>("Lesson not found", HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>("Not your course", HttpStatus.FORBIDDEN);
+
         lessonService.deleteLesson(id);
         return new ResponseEntity<>("Lesson deleted successfully", HttpStatus.OK);
     }
 
-    /** Toggle favorite status */
+    /** Toggle favorite status - a personal bookmark, allowed for any signed-in user */
     @PutMapping("/{id}/favorite/toggle")
     public ResponseEntity<Lesson> toggleFavorite(@PathVariable Long id) {
         Lesson lesson = lessonService.toggleFavorite(id);
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
-    /** Toggle visibility status (public/private) */
+    /** Toggle visibility status (public/private) - owner (or admin) only */
     @PutMapping("/{id}/visibility/toggle")
-    public ResponseEntity<Lesson> toggleVisibility(@PathVariable Long id) {
+    public ResponseEntity<Lesson> toggleVisibility(@PathVariable Long id, Principal principal) {
+        Lesson existing = findLesson(id);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         Lesson lesson = lessonService.toggleVisibility(id);
         return (lesson != null) ?
                 new ResponseEntity<>(lesson, HttpStatus.OK) :

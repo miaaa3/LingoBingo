@@ -34,16 +34,24 @@ public class FlashcardSetService {
         return flashcardSetRepository.save(flashcardSet);
     }
 
-    // Update an existing flashcard set
+    // Update an existing flashcard set. The incoming body never carries the owner
+    // (createdBy is hidden from JSON), so preserve it - and createdAt - from the
+    // stored set, otherwise an edit would orphan the set from its creator.
     public FlashcardSet updateFlashcardSet(Long id, FlashcardSet updatedFlashcardSet) {
-        if (flashcardSetRepository.existsById(id)) {
-            updatedFlashcardSet.setId(id);
-            if (updatedFlashcardSet.getFlashcards() != null) {
-                updatedFlashcardSet.getFlashcards().forEach(flashcard -> flashcard.setFlashcardSet(updatedFlashcardSet));
-            }
-            return flashcardSetRepository.save(updatedFlashcardSet);
+        Optional<FlashcardSet> existingOpt = flashcardSetRepository.findById(id);
+        if (existingOpt.isEmpty()) {
+            return null;
         }
-        return null;
+        FlashcardSet existing = existingOpt.get();
+        updatedFlashcardSet.setId(id);
+        updatedFlashcardSet.setCreatedBy(existing.getCreatedBy());
+        if (updatedFlashcardSet.getCreatedAt() == null) {
+            updatedFlashcardSet.setCreatedAt(existing.getCreatedAt());
+        }
+        if (updatedFlashcardSet.getFlashcards() != null) {
+            updatedFlashcardSet.getFlashcards().forEach(flashcard -> flashcard.setFlashcardSet(updatedFlashcardSet));
+        }
+        return flashcardSetRepository.save(updatedFlashcardSet);
     }
 
     // Delete flashcard set by ID

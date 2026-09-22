@@ -31,20 +31,24 @@
   </div>
 
   <div class="space-y-3">
-    <div *ngFor="let ev of events" class="flex items-center gap-4 bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl p-4 shadow-sm">
+    <div *ngFor="let ev of events" (click)="goToEvent(ev)"
+      class="flex items-center gap-4 bg-white dark:bg-[#191d31] border border-gray-200 dark:border-[#2a2f47] rounded-2xl p-4 shadow-sm transition-colors"
+      [ngClass]="{ 'opacity-60': isPast(ev), 'cursor-pointer hover:border-blue-ribbon-400': isActionable(ev) }">
       <div class="text-center w-16 shrink-0">
-        <div class="text-2xl font-black text-blue-ribbon-700">{{ ev.dueDate | date:'d' }}</div>
-        <div class="text-xs uppercase text-gray-400 dark:text-gray-500">{{ ev.dueDate | date:'MMM' }}</div>
+        <div class="text-2xl font-black text-blue-ribbon-700">{{ toDate(ev.dueDate) | date:'d' }}</div>
+        <div class="text-xs uppercase text-gray-400 dark:text-gray-500">{{ toDate(ev.dueDate) | date:'MMM' }}</div>
       </div>
-      <div class="flex-1">
+      <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2 flex-wrap">
           <span class="font-bold text-gray-800 dark:text-gray-200">{{ ev.title }}</span>
           <span class="text-xs font-semibold px-2 py-0.5 rounded-full" [ngClass]="typeClass(ev.type)">{{ typeLabels[ev.type] || ev.type }}</span>
+          <span *ngIf="isPast(ev)" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-600 dark:bg-[#2a1416] dark:text-red-400">Closed</span>
         </div>
-        <div class="text-sm text-gray-500 dark:text-gray-400">{{ ev.className }} &middot; {{ ev.dueDate | date:'EEE, MMM d, h:mm a' }}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">{{ ev.className }} &middot; {{ toDate(ev.dueDate) | date:'EEE, MMM d, h:mm a' }}</div>
         <div *ngIf="ev.description" class="text-sm text-gray-400 dark:text-gray-500 mt-1">{{ ev.description }}</div>
       </div>
-      <button *ngIf="isTeacher" (click)="remove(ev)" class="text-red-500 text-sm font-semibold hover:underline shrink-0">Delete</button>
+      <span *ngIf="isActionable(ev)" class="text-sm font-bold text-blue-ribbon-600 dark:text-blue-ribbon-300 shrink-0">Open &rarr;</span>
+      <button *ngIf="isTeacher" (click)="remove(ev); $event.stopPropagation()" class="text-red-500 text-sm font-semibold hover:underline shrink-0">Delete</button>
     </div>
   </div>
 </div>

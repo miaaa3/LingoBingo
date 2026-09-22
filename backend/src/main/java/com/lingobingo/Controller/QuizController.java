@@ -1,5 +1,6 @@
 package com.lingobingo.Controller;
 
+import com.lingobingo.Entity.ActivityType;
 import com.lingobingo.Entity.Quiz;
 import com.lingobingo.Entity.Question;
 import com.lingobingo.Dto.QuizTakeDto;
@@ -8,6 +9,7 @@ import com.lingobingo.Entity.User;
 import com.lingobingo.Repository.UserRepository;
 import com.lingobingo.Service.QuizService;
 import com.lingobingo.Service.QuizResultService;
+import com.lingobingo.Service.RecentActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,19 @@ public class QuizController {
     private final QuizService quizService;
     private final UserRepository userRepository;
     private final QuizResultService quizResultService;
+    private final RecentActivityService recentActivityService;
+
+    private User currentUser(Principal principal) {
+        return (principal != null) ? userRepository.findByEmail(principal.getName()).orElse(null) : null;
+    }
+
+    /** Only the quiz's creator (or an admin) may manage it. */
+    private boolean canManage(Quiz quiz, User user) {
+        if (quiz == null || user == null) return false;
+        if (user.getRole() == Role.ADMIN) return true;
+        return quiz.getCreatedBy() != null && user.getId() != null
+                && user.getId().equals(quiz.getCreatedBy().getId());
+    }
 
 
     // Add a new quiz
@@ -45,6 +60,7 @@ public class QuizController {
         }
         // Create the quiz
         Quiz createdQuiz = quizService.createQuiz(quiz);
+        recentActivityService.log(currentUser(principal), "CREATED", ActivityType.QUIZ, createdQuiz.getName());
         return new ResponseEntity<>(createdQuiz, HttpStatus.CREATED);
     }
 
@@ -78,27 +94,46 @@ public class QuizController {
     }
 
 
-    // Update a quiz by ID
+    // Update a quiz by ID - owner (or admin) only
     @PutMapping("/{quizId}/update")
-    public ResponseEntity<Quiz> updateQuiz(@PathVariable Long quizId, @RequestBody Quiz updatedQuiz) {
+    public ResponseEntity<Quiz> updateQuiz(@PathVariable Long quizId, @RequestBody Quiz updatedQuiz, Principal principal) {
+        Quiz existing = quizService.getQuizById(quizId).orElse(null);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         Quiz quiz = quizService.updateQuiz(quizId, updatedQuiz);
+        if (quiz != null) {
+            recentActivityService.log(currentUser(principal), "UPDATED", ActivityType.QUIZ, quiz.getName());
+        }
         return (quiz != null) ?
                 new ResponseEntity<>(quiz, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Delete a quiz by ID
+    // Delete a quiz by ID - owner (or admin) only
     @DeleteMapping("/{quizId}/delete")
-    public ResponseEntity<String> deleteQuiz(@PathVariable Long quizId) {
+    public ResponseEntity<String> deleteQuiz(@PathVariable Long quizId, Principal principal) {
+        Quiz existing = quizService.getQuizById(quizId).orElse(null);
+        if (existing == null) return new ResponseEntity<>("Quiz not found", HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>("Not your quiz", HttpStatus.FORBIDDEN);
+
+        String name = existing.getName();
         boolean deleted = quizService.deleteQuiz(quizId);
+        if (deleted) {
+            recentActivityService.log(currentUser(principal), "DELETED", ActivityType.QUIZ, name);
+        }
         return (deleted) ?
                 new ResponseEntity<>("Quiz deleted successfully", HttpStatus.OK) :
                 new ResponseEntity<>("Quiz not found", HttpStatus.NOT_FOUND);
     }
 
-    // Set quiz visibility (public/private)
+    // Set quiz visibility (public/private) - owner (or admin) only
     @PutMapping("/{quizId}/visibility")
-    public ResponseEntity<Quiz> setQuizVisibility(@PathVariable Long quizId, @RequestParam boolean isPublic) {
+    public ResponseEntity<Quiz> setQuizVisibility(@PathVariable Long quizId, @RequestParam boolean isPublic, Principal principal) {
+        Quiz existing = quizService.getQuizById(quizId).orElse(null);
+        if (existing == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!canManage(existing, currentUser(principal))) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         Quiz quiz = quizService.setQuizVisibility(quizId, isPublic);
         return (quiz != null) ?
                 new ResponseEntity<>(quiz, HttpStatus.OK) :
@@ -144,6 +179,8 @@ public class QuizController {
             return ResponseEntity.ok(quizResultService.submit(quizId, principal.getName(), answers));
         } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
 
@@ -182,6 +219,6 @@ public class QuizController {
                         q.getAnswers(), q.getPoints()));
             }
         }
-        return ResponseEntity.ok(new QuizTakeDto(quiz.getId(), quiz.getName(), quiz.getDescription(), questions));
+        return ResponseEntity.ok(new QuizTakeDto(quiz.getId(), quiz.getName(), quiz.getDescription(), quiz.getDueDate(), questions));
     }
 }

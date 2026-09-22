@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { FlashcardSetService } from 'src/app/Services/Flashcards/flashcardSet.service';
 import { QuizService } from 'src/app/Services/Quiz/quiz.service';
 import { QuizGeneratorService, GenMode, DraftQuestion } from 'src/app/Services/Quiz/quiz-generator.service';
 
 /**
- * Draft a quiz from an existing flashcard set, offline. The heavy lifting
- * (question shaping) lives in QuizGeneratorService; this component owns the
- * three-step UI (pick set -> tune & generate -> review/edit & save) and the
- * two HTTP calls (load a set's cards, save the finished quiz).
+ * Draft a quiz from one or more flashcard sets, offline. Question shaping lives
+ * in QuizGeneratorService; this component owns the UI (pick sets -> tune &
+ * generate -> review/edit & save) and the HTTP calls (load each set's cards,
+ * save the finished quiz).
  */
 @Component({
   selector: 'app-generate-quiz',
@@ -17,10 +18,10 @@ import { QuizGeneratorService, GenMode, DraftQuestion } from 'src/app/Services/Q
   styleUrls: ['./generate-quiz.component.css']
 })
 export class GenerateQuizComponent implements OnInit {
-  // Step 1 - source
+  // Step 1 - sources (one or several sets)
   sets: any[] = [];
   loadingSets = true;
-  selectedSetId: number | null = null;
+  selectedSetIds: number[] = [];
   loadingCards = false;
   private cards: { term: string; definition: string }[] = [];
 
@@ -33,6 +34,7 @@ export class GenerateQuizComponent implements OnInit {
   quizName = '';
   quizDescription = '';
   isPublic = true;
+  dueDate = '';   // optional deadline (datetime-local string)
   saving = false;
 
   constructor(
@@ -58,27 +60,40 @@ export class GenerateQuizComponent implements OnInit {
   get usableCount(): number { return this.gen.usableCards(this.cards).length; }
   get canGenerate(): boolean { return this.usableCount >= 2; }
 
-  onSelectSet(): void {
+  // --- source selection (multi-set) ---
+  isSelected(id: number): boolean { return this.selectedSetIds.includes(id); }
+
+  toggleSet(id: number): void {
+    const i = this.selectedSetIds.indexOf(id);
+    if (i >= 0) { this.selectedSetIds.splice(i, 1); } else { this.selectedSetIds.push(id); }
+    this.loadSelectedCards();
+  }
+
+  private loadSelectedCards(): void {
     this.drafts = [];
-    this.cards = [];
-    if (this.selectedSetId == null) { return; }
+    if (this.selectedSetIds.length === 0) { this.cards = []; return; }
     this.loadingCards = true;
-    this.setsApi.getFlashcardSetById(this.selectedSetId).subscribe({
-      next: set => {
-        this.cards = (set?.flashcards || []).map((c: any) => ({ term: c.term, definition: c.definition }));
+    forkJoin(this.selectedSetIds.map(id => this.setsApi.getFlashcardSetById(id))).subscribe({
+      next: (loaded: any[]) => {
+        const merged: { term: string; definition: string }[] = [];
+        loaded.forEach(set => (set?.flashcards || []).forEach((c: any) => merged.push({ term: c.term, definition: c.definition })));
+        this.cards = merged;
         this.loadingCards = false;
-        if (!this.quizName) { this.quizName = set?.title ? `${set.title} quiz` : 'Generated quiz'; }
+        if (!this.quizName) {
+          const first = this.sets.find(s => s.id === this.selectedSetIds[0]);
+          this.quizName = first?.title ? `${first.title} quiz` : 'Generated quiz';
+        }
         this.count = Math.min(this.count, Math.max(2, this.usableCount));
-        if (!this.canGenerate) { this.toastr.info('This set needs at least 2 complete cards to generate a quiz.'); }
+        if (!this.canGenerate) { this.toastr.info('Pick sets with at least 2 complete cards between them.'); }
       },
-      error: () => { this.loadingCards = false; this.toastr.error('Could not load that set.'); }
+      error: () => { this.loadingCards = false; this.toastr.error('Could not load the selected sets.'); }
     });
   }
 
   generate(): void {
     if (!this.canGenerate) { return; }
     this.drafts = this.gen.generate(this.cards, this.count, this.mode);
-    if (this.drafts.length === 0) { this.toastr.info('Nothing to generate from this set.'); }
+    if (this.drafts.length === 0) { this.toastr.info('Nothing to generate from these sets.'); }
   }
 
   // --- draft editing ---
@@ -97,6 +112,9 @@ export class GenerateQuizComponent implements OnInit {
   removeQuestion(index: number): void { this.drafts.splice(index, 1); }
   optionKey(i: number): string { return String.fromCharCode(65 + i); }
   totalPoints(): number { return this.drafts.reduce((s, q) => s + (q.points || 0), 0); }
+
+  incPoints(q: DraftQuestion): void { q.points = (q.points || 1) + 1; }
+  decPoints(q: DraftQuestion): void { q.points = Math.max(1, (q.points || 1) - 1); }
 
   private invalidDraft(): DraftQuestion | null {
     return this.drafts.find(q =>
@@ -126,12 +144,13 @@ export class GenerateQuizComponent implements OnInit {
       return { questionText: q.questionText.trim(), answers, correctAnswer, points: q.points || 1 };
     });
 
-    const payload = {
+    const payload: any = {
       name: this.quizName.trim(),
       description: this.quizDescription.trim(),
       isPublic: this.isPublic,
       questions
     };
+    if (this.dueDate) { payload.dueDate = this.dueDate; }
 
     this.saving = true;
     this.quizApi.addQuiz(payload).subscribe({

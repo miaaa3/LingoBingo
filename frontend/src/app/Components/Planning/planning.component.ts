@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { PlanningService } from 'src/app/Services/Planning/planning.service';
 import { ClassroomService } from 'src/app/Services/Classroom/classroom.service';
@@ -23,8 +24,26 @@ export class PlanningComponent implements OnInit {
     private planning: PlanningService,
     private classroom: ClassroomService,
     private local: LocalService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) {}
+
+  /** An event whose deadline has passed can no longer be acted on. */
+  isPast(ev: any): boolean {
+    const d = this.toDate(ev?.dueDate);
+    return !!d && d.getTime() < Date.now();
+  }
+
+  /** For students, quiz/live-session entries are actionable until they pass. */
+  isActionable(ev: any): boolean {
+    return !this.isTeacher && !this.isPast(ev) &&
+      (ev?.type === 'QUIZ_DUE' || ev?.type === 'LIVE_SESSION');
+  }
+
+  goToEvent(ev: any): void {
+    if (!this.isActionable(ev)) { return; }
+    this.router.navigate(['/Quizzes']);
+  }
 
   ngOnInit(): void {
     const role = this.local.getData('role');
@@ -73,5 +92,22 @@ export class PlanningComponent implements OnInit {
     if (t === 'QUIZ_DUE') { return 'bg-mustard-100 text-mustard-800'; }
     if (t === 'LIVE_SESSION') { return 'bg-mauve-100 text-mauve-800'; }
     return 'bg-gray-100 text-gray-600';
+  }
+
+  /**
+   * Coerce a backend date into a JS Date the `date` pipe can format. Handles
+   * ISO strings and Jackson's numeric-array form [year, month(1-based), day,
+   * hour, minute, second]. Returns null for anything unparseable so the pipe
+   * renders nothing instead of throwing (NG02100).
+   */
+  toDate(v: any): Date | null {
+    if (v === null || v === undefined || v === '') { return null; }
+    if (Array.isArray(v)) {
+      const [y, mo = 1, d = 1, h = 0, mi = 0, s = 0] = v;
+      const dt = new Date(y, (mo || 1) - 1, d || 1, h, mi, s);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+    const dt = new Date(v);
+    return isNaN(dt.getTime()) ? null : dt;
   }
 }

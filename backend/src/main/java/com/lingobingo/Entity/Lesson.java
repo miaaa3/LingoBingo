@@ -2,6 +2,7 @@ package com.lingobingo.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,4 +38,18 @@ public class Lesson {
 
     @Column(nullable = false)
     private Boolean isFavorite = true;
+
+    // Read-only owner identity for the client (createdBy is hidden by
+    // @JsonBackReference). No setters, so these are ignored on deserialization.
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public String getOwnerEmail() {
+        return createdBy != null ? createdBy.getEmail() : null;
+    }
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public Long getOwnerId() {
+        return createdBy != null ? createdBy.getId() : null;
+    }
 }

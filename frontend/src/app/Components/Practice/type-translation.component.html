@@ -61,7 +61,17 @@
       <div class="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-3">
         Translate{{ answerLangCode ? (' to ' + lang.name(answerLangCode)) : '' }} {{ lang.flag(answerLangCode) }}
       </div>
-      <div class="display text-4xl font-bold text-cloud-burst-900 dark:text-gray-100 mb-6 break-words">{{ prompt }}</div>
+      <div class="flex items-center justify-center gap-3 mb-6 break-words">
+        <span class="display text-4xl font-bold text-cloud-burst-900 dark:text-gray-100">{{ prompt }}</span>
+        <button *ngIf="speech.ttsSupported" type="button" (click)="speakPrompt()"
+          class="shrink-0 w-10 h-10 flex items-center justify-center rounded-full text-blue-ribbon-500 hover:text-white hover:bg-blue-ribbon-500 border border-gray-200 dark:border-[#2a2f47] transition-colors"
+          title="Hear it" aria-label="Hear pronunciation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+      </div>
 
       <!-- TYPE mode -->
       <ng-container *ngIf="inputMode==='type'">
@@ -74,6 +84,20 @@
             'border-red-400 bg-red-50 dark:bg-[#2a0f14]': status==='wrong'
           }">
         <div *ngIf="revealed > 0 && status==='idle'" class="mt-3 display tracking-[0.3em] text-gray-400 dark:text-gray-500 text-lg">{{ hintDisplay }}</div>
+
+        <!-- speak your answer -->
+        <button *ngIf="speech.sttSupported && status==='idle'" type="button" (click)="toggleDictation()"
+          class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-colors"
+          [ngClass]="listening
+            ? 'border-red-400 text-red-500 mic-live'
+            : 'border-gray-200 dark:border-[#2a2f47] text-gray-500 dark:text-gray-300 hover:border-blue-ribbon-400 hover:text-blue-ribbon-500'"
+          [title]="listening ? 'Tap to stop' : 'Answer by voice'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+          {{ listening ? 'Listening…' : 'Speak answer' }}
+        </button>
       </ng-container>
 
       <!-- TAP mode (word bank) -->

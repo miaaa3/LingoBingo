@@ -43,4 +43,9 @@ export class QuizHubComponent implements OnInit {
   }
 
   qCount(q: any): number { return q.questions ? q.questions.length : 0; }
+
+  /** A quiz with a deadline in the past is closed. */
+  isClosed(q: any): boolean {
+    return !!q?.dueDate && new Date(q.dueDate).getTime() < Date.now();
+  }
 }

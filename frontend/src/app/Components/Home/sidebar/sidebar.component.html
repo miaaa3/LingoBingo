@@ -13,5 +13,9 @@
 		<a routerLink="/Practice" routerLinkActive="bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300" class="px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] hover:text-blue-ribbon-700 dark:hover:text-blue-ribbon-300 transition-colors">Practice</a>
 		<a routerLink="/Quizzes" routerLinkActive="bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300" class="px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] hover:text-blue-ribbon-700 dark:hover:text-blue-ribbon-300 transition-colors">Quizzes</a>
 		<a routerLink="/Planning" routerLinkActive="bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300" class="px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] hover:text-blue-ribbon-700 dark:hover:text-blue-ribbon-300 transition-colors">Planning</a>
+		<a routerLink="/Messages" routerLinkActive="bg-blue-ribbon-50 dark:bg-[#232842] text-blue-ribbon-700 dark:text-blue-ribbon-300" class="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-blue-ribbon-50 dark:hover:bg-[#232842] hover:text-blue-ribbon-700 dark:hover:text-blue-ribbon-300 transition-colors">
+			<span>Messages</span>
+			<span *ngIf="msgUnread > 0" class="min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">{{ msgUnread > 9 ? '9+' : msgUnread }}</span>
+		</a>
 	</nav>
 </aside>
