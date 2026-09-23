@@ -38,28 +38,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader=request.getHeader(AUTHORIZATION);
-        if (authorizationHeader!=null && authorizationHeader.startsWith("Bearer ")){
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            // Only the token check lives in this try. A failure here means the token
+            // is bad/expired, so we answer 403 and stop. Crucially, the downstream
+            // request (filterChain.doFilter) runs OUTSIDE this catch: a controller
+            // that throws must surface as its own error (e.g. 500), never be
+            // repackaged as a 403 that logs the user out.
             try {
-                String token=authorizationHeader.substring("Bearer ".length());
+                String token = authorizationHeader.substring("Bearer ".length());
                 Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
-                JWTVerifier verifier= JWT.require(algorithm).build();
-                DecodedJWT decodedJWT=verifier.verify(token);
-                String username =decodedJWT.getSubject();
-                userRepository.findByEmail(username).orElseThrow(()-> new Exception("invalid Token"));
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                String username = decodedJWT.getSubject();
+                boolean exists = userRepository.findByEmail(username).isPresent();
+                if (!exists) {
+                    throw new RuntimeException("invalid Token");
+                }
                 String role = decodedJWT.getClaim("role").asString();
-                SimpleGrantedAuthority authorities=new SimpleGrantedAuthority(role);
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =new UsernamePasswordAuthenticationToken(username,null, List.of(authorities));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                filterChain.doFilter(request,response);
-            }catch (Exception e){
-                ErrorResponse errorResponse= new ErrorResponse(FORBIDDEN,e.getMessage());
+                SimpleGrantedAuthority authorities = new SimpleGrantedAuthority(role);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(username, null, List.of(authorities));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                SecurityContextHolder.clearContext();
+                ErrorResponse errorResponse = new ErrorResponse(FORBIDDEN, e.getMessage());
                 response.setContentType(APPLICATION_JSON_VALUE);
                 response.setStatus(errorResponse.getStatusCodeValue());
-                new ObjectMapper().writeValue(response.getOutputStream(),errorResponse);
+                new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
+                return;
             }
-        }else {
-            filterChain.doFilter(request,response);
         }
+
+        // Runs for both authenticated and anonymous requests. Any exception thrown
+        // here propagates normally instead of being masked as an auth failure.
+        filterChain.doFilter(request, response);
     }
 }

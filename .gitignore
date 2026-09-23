@@ -15,3 +15,6 @@ Thumbs.db
 
 # Desktop app delivered files (not part of the app)
 build outputs/
+
+# temp build tarball (safe to delete)
+_backend_src.tgz

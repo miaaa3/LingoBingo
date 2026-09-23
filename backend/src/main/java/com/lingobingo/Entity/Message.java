@@ -33,6 +33,7 @@ public class Message {
     @Column(length = 2000)
     private String content;
 
+    @Column(name = "is_read")
     private boolean read = false;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)

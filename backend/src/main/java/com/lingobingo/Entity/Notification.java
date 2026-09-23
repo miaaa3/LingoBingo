@@ -32,6 +32,7 @@ public class Notification {
     private String type;   // NEW_QUIZ, NEW_FLASHCARD_SET, NEW_COURSE, QUIZ_CLOSED
     private String link;   // frontend route to open when clicked
 
+    @Column(name = "is_read")
     private boolean read = false;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
