@@ -4,7 +4,19 @@
 
 LingoBingo is a full-stack web application for language and general learning. Teachers build courses, flashcard sets and graded quizzes and organise students into classes; students learn, practise and compete on a gamified dashboard. It is built as a single monorepo and runs end-to-end with one Docker command.
 
-> Academic project — Angular + Spring Boot + MySQL, containerised with Docker Compose.
+> Built during my 2025 internship at **La Rochelle University**, for an English teacher who wanted Quizlet-style flashcards and Kahoot-style live quizzes in one tool — Angular + Spring Boot + MySQL, containerised with Docker Compose.
+
+<p align="center">
+  <img src="screenshots/demo.gif" alt="Landing page, student dashboard, flashcards and practice" width="100%" />
+</p>
+
+| Landing page | Teacher dashboard | Student dashboard |
+|---|---|---|
+| ![Landing](screenshots/01-welcome.jpg) | ![Teacher dashboard](screenshots/02-teacher-dashboard.jpg) | ![Student dashboard](screenshots/10-student-dashboard.jpg) |
+| **Flashcards** | **Quiz generator** | **Classes** |
+| ![Flashcard](screenshots/12-flashcard.jpg) | ![Quiz generator](screenshots/08-generate.jpg) | ![Classes](screenshots/05-classes.jpg) |
+| **Quizzes & live games** | **Planning** | **Type-the-translation practice** |
+| ![Quizzes](screenshots/04-quizzes.jpg) | ![Planning](screenshots/07-planning.jpg) | ![Practice](screenshots/13-practice.jpg) |
 
 ---
 
@@ -140,4 +152,8 @@ npm start                 # http://localhost:4200
 ## 📄 Notes
 - Translation uses the free, key-free MyMemory API (cached server-side); it needs outbound internet and is rate-limited on the free tier — fine for classroom use.
 - Quiz answers are never sent to the browser; scoring happens on the server.
-- This is a student project built for coursework.
+- Built by **Meryem Belmouaddine** during an internship at La Rochelle University (April–June 2025).
+
+## 📜 License
+
+[MIT](LICENSE) © 2026 Meryem Belmouaddine

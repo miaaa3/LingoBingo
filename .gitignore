@@ -18,3 +18,6 @@ build outputs/
 
 # temp build tarball (safe to delete)
 _backend_src.tgz
+
+# Local assistant notes
+Claude outputs/
