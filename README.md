@@ -28,6 +28,7 @@ LingoBingo is a full-stack web application for language and general learning. Te
 - **Quizzes** — build by hand (per-question points, options, correct answer) or **generate a draft quiz from a flashcard set** in one click, then edit and save.
 - **Classes** with a join code and a roster; **assign** courses, quizzes and flashcards to a class.
 - **Planning** — a calendar of deadlines for each class.
+- **Classroom bingo** — turn any flashcard set into printable bingo grids (3×3 to 5×5, optional free centre), **every grid different** from the others. Draw words on the big screen (the translation is shown and read aloud), and when a student shouts "Bingo!" type their grid number: the server checks it against the words **actually drawn**, row, column or diagonal.
 - **Gradebook** — every student's quiz result is scored server-side and saved.
 
 ### For students
@@ -99,6 +100,12 @@ LingoBingo/
 ## 🚀 Run with Docker (recommended)
 
 **Prerequisites:** Docker Desktop (or Docker Engine + Compose).
+
+### One click
+Start Docker Desktop, then double-click **`start.command`** (macOS / Linux) or **`start.bat`** (Windows).
+On first run it creates `.env` with random secrets, builds and starts the whole stack, and opens **http://localhost:8088**.
+
+### Manually
 
 1. Create your environment file and set the two secrets:
    ```bash

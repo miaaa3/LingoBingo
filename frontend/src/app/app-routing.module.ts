@@ -29,6 +29,7 @@ import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 import { PlanningComponent } from './Components/Planning/planning.component';
 import { DashboardComponent } from './Components/Dashboard/dashboard.component';
 import { TypeTranslationComponent } from './Components/Practice/type-translation.component';
+import { BingoComponent } from './Components/Bingo/bingo.component';
 import { MessagesComponent } from './Components/Messages/messages.component';
 
 
@@ -56,6 +57,7 @@ const routes: Routes = [
   {path:'Dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   {path:'Profile', component: ProfileComponent, canActivate: [AuthGuard]},
   {path:'Practice', component: TypeTranslationComponent, canActivate: [AuthGuard]},
+  {path:'Bingo', component: BingoComponent, canActivate: [AuthGuard]},
   {path:'Messages', component: MessagesComponent, canActivate: [AuthGuard]},
 
 

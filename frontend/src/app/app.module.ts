@@ -41,6 +41,7 @@ import { GradebookComponent } from './Components/Quiz-play/gradebook.component';
 import { PlanningComponent } from './Components/Planning/planning.component';
 import { DashboardComponent } from './Components/Dashboard/dashboard.component';
 import { TypeTranslationComponent } from './Components/Practice/type-translation.component';
+import { BingoComponent } from './Components/Bingo/bingo.component';
 import { MessagesComponent } from './Components/Messages/messages.component';
 
 
@@ -59,6 +60,7 @@ import { MessagesComponent } from './Components/Messages/messages.component';
     CreateQuizComponent,
     GenerateQuizComponent,
     TypeTranslationComponent,
+    BingoComponent,
     WelcomeComponent,
     AvatarComponent,
     ProfileComponent,

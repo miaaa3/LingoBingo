@@ -1,0 +1,145 @@
+<div class="page">
+
+  <!-- ============ SETUP ============ -->
+  <div *ngIf="phase === 'setup'">
+    <div class="page-head">
+      <h1 class="page-title">Bingo</h1>
+      <p class="page-sub">Print a different grid for every student, draw words, and let the app check who really has bingo.</p>
+    </div>
+
+    <div class="card p-6 space-y-6">
+      <!-- 1. set -->
+      <div>
+        <div class="font-bold text-cloud-burst-900 dark:text-gray-100 mb-2">1. Vocabulary set</div>
+        <div *ngIf="loadingSets" class="text-gray-400 dark:text-gray-500">Loading your sets...</div>
+        <div *ngIf="!loadingSets && sets.length === 0" class="text-gray-400 dark:text-gray-500">No flashcard sets yet — create one first.</div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <button type="button" *ngFor="let s of sets" (click)="setId = s.id"
+            [ngClass]="setId === s.id ? 'border-blue-ribbon-500 bg-blue-ribbon-50 dark:bg-[#232842]' : 'border-gray-200 dark:border-[#2a2f47]'"
+            class="text-left border-2 rounded-xl p-3 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-semibold text-cloud-burst-900 dark:text-gray-100">{{ s.title }}</span>
+              <span *ngIf="s.sourceLang && s.targetLang" class="shrink-0">{{ lang.flag(s.sourceLang) }}→{{ lang.flag(s.targetLang) }}</span>
+            </div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">{{ s.flashcards?.length ?? '?' }} words</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. grid -->
+      <div class="grid sm:grid-cols-3 gap-4">
+        <label class="block">
+          <span class="font-bold text-cloud-burst-900 dark:text-gray-100">2. Grid size</span>
+          <select [(ngModel)]="size" class="mt-2 w-full rounded-lg border-gray-300 dark:border-[#2a2f47] dark:bg-[#232842] dark:text-gray-100">
+            <option [ngValue]="3">3 × 3 (easy)</option>
+            <option [ngValue]="4">4 × 4</option>
+            <option [ngValue]="5">5 × 5 (classic)</option>
+          </select>
+        </label>
+        <label class="block">
+          <span class="font-bold text-cloud-burst-900 dark:text-gray-100">3. Number of grids</span>
+          <input type="number" min="1" max="200" [(ngModel)]="count"
+            class="mt-2 w-full rounded-lg border-gray-300 dark:border-[#2a2f47] dark:bg-[#232842] dark:text-gray-100" />
+        </label>
+        <label class="flex items-center gap-2 sm:mt-8" [class.opacity-40]="!canFree" [title]="canFree ? '' : 'Only odd grids have a centre square'">
+          <input type="checkbox" [(ngModel)]="freeCenter" [disabled]="!canFree" class="rounded" />
+          <span class="text-gray-700 dark:text-gray-300">Free square in the middle</span>
+        </label>
+      </div>
+
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Each grid needs <b>{{ wordsNeeded }}</b> different words. No two grids will have the same words.
+      </p>
+
+      <div *ngIf="error" class="text-sm font-semibold text-red-600 dark:text-red-400">{{ error }}</div>
+
+      <button type="button" (click)="generate()" [disabled]="generating || setId == null"
+        class="w-full bg-blue-ribbon-600 hover:bg-blue-ribbon-700 disabled:opacity-50 text-white font-bold py-3 rounded-full transition-colors">
+        {{ generating ? 'Creating grids…' : 'Create the grids' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ PLAY ============ -->
+  <div *ngIf="phase === 'play' && batch">
+    <div class="page-head flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h1 class="page-title">Bingo · {{ batch.setTitle }}</h1>
+        <p class="page-sub">
+          {{ batch.grids.length }} grids, {{ batch.size }}×{{ batch.size }} ·
+          <span *ngIf="batch.uniqueBy === 'words'">every grid has a different set of words</span>
+          <span *ngIf="batch.uniqueBy === 'layout'" class="text-mustard-700 dark:text-mustard-400">small set: grids share words but are all laid out differently</span>
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" (click)="print()" class="border-2 border-blue-ribbon-200 dark:border-[#2a2f47] text-blue-ribbon-600 dark:text-blue-ribbon-300 font-bold px-4 py-2 rounded-full hover:bg-blue-ribbon-50 dark:hover:bg-[#232842]">🖨️ Print grids</button>
+        <button type="button" (click)="newGame()" class="font-bold px-4 py-2 rounded-full text-gray-500 hover:text-gray-700 dark:hover:text-gray-200">New game</button>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4">
+      <!-- caller -->
+      <div class="card p-6 lg:col-span-2 text-center">
+        <div class="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">
+          Word {{ called.length }} / {{ batch.words.length }}
+        </div>
+        <ng-container *ngIf="lastCalled !== null; else notStarted">
+          <div class="display text-4xl sm:text-5xl font-bold text-cloud-burst-900 dark:text-gray-100 break-words">
+            {{ batch.words[lastCalled].definition || batch.words[lastCalled].term }}
+          </div>
+          <div class="text-sm text-gray-400 dark:text-gray-500 mt-2">Find the word on your grid</div>
+          <button *ngIf="speech.ttsSupported" type="button" (click)="say(lastCalled)" class="mt-3 text-blue-ribbon-600 dark:text-blue-ribbon-300 font-semibold text-sm">🔊 Say it again</button>
+        </ng-container>
+        <ng-template #notStarted>
+          <div class="display text-2xl text-gray-400 dark:text-gray-500 py-6">Press “Draw a word” to start</div>
+        </ng-template>
+
+        <div class="flex gap-3 mt-6">
+          <button type="button" (click)="draw()" [disabled]="finished"
+            class="flex-1 bg-blue-ribbon-600 hover:bg-blue-ribbon-700 disabled:opacity-50 text-white font-bold py-3 rounded-full transition-colors">
+            {{ finished ? 'All words drawn' : 'Draw a word' }}
+          </button>
+          <button type="button" (click)="undo()" [disabled]="called.length === 0"
+            class="px-5 py-3 rounded-full font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 disabled:opacity-40" title="Undo the last draw">Undo</button>
+        </div>
+      </div>
+
+      <!-- referee -->
+      <div class="card p-6">
+        <div class="font-bold text-cloud-burst-900 dark:text-gray-100 mb-1">Someone shouted “Bingo!”?</div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Type their grid number. Only words you really drew count.</p>
+        <form (ngSubmit)="check()" class="flex gap-2">
+          <input type="number" name="checkNumber" [(ngModel)]="checkNumber" min="1" [max]="batch.grids.length" placeholder="Grid #"
+            class="w-full rounded-lg border-gray-300 dark:border-[#2a2f47] dark:bg-[#232842] dark:text-gray-100" />
+          <button type="submit" [disabled]="checking" class="bg-mustard-400 hover:bg-mustard-500 text-cloud-burst-900 font-bold px-4 rounded-lg">Check</button>
+        </form>
+        <div *ngIf="checkError" class="text-sm text-red-600 dark:text-red-400 mt-2">{{ checkError }}</div>
+
+        <div *ngIf="checkResult" class="mt-4">
+          <div *ngIf="checkResult.won" class="font-bold text-green-600 dark:text-green-400">🎉 Grid {{ checkResult.grid }} wins: {{ checkResult.lines.join(', ') }}</div>
+          <div *ngIf="!checkResult.won" class="font-bold text-red-600 dark:text-red-400">Not yet — grid {{ checkResult.grid }} has no full line.</div>
+
+          <div class="grid gap-1 mt-3" [style.grid-template-columns]="'repeat(' + batch.size + ', minmax(0, 1fr))'">
+            <div *ngFor="let w of batch.grids[checkResult.grid - 1]; let i = index"
+              class="aspect-square flex items-center justify-center text-center text-[11px] leading-tight rounded p-1 break-words"
+              [ngClass]="inWinningLine(i) ? 'bg-green-500 text-white font-bold'
+                : (w === FREE || isCalled(w)) ? 'bg-blue-ribbon-100 dark:bg-[#232842] text-blue-ribbon-800 dark:text-blue-ribbon-200'
+                : 'bg-gray-100 dark:bg-[#1f2338] text-gray-400 dark:text-gray-500'">
+              {{ w === FREE ? '★' : batch.words[w].term }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- history -->
+    <div class="card p-6 mt-4" *ngIf="called.length">
+      <div class="font-bold text-cloud-burst-900 dark:text-gray-100 mb-3">Words drawn</div>
+      <div class="flex flex-wrap gap-2">
+        <span *ngFor="let i of called; let n = index" class="px-3 py-1 rounded-full bg-gray-100 dark:bg-[#232842] text-sm text-gray-700 dark:text-gray-300">
+          <span class="text-gray-400">{{ n + 1 }}.</span> {{ batch.words[i].term }} <span class="text-gray-400">· {{ batch.words[i].definition }}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
